@@ -1,0 +1,396 @@
+project_info:
+  name: 12306火车票预订系统
+  version: v1.0
+  created_date: 2025-01-03
+  last_updated: 2025-01-03
+  description: 基于12306官网设计的火车票预订系统UI结构
+
+page_structure:
+  - id: PAGE-Home
+    name: 系统首页
+    route: /
+    description: 系统主页，包含车票查询入口和主要功能导航
+    layout: MainLayout
+    components: [COMP-Header, COMP-HeroSection, COMP-TicketSearch, COMP-ServiceGrid, COMP-Footer]
+    navigation:
+      parent: null
+      children: [PAGE-Login, PAGE-Register, PAGE-TicketList, PAGE-UserCenter]
+    access_control: public
+    
+  - id: PAGE-Login
+    name: 用户登录页
+    route: /login
+    description: 用户登录界面，支持手机号/用户名登录
+    layout: AuthLayout
+    components: [COMP-LoginForm, COMP-AuthHeader, COMP-AuthFooter]
+    navigation:
+      parent: PAGE-Home
+      children: [PAGE-Register, PAGE-Home]
+    access_control: guest_only
+    
+  - id: PAGE-Register
+    name: 用户注册页
+    route: /register
+    description: 用户注册界面，支持实名制注册
+    layout: AuthLayout
+    components: [COMP-RegisterForm, COMP-VerificationCode, COMP-AuthHeader, COMP-AuthFooter]
+    navigation:
+      parent: PAGE-Home
+      children: [PAGE-Login, PAGE-Home]
+    access_control: guest_only
+    
+  - id: PAGE-TicketList
+    name: 车票查询结果页
+    route: /tickets
+    description: 车票查询结果展示和筛选页面
+    layout: MainLayout
+    components: [COMP-Header, COMP-SearchForm, COMP-FilterPanel, COMP-TicketList, COMP-Pagination]
+    navigation:
+      parent: PAGE-Home
+      children: [PAGE-TicketDetail, PAGE-BookingForm]
+    access_control: public
+    
+  - id: PAGE-TicketDetail
+    name: 车次详情页
+    route: /ticket/:trainNumber
+    description: 单个车次的详细信息展示
+    layout: MainLayout
+    components: [COMP-Header, COMP-TrainInfo, COMP-SeatLayout, COMP-PriceInfo, COMP-BookingButton]
+    navigation:
+      parent: PAGE-TicketList
+      children: [PAGE-BookingForm]
+    access_control: public
+    
+  - id: PAGE-BookingForm
+    name: 订票填写页
+    route: /booking/:trainNumber
+    description: 订票信息填写和乘客选择页面
+    layout: MainLayout
+    components: [COMP-Header, COMP-OrderSummary, COMP-PassengerSelector, COMP-ContactForm, COMP-OrderSubmit]
+    navigation:
+      parent: [PAGE-TicketList, PAGE-TicketDetail]
+      children: [PAGE-Payment]
+    access_control: authenticated
+    
+  - id: PAGE-Payment
+    name: 支付页面
+    route: /payment/:orderId
+    description: 订单支付和支付方式选择页面
+    layout: PaymentLayout
+    components: [COMP-PaymentHeader, COMP-OrderInfo, COMP-PaymentMethods, COMP-PaymentForm]
+    navigation:
+      parent: PAGE-BookingForm
+      children: [PAGE-PaymentResult]
+    access_control: authenticated
+    
+  - id: PAGE-PaymentResult
+    name: 支付结果页
+    route: /payment/result/:orderId
+    description: 支付成功/失败结果展示页面
+    layout: ResultLayout
+    components: [COMP-ResultHeader, COMP-PaymentStatus, COMP-OrderDetails, COMP-NextActions]
+    navigation:
+      parent: PAGE-Payment
+      children: [PAGE-UserCenter, PAGE-Home]
+    access_control: authenticated
+    
+  - id: PAGE-UserCenter
+    name: 个人中心
+    route: /user
+    description: 用户个人信息和订单管理中心
+    layout: UserLayout
+    components: [COMP-Header, COMP-UserSidebar, COMP-UserProfile, COMP-OrderList]
+    navigation:
+      parent: PAGE-Home
+      children: [PAGE-OrderDetail, PAGE-PassengerManage, PAGE-ProfileEdit]
+    access_control: authenticated
+    
+  - id: PAGE-OrderDetail
+    name: 订单详情页
+    route: /user/order/:orderId
+    description: 单个订单的详细信息和操作页面
+    layout: UserLayout
+    components: [COMP-Header, COMP-UserSidebar, COMP-OrderInfo, COMP-OrderActions]
+    navigation:
+      parent: PAGE-UserCenter
+      children: [PAGE-UserCenter]
+    access_control: authenticated
+    
+  - id: PAGE-PassengerManage
+    name: 乘客管理页
+    route: /user/passengers
+    description: 常用乘客信息管理页面
+    layout: UserLayout
+    components: [COMP-Header, COMP-UserSidebar, COMP-PassengerList, COMP-PassengerForm]
+    navigation:
+      parent: PAGE-UserCenter
+      children: [PAGE-UserCenter]
+    access_control: authenticated
+    
+  - id: PAGE-ProfileEdit
+    name: 个人信息编辑页
+    route: /user/profile
+    description: 用户个人信息编辑页面
+    layout: UserLayout
+    components: [COMP-Header, COMP-UserSidebar, COMP-ProfileForm, COMP-SecuritySettings]
+    navigation:
+      parent: PAGE-UserCenter
+      children: [PAGE-UserCenter]
+    access_control: authenticated
+
+component_library:
+  - id: COMP-Header
+    name: 页面头部组件
+    type: Navigation
+    description: 全站通用头部导航，包含Logo、导航菜单、用户状态
+    props: [isLoggedIn, userInfo, currentPage]
+    states: [menuOpen, userMenuOpen, searchVisible]
+    events: [onLogin, onLogout, onMenuToggle, onSearch]
+    dependencies: [API-GET-UserInfo]
+    reusability: 全站复用
+    
+  - id: COMP-HeroSection
+    name: 首页主视觉区
+    type: Display
+    description: 首页主要视觉区域，包含标语和背景图
+    props: [backgroundImage, title, subtitle]
+    states: [imageLoaded]
+    events: [onImageLoad]
+    dependencies: []
+    reusability: 首页专用
+    
+  - id: COMP-TicketSearch
+    name: 车票查询表单
+    type: Form
+    description: 车票查询主表单，支持出发地、目的地、日期选择
+    props: [initialValues, showAdvanced]
+    states: [formData, loading, suggestions]
+    events: [onSubmit, onFieldChange, onCitySelect, onDateChange]
+    dependencies: [API-GET-Cities, API-POST-TicketSearch]
+    reusability: 首页和查询页复用
+    
+  - id: COMP-ServiceGrid
+    name: 服务功能网格
+    type: Display
+    description: 首页服务功能展示网格
+    props: [services, columns]
+    states: [hoveredItem]
+    events: [onServiceClick, onServiceHover]
+    dependencies: []
+    reusability: 首页专用
+    
+  - id: COMP-LoginForm
+    name: 登录表单组件
+    type: Form
+    description: 用户登录表单，支持手机号/用户名登录
+    props: [redirectUrl, showRegisterLink]
+    states: [formData, loading, errors, loginAttempts]
+    events: [onSubmit, onFieldChange, onForgotPassword]
+    dependencies: [API-POST-UserLogin]
+    reusability: 登录页专用
+    
+  - id: COMP-RegisterForm
+    name: 注册表单组件
+    type: Form
+    description: 用户注册表单，支持实名制注册
+    props: [initialValues, showAgreement]
+    states: [formData, loading, errors, passwordStrength]
+    events: [onSubmit, onFieldChange, onPasswordCheck]
+    dependencies: [API-POST-UserRegister, COMP-VerificationCode]
+    reusability: 注册页专用
+    
+  - id: COMP-VerificationCode
+    name: 验证码组件
+    type: Input
+    description: 手机验证码发送和输入组件
+    props: [phoneNumber, codeType, maxLength]
+    states: [code, countdown, loading, error]
+    events: [onSendCode, onCodeChange, onVerify]
+    dependencies: [API-POST-SendVerificationCode]
+    reusability: 注册和找回密码复用
+    
+  - id: COMP-FilterPanel
+    name: 筛选面板组件
+    type: Filter
+    description: 车票查询结果筛选面板
+    props: [filterOptions, defaultFilters]
+    states: [activeFilters, expanded]
+    events: [onFilterChange, onFilterReset, onToggleExpand]
+    dependencies: []
+    reusability: 查询结果页专用
+    
+  - id: COMP-TicketList
+    name: 车票列表组件
+    type: List
+    description: 车票查询结果列表展示
+    props: [tickets, loading, sortBy]
+    states: [selectedTicket, expandedRows]
+    events: [onTicketSelect, onSort, onBooking, onRowExpand]
+    dependencies: [API-GET-TicketList]
+    reusability: 查询结果页专用
+    
+  - id: COMP-TrainInfo
+    name: 车次信息组件
+    type: Display
+    description: 单个车次的详细信息展示
+    props: [trainNumber, trainData]
+    states: [loading, seatAvailability]
+    events: [onRefresh, onSeatSelect]
+    dependencies: [API-GET-TrainDetail]
+    reusability: 车次详情页专用
+    
+  - id: COMP-PassengerSelector
+    name: 乘客选择组件
+    type: Selector
+    description: 订票时的乘客选择和管理组件
+    props: [passengers, maxCount, required]
+    states: [selectedPassengers, showAddForm]
+    events: [onPassengerSelect, onAddPassenger, onEditPassenger]
+    dependencies: [API-GET-Passengers, API-POST-AddPassenger]
+    reusability: 订票页专用
+    
+  - id: COMP-OrderSummary
+    name: 订单摘要组件
+    type: Display
+    description: 订单信息摘要展示
+    props: [orderData, editable]
+    states: [expanded]
+    events: [onToggleExpand, onEdit]
+    dependencies: []
+    reusability: 订票和支付页复用
+    
+  - id: COMP-PaymentMethods
+    name: 支付方式组件
+    type: Selector
+    description: 支付方式选择组件
+    props: [availableMethods, defaultMethod]
+    states: [selectedMethod, methodDetails]
+    events: [onMethodSelect, onMethodConfig]
+    dependencies: [API-GET-PaymentMethods]
+    reusability: 支付页专用
+    
+  - id: COMP-UserSidebar
+    name: 用户中心侧边栏
+    type: Navigation
+    description: 用户中心左侧导航菜单
+    props: [currentPage, userInfo]
+    states: [activeMenu, collapsed]
+    events: [onMenuSelect, onToggleCollapse]
+    dependencies: []
+    reusability: 用户中心页面复用
+    
+  - id: COMP-OrderList
+    name: 订单列表组件
+    type: List
+    description: 用户订单列表展示和管理
+    props: [orders, filterType, pageSize]
+    states: [loading, selectedOrders, currentPage]
+    events: [onOrderSelect, onOrderAction, onPageChange]
+    dependencies: [API-GET-Orders]
+    reusability: 用户中心专用
+
+user_flows:
+  - id: FLOW-UserRegistration
+    name: 用户注册流程
+    description: 新用户完整注册流程
+    steps:
+      - step: 1
+        page: PAGE-Home
+        action: 点击注册按钮
+        component: COMP-Header
+        result: 跳转到注册页面
+      - step: 2
+        page: PAGE-Register
+        action: 填写注册信息
+        component: COMP-RegisterForm
+        result: 表单验证和提交
+      - step: 3
+        page: PAGE-Register
+        action: 发送验证码
+        component: COMP-VerificationCode
+        result: 手机收到验证码
+      - step: 4
+        page: PAGE-Register
+        action: 输入验证码并提交
+        component: COMP-RegisterForm
+        result: 注册成功，跳转登录
+        
+  - id: FLOW-TicketBooking
+    name: 车票预订流程
+    description: 完整的车票查询到预订流程
+    steps:
+      - step: 1
+        page: PAGE-Home
+        action: 输入查询条件
+        component: COMP-TicketSearch
+        result: 跳转到查询结果页
+      - step: 2
+        page: PAGE-TicketList
+        action: 筛选和选择车次
+        component: COMP-TicketList
+        result: 选中目标车次
+      - step: 3
+        page: PAGE-TicketDetail
+        action: 查看车次详情
+        component: COMP-TrainInfo
+        result: 确认预订信息
+      - step: 4
+        page: PAGE-BookingForm
+        action: 选择乘客和填写信息
+        component: COMP-PassengerSelector
+        result: 生成订单
+      - step: 5
+        page: PAGE-Payment
+        action: 选择支付方式并支付
+        component: COMP-PaymentMethods
+        result: 支付完成
+        
+  - id: FLOW-OrderManagement
+    name: 订单管理流程
+    description: 用户查看和管理订单流程
+    steps:
+      - step: 1
+        page: PAGE-Home
+        action: 登录并进入个人中心
+        component: COMP-Header
+        result: 跳转到用户中心
+      - step: 2
+        page: PAGE-UserCenter
+        action: 查看订单列表
+        component: COMP-OrderList
+        result: 显示所有订单
+      - step: 3
+        page: PAGE-OrderDetail
+        action: 点击查看订单详情
+        component: COMP-OrderList
+        result: 显示订单详细信息
+      - step: 4
+        page: PAGE-OrderDetail
+        action: 执行订单操作
+        component: COMP-OrderActions
+        result: 订单状态更新
+        
+  - id: FLOW-PassengerManagement
+    name: 乘客信息管理流程
+    description: 常用乘客信息管理流程
+    steps:
+      - step: 1
+        page: PAGE-UserCenter
+        action: 点击乘客管理
+        component: COMP-UserSidebar
+        result: 跳转到乘客管理页
+      - step: 2
+        page: PAGE-PassengerManage
+        action: 查看乘客列表
+        component: COMP-PassengerList
+        result: 显示所有乘客
+      - step: 3
+        page: PAGE-PassengerManage
+        action: 添加新乘客
+        component: COMP-PassengerForm
+        result: 乘客信息保存
+      - step: 4
+        page: PAGE-PassengerManage
+        action: 编辑乘客信息
+        component: COMP-PassengerForm
+        result: 乘客信息更新

@@ -1,0 +1,869 @@
+# 12306火车票预订系统 - API接口设计
+# 生成时间: 2025-01-03
+# 基于文档: interface_requirements.md
+# 版本: v1.0
+
+# 用户身份管理模块 - API接口
+- type: Backend
+  id: API-POST-SendVerificationCode
+  route: POST /api/auth/send-code
+  description: 发送手机验证码（注册/登录）
+  input:
+    type: JSON
+    body:
+      phoneNumber: string # 11位手机号
+      codeType: string # 验证码类型：register/login/reset
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "验证码发送成功"
+        data:
+          countdown: 60 # 倒计时秒数
+          codeId: string # 验证码ID（用于后续验证）
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "手机号格式错误"
+          errorCode: "INVALID_PHONE_FORMAT"
+      - statusCode: 429
+        body:
+          success: false
+          message: "发送频率过快，请稍后再试"
+          errorCode: "TOO_FREQUENT"
+      - statusCode: 500
+        body:
+          success: false
+          message: "验证码发送失败"
+          errorCode: "SMS_SEND_FAILED"
+  dependencies: []
+  acceptanceCriteria:
+    - 手机号格式验证通过
+    - 验证码成功发送
+    - 返回倒计时状态
+    - 限制发送频率（60秒内不能重复发送）
+
+- type: Backend
+  id: API-POST-UserRegister
+  route: POST /api/auth/register
+  description: 用户注册接口
+  input:
+    type: JSON
+    body:
+      phoneNumber: string # 11位手机号
+      password: string # 密码（前端已加密）
+      username: string # 用户名
+      idCard: string # 18位身份证号
+      verificationCode: string # 验证码
+      codeId: string # 验证码ID
+  output:
+    success:
+      statusCode: 201
+      body:
+        success: true
+        message: "注册成功"
+        data:
+          userId: string # 用户ID
+          token: string # JWT令牌
+          userInfo:
+            username: string
+            phoneNumber: string
+            registeredAt: datetime
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "手机号格式错误"
+          errorCode: "INVALID_PHONE_FORMAT"
+      - statusCode: 400
+        body:
+          success: false
+          message: "身份证号格式错误"
+          errorCode: "INVALID_ID_CARD_FORMAT"
+      - statusCode: 400
+        body:
+          success: false
+          message: "密码强度不足"
+          errorCode: "WEAK_PASSWORD"
+      - statusCode: 400
+        body:
+          success: false
+          message: "验证码错误或已过期"
+          errorCode: "INVALID_VERIFICATION_CODE"
+      - statusCode: 409
+        body:
+          success: false
+          message: "手机号已注册"
+          errorCode: "PHONE_ALREADY_EXISTS"
+  dependencies: [DB-CreateUser]
+  acceptanceCriteria:
+    - 所有输入参数验证通过
+    - 用户信息成功保存
+    - 返回JWT令牌
+    - 自动登录状态
+
+- type: Backend
+  id: API-POST-UserLogin
+  route: POST /api/auth/login
+  description: 用户登录接口
+  input:
+    type: JSON
+    body:
+      phoneNumber: string # 手机号或用户名
+      password: string # 密码（前端已加密）
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "登录成功"
+        data:
+          userId: string
+          token: string # JWT令牌
+          userInfo:
+            username: string
+            phoneNumber: string
+            lastLoginAt: datetime
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "用户名或密码错误"
+          errorCode: "INVALID_CREDENTIALS"
+      - statusCode: 423
+        body:
+          success: false
+          message: "账户已被锁定，请30分钟后再试"
+          errorCode: "ACCOUNT_LOCKED"
+          data:
+            lockedUntil: datetime
+      - statusCode: 429
+        body:
+          success: false
+          message: "登录尝试过于频繁"
+          errorCode: "TOO_MANY_ATTEMPTS"
+  dependencies: [DB-ValidateUser, DB-UpdateLoginAttempts]
+  acceptanceCriteria:
+    - 用户凭据验证通过
+    - 账户锁定状态检查
+    - 登录尝试次数更新
+    - 返回有效JWT令牌
+
+- type: Backend
+  id: API-GET-UserProfile
+  route: GET /api/user/profile
+  description: 获取用户个人信息
+  input:
+    type: Headers
+    headers:
+      Authorization: "Bearer {token}" # JWT令牌
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          userInfo:
+            userId: string
+            username: string
+            phoneNumber: string
+            idCard: string # 脱敏显示
+            registeredAt: datetime
+            lastLoginAt: datetime
+    error:
+      - statusCode: 401
+        body:
+          success: false
+          message: "Token无效或已过期"
+          errorCode: "INVALID_TOKEN"
+      - statusCode: 404
+        body:
+          success: false
+          message: "用户不存在"
+          errorCode: "USER_NOT_FOUND"
+  dependencies: []
+  acceptanceCriteria:
+    - JWT令牌验证通过
+    - 返回完整用户信息
+    - 敏感信息脱敏处理
+
+- type: Backend
+  id: API-PUT-UserProfile
+  route: PUT /api/user/profile
+  description: 更新用户个人信息
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    body:
+      username: string # 可选
+      password: string # 可选，新密码
+      oldPassword: string # 修改密码时必需
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "信息更新成功"
+        data:
+          updatedFields: array
+          updatedAt: datetime
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "原密码错误"
+          errorCode: "INVALID_OLD_PASSWORD"
+      - statusCode: 401
+        body:
+          success: false
+          message: "Token无效或已过期"
+          errorCode: "INVALID_TOKEN"
+  dependencies: [DB-UpdateUserInfo]
+  acceptanceCriteria:
+    - 权限验证通过
+    - 原密码验证（如果修改密码）
+    - 信息成功更新
+
+# 车票查询模块 - API接口
+- type: Backend
+  id: API-GET-TrainSearch
+  route: GET /api/trains/search
+  description: 车票查询接口
+  input:
+    type: Query
+    params:
+      departureCity: string # 出发城市
+      arrivalCity: string # 到达城市
+      departureDate: date # 出发日期 YYYY-MM-DD
+      trainTypes: string # 车次类型，逗号分隔（可选）
+      seatTypes: string # 席别类型，逗号分隔（可选）
+      departureTimeStart: string # 出发时间范围开始 HH:MM（可选）
+      departureTimeEnd: string # 出发时间范围结束 HH:MM（可选）
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          trainList: array # 车次列表
+          totalCount: number
+          searchParams: object # 搜索参数
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "出发城市或到达城市不能为空"
+          errorCode: "MISSING_REQUIRED_PARAMS"
+      - statusCode: 400
+        body:
+          success: false
+          message: "日期格式无效或为过去时间"
+          errorCode: "INVALID_DATE"
+      - statusCode: 404
+        body:
+          success: false
+          message: "城市不存在"
+          errorCode: "CITY_NOT_FOUND"
+      - statusCode: 404
+        body:
+          success: false
+          message: "未找到符合条件的车次"
+          errorCode: "NO_TRAINS_FOUND"
+      - statusCode: 408
+        body:
+          success: false
+          message: "查询超时，请重试"
+          errorCode: "QUERY_TIMEOUT"
+  dependencies: [DB-QueryTrains]
+  acceptanceCriteria:
+    - 查询参数验证通过
+    - 返回符合条件的车次
+    - 包含余票信息
+    - 支持多种筛选条件
+
+- type: Backend
+  id: API-GET-TrainDetail
+  route: GET /api/trains/{trainNumber}/detail
+  description: 获取车次详细信息
+  input:
+    type: Path
+    params:
+      trainNumber: string # 车次号
+    query:
+      departureDate: date # 出发日期
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          trainInfo:
+            trainNumber: string
+            trainType: string
+            departureStation: string
+            arrivalStation: string
+            departureTime: string
+            arrivalTime: string
+            duration: string
+          stationList: array # 途经站点
+          seatInfo: array # 座位类型和价格
+          ticketInfo: object # 余票信息
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "车次不存在"
+          errorCode: "TRAIN_NOT_FOUND"
+      - statusCode: 400
+        body:
+          success: false
+          message: "日期参数无效"
+          errorCode: "INVALID_DATE"
+  dependencies: [DB-GetTrainDetail]
+  acceptanceCriteria:
+    - 返回完整车次信息
+    - 包含途经站点详情
+    - 显示实时余票数据
+    - 包含票价信息
+
+# 车票预订模块 - API接口
+- type: Backend
+  id: API-POST-CreateOrder
+  route: POST /api/orders/create
+  description: 创建车票预订订单
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    body:
+      trainId: string # 车次ID
+      seatType: string # 席别类型
+      quantity: number # 票数（1-5张）
+      preferredSeats: array # 偏好座位（可选）
+  output:
+    success:
+      statusCode: 201
+      body:
+        success: true
+        message: "订单创建成功"
+        data:
+          orderId: string
+          seatNumbers: array # 分配的座位号
+          expireAt: datetime # 过期时间
+          lockTime: number # 剩余锁定时间（秒）
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "票数必须在1-5张之间"
+          errorCode: "INVALID_QUANTITY"
+      - statusCode: 409
+        body:
+          success: false
+          message: "余票不足"
+          errorCode: "INSUFFICIENT_TICKETS"
+      - statusCode: 409
+        body:
+          success: false
+          message: "您已有该车次的未完成订单"
+          errorCode: "DUPLICATE_ORDER"
+      - statusCode: 401
+        body:
+          success: false
+          message: "请先登录"
+          errorCode: "UNAUTHORIZED"
+  dependencies: [DB-CreateOrder, DB-CheckTicketAvailability]
+  acceptanceCriteria:
+    - 用户登录状态验证
+    - 余票数量检查
+    - 座位成功分配和锁定
+    - 设置30分钟过期时间
+
+- type: Backend
+  id: API-PUT-OrderPassengers
+  route: PUT /api/orders/{orderId}/passengers
+  description: 填写订单乘客信息
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      orderId: string # 订单ID
+    body:
+      passengerList: array # 乘客信息列表
+      contactInfo:
+        contactName: string # 联系人姓名
+        contactPhone: string # 联系人手机
+        contactEmail: string # 联系人邮箱（可选）
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "乘客信息保存成功"
+        data:
+          orderDetails: object # 完整订单信息
+          totalAmount: number # 总金额
+          remainingTime: number # 剩余支付时间（秒）
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "订单不存在或已过期"
+          errorCode: "ORDER_NOT_FOUND"
+      - statusCode: 400
+        body:
+          success: false
+          message: "乘客信息不完整或格式错误"
+          errorCode: "INVALID_PASSENGER_INFO"
+      - statusCode: 400
+        body:
+          success: false
+          message: "乘客数量与票数不匹配"
+          errorCode: "PASSENGER_COUNT_MISMATCH"
+  dependencies: [DB-UpdateOrderInfo]
+  acceptanceCriteria:
+    - 订单权限验证
+    - 乘客信息格式验证
+    - 数量匹配检查
+    - 订单状态更新为待支付
+
+- type: Backend
+  id: API-GET-UserOrders
+  route: GET /api/orders
+  description: 获取用户订单列表
+  input:
+    type: Query
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      status: string # 订单状态筛选（可选）
+      page: number # 页码，默认1
+      pageSize: number # 每页数量，默认10
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          orderList: array # 订单列表
+          pagination:
+            currentPage: number
+            totalPages: number
+            totalCount: number
+            pageSize: number
+    error:
+      - statusCode: 401
+        body:
+          success: false
+          message: "请先登录"
+          errorCode: "UNAUTHORIZED"
+  dependencies: [DB-GetUserOrders]
+  acceptanceCriteria:
+    - 用户权限验证
+    - 支持状态筛选
+    - 分页查询
+    - 按时间倒序排列
+
+- type: Backend
+  id: API-DELETE-CancelOrder
+  route: DELETE /api/orders/{orderId}
+  description: 取消订单
+  input:
+    type: Path
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      orderId: string # 订单ID
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "订单取消成功"
+        data:
+          orderId: string
+          canceledAt: datetime
+          refundInfo: object # 退款信息（如果已支付）
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "订单不存在"
+          errorCode: "ORDER_NOT_FOUND"
+      - statusCode: 400
+        body:
+          success: false
+          message: "订单状态不允许取消"
+          errorCode: "CANNOT_CANCEL_ORDER"
+      - statusCode: 403
+        body:
+          success: false
+          message: "无权限取消此订单"
+          errorCode: "PERMISSION_DENIED"
+  dependencies: [DB-UpdateOrderStatus]
+  acceptanceCriteria:
+    - 订单权限验证
+    - 订单状态检查
+    - 座位资源释放
+    - 退款处理（如适用）
+
+# 乘客信息管理模块 - API接口
+- type: Backend
+  id: API-POST-AddPassenger
+  route: POST /api/passengers
+  description: 添加常用乘客
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    body:
+      passengerName: string # 乘客姓名
+      idType: string # 证件类型
+      idNumber: string # 证件号码
+      passengerType: string # 乘客类型
+  output:
+    success:
+      statusCode: 201
+      body:
+        success: true
+        message: "乘客添加成功"
+        data:
+          passengerId: string
+          passengerInfo: object
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "证件号格式错误"
+          errorCode: "INVALID_ID_FORMAT"
+      - statusCode: 409
+        body:
+          success: false
+          message: "该证件号已存在"
+          errorCode: "PASSENGER_ALREADY_EXISTS"
+      - statusCode: 400
+        body:
+          success: false
+          message: "常用乘客数量已达上限（10个）"
+          errorCode: "PASSENGER_LIMIT_EXCEEDED"
+  dependencies: [DB-CreatePassenger]
+  acceptanceCriteria:
+    - 用户权限验证
+    - 证件号格式验证
+    - 重复性检查
+    - 数量限制检查
+
+- type: Backend
+  id: API-GET-UserPassengers
+  route: GET /api/passengers
+  description: 获取常用乘客列表
+  input:
+    type: Headers
+    headers:
+      Authorization: "Bearer {token}"
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          passengerList: array # 乘客列表（证件号脱敏）
+          totalCount: number
+    error:
+      - statusCode: 401
+        body:
+          success: false
+          message: "请先登录"
+          errorCode: "UNAUTHORIZED"
+  dependencies: [DB-GetUserPassengers]
+  acceptanceCriteria:
+    - 用户权限验证
+    - 返回完整乘客列表
+    - 证件号脱敏显示
+    - 按添加时间排序
+
+- type: Backend
+  id: API-PUT-UpdatePassenger
+  route: PUT /api/passengers/{passengerId}
+  description: 更新乘客信息
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      passengerId: string
+    body:
+      passengerName: string # 可选
+      passengerType: string # 可选
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "乘客信息更新成功"
+        data:
+          updatedInfo: object
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "乘客不存在"
+          errorCode: "PASSENGER_NOT_FOUND"
+      - statusCode: 403
+        body:
+          success: false
+          message: "无权限修改此乘客信息"
+          errorCode: "PERMISSION_DENIED"
+  dependencies: [DB-UpdatePassenger]
+  acceptanceCriteria:
+    - 权限验证通过
+    - 乘客存在性检查
+    - 信息成功更新
+
+- type: Backend
+  id: API-DELETE-RemovePassenger
+  route: DELETE /api/passengers/{passengerId}
+  description: 删除常用乘客
+  input:
+    type: Path
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      passengerId: string
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "乘客删除成功"
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "乘客不存在"
+          errorCode: "PASSENGER_NOT_FOUND"
+      - statusCode: 400
+        body:
+          success: false
+          message: "该乘客有未完成的订单，无法删除"
+          errorCode: "PASSENGER_HAS_ACTIVE_ORDERS"
+  dependencies: [DB-DeletePassenger, DB-CheckPassengerOrders]
+  acceptanceCriteria:
+    - 权限验证通过
+    - 关联订单检查
+    - 成功删除乘客
+
+# 支付处理模块 - API接口
+- type: Backend
+  id: API-POST-CreatePayment
+  route: POST /api/payments/create
+  description: 创建支付订单
+  input:
+    type: JSON
+    headers:
+      Authorization: "Bearer {token}"
+    body:
+      orderId: string # 订单ID
+      paymentMethod: string # 支付方式
+  output:
+    success:
+      statusCode: 201
+      body:
+        success: true
+        message: "支付订单创建成功"
+        data:
+          paymentId: string
+          paymentUrl: string # 第三方支付链接
+          qrCode: string # 支付二维码（如适用）
+          expireAt: datetime # 支付过期时间
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "订单不存在或状态异常"
+          errorCode: "INVALID_ORDER"
+      - statusCode: 400
+        body:
+          success: false
+          message: "支付方式不支持"
+          errorCode: "UNSUPPORTED_PAYMENT_METHOD"
+      - statusCode: 409
+        body:
+          success: false
+          message: "订单已支付"
+          errorCode: "ORDER_ALREADY_PAID"
+  dependencies: [DB-CreatePayment]
+  acceptanceCriteria:
+    - 订单状态验证
+    - 支付方式验证
+    - 生成第三方支付链接
+    - 设置支付过期时间
+
+- type: Backend
+  id: API-POST-PaymentCallback
+  route: POST /api/payments/callback
+  description: 支付结果回调接口
+  input:
+    type: JSON
+    body:
+      paymentId: string # 支付ID
+      transactionId: string # 第三方交易流水号
+      paymentStatus: string # 支付状态
+      amount: number # 支付金额
+      signature: string # 签名验证
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        message: "回调处理成功"
+    error:
+      - statusCode: 400
+        body:
+          success: false
+          message: "签名验证失败"
+          errorCode: "INVALID_SIGNATURE"
+      - statusCode: 404
+        body:
+          success: false
+          message: "支付记录不存在"
+          errorCode: "PAYMENT_NOT_FOUND"
+  dependencies: [DB-UpdatePaymentStatus, DB-UpdateOrderStatus]
+  acceptanceCriteria:
+    - 签名验证通过
+    - 支付状态更新
+    - 订单状态同步更新
+    - 异步处理机制
+
+- type: Backend
+  id: API-GET-PaymentStatus
+  route: GET /api/payments/{paymentId}/status
+  description: 查询支付状态
+  input:
+    type: Path
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      paymentId: string
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          paymentStatus: string # 支付状态
+          orderStatus: string # 订单状态
+          paidAt: datetime # 支付时间（如已支付）
+          transactionId: string # 交易流水号（如已支付）
+    error:
+      - statusCode: 404
+        body:
+          success: false
+          message: "支付记录不存在"
+          errorCode: "PAYMENT_NOT_FOUND"
+      - statusCode: 403
+        body:
+          success: false
+          message: "无权限查看此支付信息"
+          errorCode: "PERMISSION_DENIED"
+  dependencies: []
+  acceptanceCriteria:
+    - 权限验证通过
+    - 返回实时支付状态
+    - 包含关联订单状态
+
+- type: Backend
+  id: API-GET-PaymentHistory
+  route: GET /api/payments/history
+  description: 获取支付历史记录
+  input:
+    type: Query
+    headers:
+      Authorization: "Bearer {token}"
+    params:
+      page: number # 页码
+      pageSize: number # 每页数量
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          paymentList: array # 支付记录列表
+          pagination: object # 分页信息
+    error:
+      - statusCode: 401
+        body:
+          success: false
+          message: "请先登录"
+          errorCode: "UNAUTHORIZED"
+  dependencies: [DB-GetPaymentHistory]
+  acceptanceCriteria:
+    - 用户权限验证
+    - 分页查询支持
+    - 按支付时间倒序排列
+    - 包含关联订单信息
+
+# 系统导航模块 - API接口
+- type: Backend
+  id: API-GET-SystemConfig
+  route: GET /api/system/config
+  description: 获取系统配置信息
+  input:
+    type: Query
+    params:
+      configType: string # 配置类型（可选）
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          cities: array # 城市列表
+          trainTypes: array # 车次类型
+          seatTypes: array # 席别类型
+          paymentMethods: array # 支付方式
+          systemNotices: array # 系统公告
+    error:
+      - statusCode: 500
+        body:
+          success: false
+          message: "系统配置加载失败"
+          errorCode: "CONFIG_LOAD_FAILED"
+  dependencies: []
+  acceptanceCriteria:
+    - 返回完整系统配置
+    - 支持配置类型筛选
+    - 配置信息实时更新
+
+- type: Backend
+  id: API-GET-SystemStatus
+  route: GET /api/system/status
+  description: 获取系统运行状态
+  input:
+    type: Query
+  output:
+    success:
+      statusCode: 200
+      body:
+        success: true
+        data:
+          systemStatus: string # 系统状态
+          maintenanceMode: boolean # 维护模式
+          serverTime: datetime # 服务器时间
+          version: string # 系统版本
+    error:
+      - statusCode: 503
+        body:
+          success: false
+          message: "系统维护中"
+          errorCode: "SYSTEM_MAINTENANCE"
+  dependencies: []
+  acceptanceCriteria:
+    - 返回实时系统状态
+    - 维护模式检查
+    - 服务器时间同步

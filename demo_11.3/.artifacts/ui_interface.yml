@@ -1,0 +1,525 @@
+# 12306火车票预订系统 - UI接口设计
+# 生成时间: 2025-01-03
+# 基于文档: interface_requirements.md
+# 版本: v1.0
+
+# 用户身份管理模块 - UI组件接口
+- type: Frontend
+  id: UI-VerificationCodeInput
+  description: 验证码输入组件，支持发送和验证手机验证码
+  props:
+    phoneNumber: string # 手机号（必需）
+    codeType: string # 验证码类型：register/login/reset
+    placeholder: string # 输入框占位符
+    disabled: boolean # 是否禁用
+    maxLength: number # 最大长度，默认6
+  state:
+    verificationCode: string # 验证码值
+    countdown: number # 倒计时秒数
+    loading: boolean # 发送中状态
+    codeId: string # 验证码ID
+    error: string # 错误信息
+  events:
+    onSendCode: function # 发送验证码事件
+    onCodeChange: function # 验证码变化事件
+    onVerify: function # 验证事件
+    onCountdownEnd: function # 倒计时结束事件
+  dependencies: [API-POST-SendVerificationCode]
+  acceptanceCriteria:
+    - 支持手机号格式验证
+    - 显示60秒倒计时
+    - 发送频率限制提示
+    - 验证码输入格式化
+
+- type: Frontend
+  id: UI-RegisterForm
+  description: 用户注册表单组件
+  props:
+    initialValues: object # 初始值
+    submitButtonText: string # 提交按钮文本
+    showAgreement: boolean # 是否显示协议
+  state:
+    formData:
+      phoneNumber: string
+      password: string
+      confirmPassword: string
+      username: string
+      idCard: string
+      verificationCode: string
+      agreement: boolean
+    errors: object # 表单验证错误
+    loading: boolean # 提交中状态
+    passwordStrength: string # 密码强度
+  events:
+    onSubmit: function # 提交注册
+    onFieldChange: function # 字段变化
+    onPasswordStrengthCheck: function # 密码强度检查
+    onAgreementChange: function # 协议勾选变化
+  dependencies: [API-POST-UserRegister, UI-VerificationCodeInput]
+  acceptanceCriteria:
+    - 实时表单验证
+    - 密码强度检测
+    - 身份证号格式验证
+    - 协议勾选验证
+
+- type: Frontend
+  id: UI-LoginForm
+  description: 用户登录表单组件
+  props:
+    redirectUrl: string # 登录成功后跳转URL
+    showRegisterLink: boolean # 是否显示注册链接
+    rememberMe: boolean # 记住登录状态
+  state:
+    formData:
+      phoneNumber: string
+      password: string
+      rememberMe: boolean
+    errors: object # 表单错误
+    loading: boolean # 登录中状态
+    loginAttempts: number # 登录尝试次数
+    lockInfo: object # 账户锁定信息
+  events:
+    onSubmit: function # 提交登录
+    onFieldChange: function # 字段变化
+    onForgotPassword: function # 忘记密码
+    onRegisterRedirect: function # 跳转注册
+  dependencies: [API-POST-UserLogin]
+  acceptanceCriteria:
+    - 支持手机号/用户名登录
+    - 登录失败次数提示
+    - 账户锁定状态显示
+    - 记住登录状态功能
+
+- type: Frontend
+  id: UI-UserProfile
+  description: 用户个人信息组件
+  props:
+    editable: boolean # 是否可编辑
+    showSensitiveInfo: boolean # 是否显示敏感信息
+  state:
+    userInfo: object # 用户信息
+    editMode: boolean # 编辑模式
+    formData: object # 编辑表单数据
+    loading: boolean # 加载状态
+    saving: boolean # 保存状态
+  events:
+    onEdit: function # 进入编辑模式
+    onSave: function # 保存修改
+    onCancel: function # 取消编辑
+    onPasswordChange: function # 修改密码
+  dependencies: [API-GET-UserProfile, API-PUT-UserProfile]
+  acceptanceCriteria:
+    - 信息脱敏显示
+    - 编辑模式切换
+    - 实时保存状态
+    - 修改密码功能
+
+# 车票查询模块 - UI组件接口
+- type: Frontend
+  id: UI-TrainSearchForm
+  description: 车票查询表单组件
+  props:
+    defaultValues: object # 默认查询条件
+    quickSelectDates: array # 快速选择日期
+    popularRoutes: array # 热门路线
+  state:
+    searchParams:
+      departureCity: string
+      arrivalCity: string
+      departureDate: date
+      trainTypes: array
+      seatTypes: array
+      timeRange: object
+    cityOptions: array # 城市选项
+    loading: boolean # 查询中状态
+    errors: object # 验证错误
+  events:
+    onSearch: function # 执行查询
+    onCitySwap: function # 城市互换
+    onDateSelect: function # 日期选择
+    onQuickRoute: function # 快速路线选择
+    onFilterChange: function # 筛选条件变化
+  dependencies: [API-GET-TrainSearch, API-GET-SystemConfig]
+  acceptanceCriteria:
+    - 城市智能搜索
+    - 日期选择器
+    - 出发到达城市互换
+    - 查询条件保存
+
+- type: Frontend
+  id: UI-TrainList
+  description: 车次列表组件
+  props:
+    searchParams: object # 查询参数
+    sortBy: string # 排序方式
+    pageSize: number # 每页数量
+  state:
+    trainList: array # 车次列表
+    loading: boolean # 加载状态
+    totalCount: number # 总数量
+    currentPage: number # 当前页码
+    sortOptions: array # 排序选项
+    filterOptions: object # 筛选选项
+  events:
+    onTrainSelect: function # 选择车次
+    onSortChange: function # 排序变化
+    onFilterChange: function # 筛选变化
+    onPageChange: function # 翻页
+    onRefresh: function # 刷新数据
+  dependencies: [API-GET-TrainSearch]
+  acceptanceCriteria:
+    - 车次信息展示
+    - 余票实时显示
+    - 多种排序方式
+    - 筛选功能
+
+- type: Frontend
+  id: UI-TrainDetail
+  description: 车次详情组件
+  props:
+    trainNumber: string # 车次号
+    departureDate: date # 出发日期
+    showBookingButton: boolean # 是否显示预订按钮
+  state:
+    trainDetail: object # 车次详情
+    stationList: array # 途经站点
+    seatInfo: array # 座位信息
+    ticketInfo: object # 余票信息
+    loading: boolean # 加载状态
+    selectedSeatType: string # 选中的席别
+  events:
+    onSeatTypeSelect: function # 席别选择
+    onBooking: function # 预订车票
+    onStationExpand: function # 展开站点信息
+    onPriceDetail: function # 查看价格详情
+  dependencies: [API-GET-TrainDetail]
+  acceptanceCriteria:
+    - 完整车次信息展示
+    - 途经站点时刻表
+    - 席别价格对比
+    - 余票实时更新
+
+# 车票预订模块 - UI组件接口
+- type: Frontend
+  id: UI-OrderCreation
+  description: 订单创建组件
+  props:
+    trainInfo: object # 车次信息
+    maxTickets: number # 最大票数，默认5
+    userPassengers: array # 用户常用乘客
+  state:
+    orderForm:
+      seatType: string
+      quantity: number
+      preferredSeats: array
+    selectedPassengers: array # 选中的乘客
+    contactInfo: object # 联系方式
+    totalAmount: number # 总金额
+    loading: boolean # 创建中状态
+    errors: object # 验证错误
+  events:
+    onSeatTypeChange: function # 席别变化
+    onQuantityChange: function # 票数变化
+    onPassengerSelect: function # 乘客选择
+    onContactChange: function # 联系方式变化
+    onSubmit: function # 提交订单
+  dependencies: [API-POST-CreateOrder, API-PUT-OrderPassengers]
+  acceptanceCriteria:
+    - 席别票数选择
+    - 乘客信息填写
+    - 实时金额计算
+    - 表单验证提示
+
+- type: Frontend
+  id: UI-OrderList
+  description: 订单列表组件
+  props:
+    showFilters: boolean # 是否显示筛选
+    pageSize: number # 每页数量
+    autoRefresh: boolean # 自动刷新
+  state:
+    orderList: array # 订单列表
+    filterOptions:
+      status: string
+      dateRange: object
+    pagination: object # 分页信息
+    loading: boolean # 加载状态
+    refreshing: boolean # 刷新状态
+  events:
+    onOrderSelect: function # 选择订单
+    onFilterChange: function # 筛选变化
+    onPageChange: function # 翻页
+    onRefresh: function # 手动刷新
+    onOrderAction: function # 订单操作（取消/支付等）
+  dependencies: [API-GET-UserOrders]
+  acceptanceCriteria:
+    - 订单状态展示
+    - 筛选和分页
+    - 订单操作按钮
+    - 自动刷新机制
+
+- type: Frontend
+  id: UI-OrderDetail
+  description: 订单详情组件
+  props:
+    orderId: string # 订单ID
+    showActions: boolean # 是否显示操作按钮
+  state:
+    orderDetail: object # 订单详情
+    paymentInfo: object # 支付信息
+    passengerList: array # 乘客列表
+    trainInfo: object # 车次信息
+    loading: boolean # 加载状态
+    actionLoading: boolean # 操作中状态
+  events:
+    onPayment: function # 去支付
+    onCancel: function # 取消订单
+    onRefund: function # 申请退票
+    onModify: function # 改签
+    onDownloadTicket: function # 下载车票
+  dependencies: [API-GET-UserOrders, API-DELETE-CancelOrder]
+  acceptanceCriteria:
+    - 完整订单信息展示
+    - 支付状态实时更新
+    - 订单操作功能
+    - 车票下载功能
+
+# 乘客信息管理模块 - UI组件接口
+- type: Frontend
+  id: UI-PassengerList
+  description: 常用乘客列表组件
+  props:
+    selectable: boolean # 是否可选择
+    maxSelection: number # 最大选择数量
+    showActions: boolean # 是否显示操作按钮
+  state:
+    passengerList: array # 乘客列表
+    selectedPassengers: array # 选中的乘客
+    loading: boolean # 加载状态
+    editingPassenger: object # 正在编辑的乘客
+  events:
+    onPassengerSelect: function # 乘客选择
+    onAddPassenger: function # 添加乘客
+    onEditPassenger: function # 编辑乘客
+    onDeletePassenger: function # 删除乘客
+    onSelectionChange: function # 选择变化
+  dependencies: [API-GET-UserPassengers]
+  acceptanceCriteria:
+    - 乘客信息展示（脱敏）
+    - 多选功能
+    - 增删改操作
+    - 选择数量限制
+
+- type: Frontend
+  id: UI-PassengerForm
+  description: 乘客信息表单组件
+  props:
+    mode: string # 模式：add/edit
+    initialData: object # 初始数据
+    passengerTypes: array # 乘客类型选项
+  state:
+    formData:
+      passengerName: string
+      idType: string
+      idNumber: string
+      passengerType: string
+    errors: object # 验证错误
+    loading: boolean # 提交中状态
+    idValidation: object # 证件验证结果
+  events:
+    onSubmit: function # 提交表单
+    onFieldChange: function # 字段变化
+    onIdValidation: function # 证件验证
+    onCancel: function # 取消操作
+  dependencies: [API-POST-AddPassenger, API-PUT-UpdatePassenger]
+  acceptanceCriteria:
+    - 实时表单验证
+    - 证件号格式检查
+    - 重复性验证
+    - 数量限制提示
+
+# 支付处理模块 - UI组件接口
+- type: Frontend
+  id: UI-PaymentMethods
+  description: 支付方式选择组件
+  props:
+    availableMethods: array # 可用支付方式
+    defaultMethod: string # 默认支付方式
+    orderAmount: number # 订单金额
+  state:
+    selectedMethod: string # 选中的支付方式
+    paymentMethods: array # 支付方式列表
+    loading: boolean # 加载状态
+  events:
+    onMethodSelect: function # 支付方式选择
+    onPaymentCreate: function # 创建支付
+    onMethodRefresh: function # 刷新支付方式
+  dependencies: [API-GET-SystemConfig]
+  acceptanceCriteria:
+    - 支付方式图标展示
+    - 方式选择交互
+    - 金额显示
+    - 可用性检查
+
+- type: Frontend
+  id: UI-PaymentProcess
+  description: 支付处理组件
+  props:
+    orderId: string # 订单ID
+    paymentMethod: string # 支付方式
+    amount: number # 支付金额
+  state:
+    paymentInfo: object # 支付信息
+    paymentStatus: string # 支付状态
+    qrCode: string # 支付二维码
+    paymentUrl: string # 支付链接
+    countdown: number # 支付倒计时
+    loading: boolean # 处理中状态
+  events:
+    onPaymentStart: function # 开始支付
+    onStatusCheck: function # 状态检查
+    onPaymentSuccess: function # 支付成功
+    onPaymentFailed: function # 支付失败
+    onTimeout: function # 支付超时
+  dependencies: [API-POST-CreatePayment, API-GET-PaymentStatus]
+  acceptanceCriteria:
+    - 支付二维码展示
+    - 支付状态轮询
+    - 倒计时显示
+    - 支付结果处理
+
+- type: Frontend
+  id: UI-PaymentHistory
+  description: 支付历史组件
+  props:
+    pageSize: number # 每页数量
+    showFilters: boolean # 是否显示筛选
+  state:
+    paymentList: array # 支付记录列表
+    filterOptions: object # 筛选选项
+    pagination: object # 分页信息
+    loading: boolean # 加载状态
+  events:
+    onFilterChange: function # 筛选变化
+    onPageChange: function # 翻页
+    onPaymentDetail: function # 查看支付详情
+    onRefresh: function # 刷新数据
+  dependencies: [API-GET-PaymentHistory]
+  acceptanceCriteria:
+    - 支付记录展示
+    - 状态筛选
+    - 分页查询
+    - 详情查看
+
+# 系统导航模块 - UI组件接口
+- type: Frontend
+  id: UI-Navigation
+  description: 主导航组件
+  props:
+    currentRoute: string # 当前路由
+    userInfo: object # 用户信息
+    showUserMenu: boolean # 是否显示用户菜单
+  state:
+    menuItems: array # 菜单项
+    activeMenu: string # 激活的菜单
+    userMenuVisible: boolean # 用户菜单可见性
+    notifications: array # 通知消息
+  events:
+    onMenuClick: function # 菜单点击
+    onUserMenuToggle: function # 用户菜单切换
+    onLogout: function # 退出登录
+    onNotificationClick: function # 通知点击
+  dependencies: []
+  acceptanceCriteria:
+    - 响应式导航菜单
+    - 用户登录状态显示
+    - 路由高亮
+    - 通知消息提示
+
+- type: Frontend
+  id: UI-Breadcrumb
+  description: 面包屑导航组件
+  props:
+    routes: array # 路由路径
+    separator: string # 分隔符
+    showHome: boolean # 是否显示首页
+  state:
+    breadcrumbItems: array # 面包屑项
+    currentPath: string # 当前路径
+  events:
+    onBreadcrumbClick: function # 面包屑点击
+    onPathChange: function # 路径变化
+  dependencies: []
+  acceptanceCriteria:
+    - 动态路径生成
+    - 点击导航功能
+    - 自定义分隔符
+    - 首页链接
+
+- type: Frontend
+  id: UI-SystemNotice
+  description: 系统公告组件
+  props:
+    noticeType: string # 公告类型
+    autoClose: boolean # 自动关闭
+    showIcon: boolean # 是否显示图标
+  state:
+    notices: array # 公告列表
+    currentNotice: object # 当前公告
+    visible: boolean # 可见性
+    loading: boolean # 加载状态
+  events:
+    onNoticeClose: function # 关闭公告
+    onNoticeClick: function # 公告点击
+    onNoticeRefresh: function # 刷新公告
+  dependencies: [API-GET-SystemConfig]
+  acceptanceCriteria:
+    - 公告轮播显示
+    - 类型样式区分
+    - 自动关闭功能
+    - 点击查看详情
+
+- type: Frontend
+  id: UI-LoadingSpinner
+  description: 加载状态组件
+  props:
+    size: string # 尺寸：small/medium/large
+    text: string # 加载文本
+    overlay: boolean # 是否覆盖层
+    color: string # 颜色主题
+  state:
+    visible: boolean # 可见性
+    progress: number # 进度百分比（可选）
+  events:
+    onShow: function # 显示加载
+    onHide: function # 隐藏加载
+    onProgressUpdate: function # 进度更新
+  dependencies: []
+  acceptanceCriteria:
+    - 多种尺寸样式
+    - 自定义加载文本
+    - 覆盖层模式
+    - 进度显示（可选）
+
+- type: Frontend
+  id: UI-ErrorBoundary
+  description: 错误边界组件
+  props:
+    fallbackComponent: component # 错误回退组件
+    onError: function # 错误处理函数
+    showErrorDetails: boolean # 是否显示错误详情
+  state:
+    hasError: boolean # 是否有错误
+    errorInfo: object # 错误信息
+    errorId: string # 错误ID
+  events:
+    onErrorCatch: function # 捕获错误
+    onErrorReport: function # 错误上报
+    onRetry: function # 重试操作
+    onReset: function # 重置状态
+  dependencies: []
+  acceptanceCriteria:
+    - 错误捕获和显示
+    - 错误信息上报
+    - 用户友好的错误页面
+    - 重试机制

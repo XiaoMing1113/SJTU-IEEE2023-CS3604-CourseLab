@@ -1,0 +1,387 @@
+# 12306火车票预订系统 - 数据库接口设计
+# 生成时间: 2025-01-03
+# 基于文档: interface_requirements.md
+# 版本: v1.0
+
+# 用户身份管理模块 - 数据库接口
+- type: Database
+  id: DB-CreateUser
+  description: 创建新用户账户，支持实名制注册
+  input:
+    phoneNumber: string # 11位手机号
+    idCard: string # 18位身份证号
+    passwordHash: string # 加密后的密码
+    username: string # 用户名
+    verificationCode: string # 验证码（用于验证）
+  output:
+    userId: string # 生成的用户ID
+    createdAt: datetime # 创建时间
+  constraints:
+    - phoneNumber必须唯一
+    - idCard必须唯一
+    - 密码必须加密存储
+    - 验证码验证后不存储
+  acceptanceCriteria:
+    - 手机号格式验证通过
+    - 身份证号格式验证通过
+    - 用户信息成功存储到数据库
+    - 返回唯一用户ID
+
+- type: Database
+  id: DB-ValidateUser
+  description: 验证用户登录凭据
+  input:
+    phoneNumber: string # 手机号或用户名
+    passwordHash: string # 加密后的密码
+  output:
+    userId: string # 用户ID
+    userInfo: object # 用户基本信息
+    loginAttempts: number # 登录尝试次数
+    lockedUntil: datetime # 锁定截止时间
+  constraints:
+    - 密码验证使用加密比较
+    - 记录登录尝试次数
+    - 超过5次失败锁定30分钟
+  acceptanceCriteria:
+    - 用户存在性验证
+    - 密码正确性验证
+    - 账户锁定状态检查
+    - 返回完整用户信息
+
+- type: Database
+  id: DB-UpdateUserInfo
+  description: 更新用户个人信息
+  input:
+    userId: string # 用户ID
+    updateFields: object # 要更新的字段
+  output:
+    updatedInfo: object # 更新后的用户信息
+    updatedAt: datetime # 更新时间
+  constraints:
+    - 只能更新允许的字段
+    - 敏感信息需要额外验证
+  acceptanceCriteria:
+    - 用户权限验证通过
+    - 数据格式验证通过
+    - 信息成功更新
+
+- type: Database
+  id: DB-UpdateLoginAttempts
+  description: 更新用户登录尝试次数和锁定状态
+  input:
+    userId: string # 用户ID
+    attempts: number # 尝试次数
+    lockUntil: datetime # 锁定截止时间（可选）
+  output:
+    currentAttempts: number # 当前尝试次数
+    isLocked: boolean # 是否被锁定
+  constraints:
+    - 超过5次自动锁定30分钟
+    - 成功登录后重置尝试次数
+  acceptanceCriteria:
+    - 尝试次数正确更新
+    - 锁定状态正确设置
+
+# 车票查询模块 - 数据库接口
+- type: Database
+  id: DB-QueryTrains
+  description: 查询符合条件的车次信息
+  input:
+    departureCity: string # 出发城市
+    arrivalCity: string # 到达城市
+    departureDate: date # 出发日期
+    trainTypes: array # 车次类型筛选（可选）
+    seatTypes: array # 席别类型筛选（可选）
+    timeRange: object # 时间范围筛选（可选）
+  output:
+    trainList: array # 车次列表
+    totalCount: number # 总数量
+  constraints:
+    - 日期不能是过去时间
+    - 日期不能超过30天
+    - 城市必须在有效城市列表中
+  acceptanceCriteria:
+    - 查询条件验证通过
+    - 返回符合条件的车次
+    - 结果按出发时间排序
+    - 包含余票信息
+
+- type: Database
+  id: DB-GetTrainDetail
+  description: 获取指定车次的详细信息
+  input:
+    trainNumber: string # 车次号
+    departureDate: date # 出发日期
+  output:
+    trainDetail: object # 车次详细信息
+    seatInfo: array # 座位信息
+    ticketInfo: object # 余票信息
+  constraints:
+    - 车次号必须存在
+    - 日期必须有效
+  acceptanceCriteria:
+    - 返回完整车次信息
+    - 包含途经站点信息
+    - 包含实时余票数据
+
+- type: Database
+  id: DB-CheckTicketAvailability
+  description: 检查指定车次席别的余票情况
+  input:
+    trainId: string # 车次ID
+    seatType: string # 席别类型
+    quantity: number # 需要数量
+    departureDate: date # 出发日期
+  output:
+    available: boolean # 是否有足够余票
+    remainingTickets: number # 剩余票数
+    seatNumbers: array # 可分配座位号（如果有）
+  constraints:
+    - 数量必须大于0且小于等于5
+    - 席别类型必须有效
+  acceptanceCriteria:
+    - 准确返回余票状态
+    - 提供可分配座位信息
+    - 支持并发查询
+
+# 车票预订模块 - 数据库接口
+- type: Database
+  id: DB-CreateOrder
+  description: 创建车票预订订单
+  input:
+    userId: string # 用户ID
+    trainId: string # 车次ID
+    seatType: string # 席别类型
+    quantity: number # 票数
+    seatNumbers: array # 座位号列表
+    totalAmount: number # 总金额
+  output:
+    orderId: string # 订单ID
+    expireAt: datetime # 过期时间（30分钟后）
+    lockTime: number # 锁定时长（秒）
+  constraints:
+    - 座位必须可用且未被锁定
+    - 订单30分钟后自动过期
+    - 同一用户同一车次不能重复预订
+  acceptanceCriteria:
+    - 订单成功创建
+    - 座位成功锁定
+    - 设置正确的过期时间
+
+- type: Database
+  id: DB-UpdateOrderInfo
+  description: 更新订单乘客信息和联系方式
+  input:
+    orderId: string # 订单ID
+    passengerList: array # 乘客信息列表
+    contactInfo: object # 联系方式
+  output:
+    orderDetails: object # 完整订单信息
+    totalAmount: number # 最终金额
+  constraints:
+    - 订单必须存在且未过期
+    - 乘客数量必须与票数匹配
+    - 乘客信息必须完整有效
+  acceptanceCriteria:
+    - 乘客信息成功保存
+    - 订单状态更新为待支付
+    - 金额计算正确
+
+- type: Database
+  id: DB-GetUserOrders
+  description: 获取用户的订单列表
+  input:
+    userId: string # 用户ID
+    orderStatus: string # 订单状态筛选（可选）
+    pageSize: number # 分页大小
+    pageNumber: number # 页码
+  output:
+    orderList: array # 订单列表
+    totalCount: number # 总订单数
+    pageInfo: object # 分页信息
+  constraints:
+    - 只能查询自己的订单
+    - 支持分页查询
+  acceptanceCriteria:
+    - 返回用户所有订单
+    - 按创建时间倒序排列
+    - 分页信息正确
+
+- type: Database
+  id: DB-UpdateOrderStatus
+  description: 更新订单状态
+  input:
+    orderId: string # 订单ID
+    newStatus: string # 新状态
+    updateReason: string # 更新原因
+  output:
+    orderStatus: string # 更新后状态
+    updatedAt: datetime # 更新时间
+  constraints:
+    - 状态转换必须符合业务规则
+    - 记录状态变更历史
+  acceptanceCriteria:
+    - 状态成功更新
+    - 记录变更日志
+    - 触发相关业务逻辑
+
+- type: Database
+  id: DB-CancelExpiredOrders
+  description: 自动取消过期订单
+  input:
+    currentTime: datetime # 当前时间
+  output:
+    canceledCount: number # 取消的订单数量
+    releasedSeats: array # 释放的座位列表
+  constraints:
+    - 只处理过期的待支付订单
+    - 释放被锁定的座位
+  acceptanceCriteria:
+    - 正确识别过期订单
+    - 成功取消过期订单
+    - 释放座位资源
+
+# 乘客信息管理模块 - 数据库接口
+- type: Database
+  id: DB-CreatePassenger
+  description: 添加常用乘客信息
+  input:
+    userId: string # 用户ID
+    passengerName: string # 乘客姓名
+    idType: string # 证件类型
+    idNumber: string # 证件号码
+    passengerType: string # 乘客类型（成人/儿童/学生）
+  output:
+    passengerId: string # 乘客ID
+    createdAt: datetime # 创建时间
+  constraints:
+    - 每个用户最多10个常用乘客
+    - 同一用户不能添加相同证件号的乘客
+    - 证件号格式必须正确
+  acceptanceCriteria:
+    - 乘客信息成功保存
+    - 证件号格式验证通过
+    - 返回唯一乘客ID
+
+- type: Database
+  id: DB-GetUserPassengers
+  description: 获取用户的常用乘客列表
+  input:
+    userId: string # 用户ID
+  output:
+    passengerList: array # 乘客信息列表
+    totalCount: number # 乘客总数
+  constraints:
+    - 只能查询自己的乘客信息
+    - 敏感信息需要脱敏处理
+  acceptanceCriteria:
+    - 返回完整乘客列表
+    - 按添加时间排序
+    - 证件号部分脱敏显示
+
+- type: Database
+  id: DB-UpdatePassenger
+  description: 更新乘客信息
+  input:
+    passengerId: string # 乘客ID
+    userId: string # 用户ID（权限验证）
+    updateInfo: object # 更新信息
+  output:
+    updatedInfo: object # 更新后的乘客信息
+    updatedAt: datetime # 更新时间
+  constraints:
+    - 只能更新自己的乘客信息
+    - 证件号修改需要重新验证
+  acceptanceCriteria:
+    - 权限验证通过
+    - 信息成功更新
+    - 返回更新后信息
+
+- type: Database
+  id: DB-DeletePassenger
+  description: 删除常用乘客信息
+  input:
+    passengerId: string # 乘客ID
+    userId: string # 用户ID（权限验证）
+  output:
+    deleted: boolean # 删除结果
+    deletedAt: datetime # 删除时间
+  constraints:
+    - 只能删除自己的乘客信息
+    - 有未完成订单的乘客不能删除
+  acceptanceCriteria:
+    - 权限验证通过
+    - 关联订单检查通过
+    - 成功删除乘客信息
+
+- type: Database
+  id: DB-CheckPassengerOrders
+  description: 检查乘客是否有关联的未完成订单
+  input:
+    passengerId: string # 乘客ID
+  output:
+    hasActiveOrders: boolean # 是否有未完成订单
+    activeOrderIds: array # 未完成订单ID列表
+  constraints:
+    - 检查所有未完成状态的订单
+  acceptanceCriteria:
+    - 准确检查订单关联
+    - 返回详细订单信息
+
+# 支付处理模块 - 数据库接口
+- type: Database
+  id: DB-CreatePayment
+  description: 创建支付记录
+  input:
+    orderId: string # 订单ID
+    paymentMethod: string # 支付方式
+    amount: number # 支付金额
+    userId: string # 用户ID
+  output:
+    paymentId: string # 支付ID
+    paymentStatus: string # 支付状态
+    createdAt: datetime # 创建时间
+  constraints:
+    - 订单必须存在且为待支付状态
+    - 支付金额必须与订单金额一致
+  acceptanceCriteria:
+    - 支付记录成功创建
+    - 状态设置为处理中
+    - 返回唯一支付ID
+
+- type: Database
+  id: DB-UpdatePaymentStatus
+  description: 更新支付状态
+  input:
+    paymentId: string # 支付ID
+    paymentStatus: string # 新支付状态
+    transactionId: string # 第三方交易流水号
+    completedAt: datetime # 完成时间
+  output:
+    updatedStatus: string # 更新后状态
+    orderStatus: string # 关联订单状态
+  constraints:
+    - 支付状态转换必须合理
+    - 成功支付需要更新订单状态
+  acceptanceCriteria:
+    - 支付状态成功更新
+    - 订单状态同步更新
+    - 记录交易流水号
+
+- type: Database
+  id: DB-GetPaymentHistory
+  description: 获取用户支付历史记录
+  input:
+    userId: string # 用户ID
+    pageSize: number # 分页大小
+    pageNumber: number # 页码
+  output:
+    paymentList: array # 支付记录列表
+    totalCount: number # 总记录数
+  constraints:
+    - 只能查询自己的支付记录
+    - 支持分页查询
+  acceptanceCriteria:
+    - 返回完整支付历史
+    - 按支付时间倒序排列
+    - 包含关联订单信息

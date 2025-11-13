@@ -1,0 +1,219 @@
+design_system:
+  version: "1.0.0"
+  created_date: "2024-12-19"
+  description: "12306火车票预订系统设计系统规范"
+  
+color_palette:
+  primary:
+    main: "#0066CC"        # 12306主蓝色
+    light: "#3385D6"       # 浅蓝色
+    dark: "#004499"        # 深蓝色
+    hover: "#0052A3"       # 悬停状态
+  secondary:
+    main: "#FF6600"        # 橙色（强调色）
+    light: "#FF8533"       # 浅橙色
+    dark: "#CC5200"        # 深橙色
+  functional:
+    success: "#52C41A"     # 成功绿色
+    warning: "#FAAD14"     # 警告黄色
+    error: "#F5222D"       # 错误红色
+    info: "#1890FF"        # 信息蓝色
+  neutral:
+    text_primary: "#333333"     # 主要文字色
+    text_secondary: "#666666"   # 次要文字色
+    text_disabled: "#999999"    # 禁用文字色
+    text_placeholder: "#CCCCCC" # 占位符文字色
+    background: "#FFFFFF"       # 主背景色
+    background_secondary: "#F5F5F5"  # 次要背景色
+    background_disabled: "#FAFAFA"   # 禁用背景色
+    border: "#D9D9D9"          # 边框色
+    border_light: "#E8E8E8"    # 浅边框色
+    divider: "#F0F0F0"         # 分割线色
+
+typography:
+  font_families:
+    primary: "'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif"
+    secondary: "'Arial', 'Helvetica', sans-serif"
+    monospace: "'Consolas', 'Monaco', 'Courier New', monospace"
+  font_sizes:
+    - size: "12px"
+      usage: "辅助信息、标签"
+      line_height: "18px"
+    - size: "14px"
+      usage: "正文内容、表单输入"
+      line_height: "22px"
+    - size: "16px"
+      usage: "重要内容、按钮文字"
+      line_height: "24px"
+    - size: "18px"
+      usage: "小标题"
+      line_height: "26px"
+    - size: "20px"
+      usage: "页面标题"
+      line_height: "28px"
+    - size: "24px"
+      usage: "主标题"
+      line_height: "32px"
+    - size: "28px"
+      usage: "大标题"
+      line_height: "36px"
+  font_weights:
+    - weight: "400"
+      usage: "正文内容"
+    - weight: "500"
+      usage: "重要文字"
+    - weight: "600"
+      usage: "标题文字"
+    - weight: "700"
+      usage: "强调标题"
+
+spacing:
+  base_unit: "4px"
+  scale: [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96]
+  components:
+    - type: "按钮"
+      padding: "8px 16px"
+      margin: "8px"
+      min_height: "32px"
+    - type: "输入框"
+      padding: "8px 12px"
+      margin: "8px 0"
+      height: "40px"
+    - type: "卡片"
+      padding: "16px"
+      margin: "16px 0"
+    - type: "表单项"
+      margin: "16px 0"
+    - type: "页面容器"
+      padding: "24px"
+      max_width: "1200px"
+
+breakpoints:
+  mobile: "768px"
+  tablet: "1024px"
+  desktop: "1200px"
+  large: "1440px"
+
+shadows:
+  - name: "card"
+    value: "0 2px 8px rgba(0, 0, 0, 0.1)"
+    usage: "卡片阴影"
+  - name: "dropdown"
+    value: "0 4px 12px rgba(0, 0, 0, 0.15)"
+    usage: "下拉菜单阴影"
+  - name: "modal"
+    value: "0 8px 24px rgba(0, 0, 0, 0.2)"
+    usage: "模态框阴影"
+  - name: "button_hover"
+    value: "0 2px 4px rgba(0, 0, 0, 0.1)"
+    usage: "按钮悬停阴影"
+
+border_radius:
+  - size: "2px"
+    usage: "小圆角（输入框、小按钮）"
+  - size: "4px"
+    usage: "标准圆角（按钮、卡片）"
+  - size: "6px"
+    usage: "大圆角（面板、容器）"
+  - size: "50%"
+    usage: "圆形（头像、图标按钮）"
+
+animations:
+  - name: "fade_in"
+    duration: "0.3s"
+    easing: "ease-out"
+    usage: "页面加载、内容显示"
+  - name: "slide_down"
+    duration: "0.2s"
+    easing: "ease-out"
+    usage: "下拉菜单展开"
+  - name: "button_click"
+    duration: "0.1s"
+    easing: "ease-in-out"
+    usage: "按钮点击反馈"
+  - name: "loading_spin"
+    duration: "1s"
+    easing: "linear"
+    usage: "加载动画"
+    infinite: true
+
+component_styles:
+  button:
+    primary:
+      background: "#0066CC"
+      color: "#FFFFFF"
+      border: "none"
+      hover_background: "#0052A3"
+    secondary:
+      background: "#FFFFFF"
+      color: "#0066CC"
+      border: "1px solid #0066CC"
+      hover_background: "#F0F7FF"
+    danger:
+      background: "#F5222D"
+      color: "#FFFFFF"
+      border: "none"
+      hover_background: "#D4001A"
+    disabled:
+      background: "#F5F5F5"
+      color: "#CCCCCC"
+      border: "1px solid #E8E8E8"
+      cursor: "not-allowed"
+  
+  input:
+    default:
+      background: "#FFFFFF"
+      border: "1px solid #D9D9D9"
+      color: "#333333"
+      placeholder_color: "#CCCCCC"
+      focus_border: "#0066CC"
+      error_border: "#F5222D"
+    disabled:
+      background: "#FAFAFA"
+      color: "#999999"
+      cursor: "not-allowed"
+  
+  card:
+    default:
+      background: "#FFFFFF"
+      border: "1px solid #E8E8E8"
+      shadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+    hover:
+      shadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+  
+  table:
+    header:
+      background: "#FAFAFA"
+      color: "#333333"
+      font_weight: "600"
+    row:
+      background: "#FFFFFF"
+      hover_background: "#F5F7FA"
+      border_bottom: "1px solid #F0F0F0"
+    selected:
+      background: "#E6F7FF"
+
+layout_grid:
+  container_max_width: "1200px"
+  gutter: "24px"
+  columns: 24
+  breakpoint_gutters:
+    mobile: "16px"
+    tablet: "20px"
+    desktop: "24px"
+
+accessibility:
+  focus_outline: "2px solid #0066CC"
+  focus_offset: "2px"
+  min_touch_target: "44px"
+  color_contrast_ratio: "4.5:1"
+  
+z_index:
+  dropdown: 1000
+  sticky: 1020
+  fixed: 1030
+  modal_backdrop: 1040
+  modal: 1050
+  popover: 1060
+  tooltip: 1070
+  notification: 1080

@@ -1,0 +1,312 @@
+asset_requirements:
+  version: "1.0.0"
+  created_date: "2024-12-19"
+  description: "12306火车票预订系统UI素材需求清单"
+  
+images:
+  - id: IMG-Logo
+    name: "12306系统Logo"
+    type: "logo"
+    usage: "网站标识、页面头部"
+    dimensions: "200x60px"
+    format: "PNG/SVG"
+    priority: "high"
+    source_suggestion: "设计简洁的文字Logo或使用12306官方风格"
+    fallback: "纯文字Logo"
+    
+  - id: IMG-LoginBg
+    name: "登录页面背景图"
+    type: "background"
+    usage: "登录页面装饰背景"
+    dimensions: "1920x1080px"
+    format: "JPG"
+    priority: "medium"
+    source_suggestion: "火车站、铁路相关的高质量图片"
+    fallback: "蓝色渐变背景"
+    
+  - id: IMG-EmptyState
+    name: "空状态插图"
+    type: "illustration"
+    usage: "无数据时的占位图"
+    dimensions: "200x150px"
+    format: "SVG/PNG"
+    priority: "medium"
+    source_suggestion: "简洁的线条插图"
+    fallback: "文字提示"
+    
+  - id: IMG-ErrorPage
+    name: "错误页面插图"
+    type: "illustration"
+    usage: "404、500等错误页面"
+    dimensions: "300x200px"
+    format: "SVG/PNG"
+    priority: "low"
+    source_suggestion: "友好的错误提示插图"
+    fallback: "纯文字错误提示"
+
+icons:
+  # 导航图标
+  - id: ICON-Home
+    name: "首页图标"
+    usage: "导航菜单、面包屑"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Search
+    name: "搜索图标"
+    usage: "搜索按钮、查询功能"
+    size: "20x20px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-User
+    name: "用户图标"
+    usage: "用户中心、个人信息"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Menu
+    name: "菜单图标"
+    usage: "移动端导航菜单"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  # 功能图标
+  - id: ICON-Calendar
+    name: "日历图标"
+    usage: "日期选择器"
+    size: "20x20px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Clock
+    name: "时间图标"
+    usage: "时间显示、发车时间"
+    size: "16x16px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Train
+    name: "火车图标"
+    usage: "车次信息、交通工具标识"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "自定义设计或交通图标库"
+    
+  - id: ICON-Ticket
+    name: "车票图标"
+    usage: "订单管理、车票相关功能"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "自定义设计"
+    
+  - id: ICON-Payment
+    name: "支付图标"
+    usage: "支付页面、支付方式"
+    size: "24x24px"
+    style: "线条风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  # 状态图标
+  - id: ICON-Success
+    name: "成功图标"
+    usage: "成功提示、完成状态"
+    size: "20x20px"
+    style: "填充风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Warning
+    name: "警告图标"
+    usage: "警告提示、注意事项"
+    size: "20x20px"
+    style: "填充风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Error
+    name: "错误图标"
+    usage: "错误提示、失败状态"
+    size: "20x20px"
+    style: "填充风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Info
+    name: "信息图标"
+    usage: "信息提示、帮助说明"
+    size: "20x20px"
+    style: "填充风格"
+    priority: "high"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  # 操作图标
+  - id: ICON-Edit
+    name: "编辑图标"
+    usage: "编辑功能、修改信息"
+    size: "16x16px"
+    style: "线条风格"
+    priority: "medium"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Delete
+    name: "删除图标"
+    usage: "删除功能、移除操作"
+    size: "16x16px"
+    style: "线条风格"
+    priority: "medium"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Add
+    name: "添加图标"
+    usage: "添加功能、新增操作"
+    size: "20x20px"
+    style: "线条风格"
+    priority: "medium"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Close
+    name: "关闭图标"
+    usage: "关闭弹窗、取消操作"
+    size: "16x16px"
+    style: "线条风格"
+    priority: "medium"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Arrow
+    name: "箭头图标"
+    usage: "导航、展开收起"
+    size: "16x16px"
+    style: "线条风格"
+    priority: "medium"
+    source_suggestion: "Feather Icons, Heroicons"
+    
+  - id: ICON-Loading
+    name: "加载图标"
+    usage: "加载状态、数据请求中"
+    size: "20x20px"
+    style: "动画图标"
+    priority: "medium"
+    source_suggestion: "CSS动画或SVG动画"
+
+fonts:
+  - id: FONT-Primary
+    name: "主字体"
+    usage: "正文内容、界面文字"
+    weight: "400, 500, 600"
+    license: "免费商用"
+    source_suggestion: "Microsoft YaHei, PingFang SC"
+    fallback: "Arial, sans-serif"
+    
+  - id: FONT-Monospace
+    name: "等宽字体"
+    usage: "代码显示、数字显示"
+    weight: "400, 600"
+    license: "免费商用"
+    source_suggestion: "Consolas, Monaco"
+    fallback: "Courier New, monospace"
+
+free_resources:
+  icon_libraries:
+    - name: "Feather Icons"
+      url: "https://feathericons.com/"
+      license: "MIT License"
+      description: "简洁的线条风格图标库，完全免费"
+      
+    - name: "Heroicons"
+      url: "https://heroicons.com/"
+      license: "MIT License"
+      description: "Tailwind团队制作的高质量图标库"
+      
+    - name: "Lucide"
+      url: "https://lucide.dev/"
+      license: "ISC License"
+      description: "Feather Icons的继承者，图标更丰富"
+      
+    - name: "Tabler Icons"
+      url: "https://tabler-icons.io/"
+      license: "MIT License"
+      description: "超过4000个免费SVG图标"
+      
+  image_sources:
+    - name: "Unsplash"
+      url: "https://unsplash.com/"
+      license: "Unsplash License"
+      description: "高质量免费图片，可商用"
+      
+    - name: "Pexels"
+      url: "https://www.pexels.com/"
+      license: "Pexels License"
+      description: "免费图片和视频资源"
+      
+    - name: "Pixabay"
+      url: "https://pixabay.com/"
+      license: "Pixabay License"
+      description: "免费图片、插图和矢量图"
+      
+  illustration_sources:
+    - name: "unDraw"
+      url: "https://undraw.co/"
+      license: "MIT License"
+      description: "开源插图库，可自定义颜色"
+      
+    - name: "Storyset"
+      url: "https://storyset.com/"
+      license: "Free for commercial use"
+      description: "动画插图和静态插图"
+      
+  font_sources:
+    - name: "Google Fonts"
+      url: "https://fonts.google.com/"
+      license: "Open Font License"
+      description: "免费网络字体服务"
+      
+    - name: "Adobe Fonts"
+      url: "https://fonts.adobe.com/"
+      license: "需要订阅"
+      description: "高质量字体库（需付费）"
+
+implementation_priority:
+  phase_1_critical:
+    - "ICON-Home, ICON-Search, ICON-User, ICON-Menu"
+    - "ICON-Calendar, ICON-Clock, ICON-Train"
+    - "ICON-Success, ICON-Warning, ICON-Error"
+    - "IMG-Logo"
+    
+  phase_2_important:
+    - "ICON-Ticket, ICON-Payment, ICON-Loading"
+    - "ICON-Edit, ICON-Delete, ICON-Add, ICON-Close"
+    - "IMG-EmptyState"
+    
+  phase_3_enhancement:
+    - "IMG-LoginBg, IMG-ErrorPage"
+    - "ICON-Arrow, ICON-Info"
+    - "装饰性图片和插图"
+
+asset_optimization:
+  icons:
+    format: "SVG优先，PNG备选"
+    optimization: "压缩SVG代码，移除不必要属性"
+    naming: "使用语义化命名，如icon-home.svg"
+    
+  images:
+    format: "WebP优先，JPG/PNG备选"
+    optimization: "压缩图片大小，保持视觉质量"
+    responsive: "提供多种尺寸适配不同设备"
+    
+  fonts:
+    format: "WOFF2优先，WOFF备选"
+    subset: "只加载需要的字符集"
+    preload: "关键字体使用preload预加载"
