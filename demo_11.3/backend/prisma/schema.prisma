@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./database.sqlite"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  phoneNumber String   @unique
+  idCard      String   @unique
+  username    String
+  passwordHash String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // 登录安全相关
+  loginAttempts Int      @default(0)
+  lockedUntil   DateTime?
+  
+  // 关联关系
+  passengers  Passenger[]
+  orders      Order[]
+  
+  @@map("users")
+}
+
+model Passenger {
+  id       String @id @default(cuid())
+  userId   String
+  name     String
+  idCard   String
+  phone    String?
+  
+  // 关联关系
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderPassengers OrderPassenger[]
+  
+  @@map("passengers")
+}
+
+model Train {
+  id            String @id @default(cuid())
+  trainNumber   String @unique
+  trainType     String // G/D/C/K/T等
+  departureCity String
+  arrivalCity   String
+  departureTime String
+  arrivalTime   String
+  duration      String
+  
+  // 座位信息
+  seats         TrainSeat[]
+  orders        Order[]
+  
+  @@map("trains")
+}
+
+model TrainSeat {
+  id        String @id @default(cuid())
+  trainId   String
+  seatType  String // 商务座/一等座/二等座/硬卧/软卧等
+  totalSeats Int
+  availableSeats Int
+  price     Float
+  
+  // 关联关系
+  train     Train @relation(fields: [trainId], references: [id], onDelete: Cascade)
+  
+  @@map("train_seats")
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  userId        String
+  trainId       String
+  orderNumber   String   @unique
+  status        String   @default("PENDING") // PENDING/PAID/CANCELLED/COMPLETED/REFUNDED
+  totalAmount   Float
+  seatType      String
+  departureDate DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // 关联关系
+  user          User     @relation(fields: [userId], references: [id])
+  train         Train    @relation(fields: [trainId], references: [id])
+  passengers    OrderPassenger[]
+  
+  @@map("orders")
+}
+
+model OrderPassenger {
+  id          String @id @default(cuid())
+  orderId     String
+  passengerId String
+  seatNumber  String?
+  
+  // 关联关系
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  passenger   Passenger @relation(fields: [passengerId], references: [id])
+  
+  @@map("order_passengers")
+}
+
+model VerificationCode {
+  id          String   @id @default(cuid())
+  phoneNumber String
+  code        String
+  codeType    String   // register/login/reset
+  expiresAt   DateTime
+  used        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  @@map("verification_codes")
+}
