@@ -14,8 +14,8 @@
 
 #### 1.1 读取输入文件
 - **接口设计**: `.interfaces/api_design.md`, `.interfaces/data_models.md`
-- **UI设计**: `.ui_design/ui_structure.md`, `.ui_design/component_library.md`, `.ui_design/design_system.md`
-- **素材需求**: `.ui_design/asset_requirements.md`, `.ui_design/implementation_guide.md`
+- **UI设计**: `.ui_design/ui_structure.yml`, `.ui_design/design_system.yml`
+- **素材需求**: `.ui_design/asset_requirements.yml`, `.ui_design/implementation_guide.md`
 - **测试用例**: `backend/test/`, `frontend/test/`, `test/e2e/`
 - **代码骨架**: `backend/src/`, `frontend/src/`, `shared/`
 - **历史记录**: `.prompt6_history/implementation_history.md`
@@ -74,7 +74,7 @@
 #### 2.3 素材处理策略
 ```
 处理UI设计中的素材需求:
-1. **素材检查**: 验证asset_requirements.md中列出的素材是否可用
+1. **素材检查**: 验证asset_requirements.yml中列出的素材是否可用
 2. **占位符实现**: 为缺失的素材创建合适的占位符
 3. **素材优化**: 确保图片、图标等素材符合web标准
 4. **响应式处理**: 为不同分辨率准备合适的素材版本

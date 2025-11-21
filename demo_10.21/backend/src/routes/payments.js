@@ -182,6 +182,24 @@ router.post('/callback', (req, res) => {
     }
 
     console.log(`订单 ${orderId} 支付成功，生成电子车票`);
+    // 同步到数据库
+    try {
+      const { Order } = require('../models/Order');
+      const dbOrderInfo = {
+        ticketId: order?.ticketInfo?.ticketId,
+        generatedAt: order?.ticketInfo?.generatedAt,
+        trainNumber: order?.ticketInfo?.trainNumber,
+        date: order?.ticketInfo?.date,
+        from: order?.ticketInfo?.from,
+        to: order?.ticketInfo?.to,
+        passengers: order?.ticketInfo?.passengers
+      };
+      Order.setPaid(orderId, dbOrderInfo).catch(e => {
+        console.error('保存订单支付状态到数据库失败:', e);
+      });
+    } catch (e) {
+      console.error('保存订单支付状态到数据库失败:', e);
+    }
   } else if (status === 'FAILED') {
     payment.status = 'FAILED';
     payment.failReason = '支付失败';

@@ -1,0 +1,166 @@
+{
+    "current_version": "v1.1",
+    "extract_version": "v1.0",
+    "total_sub_requirements": 260,
+    
+    "function_detail_registry": {
+      "F001": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 9,
+        "last_modified_version": "v1.1"
+      },
+      "F002": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 9,
+        "last_modified_version": "v1.1"
+      },
+      "F003": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 24,
+        "last_modified_version": "v1.1"
+      },
+      "F004": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 18,
+        "last_modified_version": "v1.1"
+      },
+      "F005": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 18,
+        "last_modified_version": "v1.1"
+      },
+      "F006": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 16,
+        "last_modified_version": "v1.1"
+      },
+      "F007": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 21,
+        "last_modified_version": "v1.1"
+      },
+      "F008": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 20,
+        "last_modified_version": "v1.1"
+      },
+      "F009": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 22,
+        "last_modified_version": "v1.1"
+      },
+      "F010": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 16,
+        "last_modified_version": "v1.1"
+      },
+      "F011": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 23,
+        "last_modified_version": "v1.1"
+      },
+      "F012": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 24,
+        "last_modified_version": "v1.1"
+      },
+      "F013": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 28,
+        "last_modified_version": "v1.1"
+      },
+      "F014": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 25,
+        "last_modified_version": "v1.1"
+      },
+      "F015": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 19,
+        "last_modified_version": "v1.1"
+      },
+      "F016": {
+        "version": "v1.1",
+        "status": "detailed",
+        "sub_requirement_count": 8,
+        "last_modified_version": "v1.1"
+      }
+    },
+    
+    "category_statistics": {
+      "order_confirmation": 6,
+      "passenger_info": 5,
+      "ticket_type": 3,
+      "contact_info": 3,
+      "invoice_info": 2,
+      "insurance": 2,
+      "pre_validation": 5,
+      "order_creation": 4,
+      "submit_success": 4,
+      "submit_failure": 2,
+      "info_display": 9,
+      "modify_phone": 3,
+      "modify_email": 3,
+      "modify_password": 3,
+      "avatar_update": 2,
+      "realname_auth": 2,
+      "passenger_list": 7,
+      "add_passenger": 4,
+      "certificate_validation": 3,
+      "special_passenger": 4,
+      "edit_passenger": 3,
+      "delete_passenger": 1,
+      "filter_condition": 3,
+      "order_card": 6,
+      "order_sorting": 3,
+      "pagination": 2,
+      "order_detail": 5,
+      "e_ticket": 3,
+      "order_operation": 4,
+      "payment_method": 8,
+      "payment_confirmation": 4,
+      "payment_process": 3,
+      "payment_result": 4,
+      "payment_success": 2,
+      "payment_failure": 2,
+      "eligibility_check": 5,
+      "select_train": 5,
+      "fee_calculation": 3,
+      "confirm_change": 2,
+      "change_result": 2,
+      "logout_trigger": 3,
+      "logout_process": 3,
+      "after_logout": 1
+    },
+    
+    "version_history": [
+      {
+        "version": "v1.1",
+        "extract_source": "v1.0",
+        "changes": {
+          "detailed_functions": [
+            "F001", "F002", "F003", "F004", "F005", "F006", "F007", "F008",
+            "F009", "F010", "F011", "F012", "F013", "F014", "F015", "F016"
+          ],
+          "modified_functions": [],
+          "pending_functions": [],
+          "total_sub_requirements_added": 260
+        }
+      }
+    ]
+}

@@ -65,10 +65,29 @@ const Header = () => {
 
   // 生成面包屑导航
   const generateBreadcrumb = () => {
+    const currentPath = location.pathname
+    const crumbs = [{ name: '首页', path: '/' }]
+
+    if (currentPath === '/') {
+      return crumbs
+    }
+
+    if (currentPath === '/tickets') {
+      crumbs.push({ name: '车票预订', path: '/tickets' })
+      return crumbs
+    }
+
+    if (currentPath === '/search' || currentPath === '/search-results') {
+      crumbs.push({ name: '车票查询', path: '/search-results' })
+      return crumbs
+    }
+
+    if (currentPath === '/my-orders') {
+      crumbs.push({ name: '我的订单', path: '/my-orders' })
+      return crumbs
+    }
+
     const pathMap = {
-      '/': { name: '首页', path: '/' },
-      '/tickets': { name: '车票预订', path: '/tickets' },
-      '/my-orders': { name: '我的订单', path: '/my-orders' },
       '/login': { name: '登录', path: '/login' },
       '/register': { name: '注册', path: '/register' },
       '/timetable': { name: '时刻表', path: '/timetable' },
@@ -79,21 +98,11 @@ const Header = () => {
       '/profile': { name: '个人中心', path: '/profile' }
     }
 
-    const currentPath = location.pathname
-    const breadcrumbs = [{ name: '首页', path: '/' }]
-
-    if (currentPath !== '/') {
-      const currentPage = pathMap[currentPath]
-      if (currentPage) {
-        // 对于某些页面，添加中间层级
-        if (currentPath === '/my-orders') {
-          breadcrumbs.push({ name: '车票预订', path: '/tickets' })
-        }
-        breadcrumbs.push(currentPage)
-      }
+    const extra = pathMap[currentPath]
+    if (extra) {
+      crumbs.push(extra)
     }
-
-    return breadcrumbs
+    return crumbs
   }
 
   return (

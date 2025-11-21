@@ -65,6 +65,7 @@
 
 .input-group {
   display: flex;
+  gap: 8px;
   flex-direction: column;
   min-width: 140px;
 }
@@ -106,6 +107,8 @@
   transition: all 0.3s;
   margin-bottom: 0;
 }
+
+.swap-button + .input-group { margin-left: -170px; }
 
 .swap-button:hover {
   background: #0066cc;

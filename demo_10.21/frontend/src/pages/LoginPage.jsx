@@ -102,8 +102,12 @@ const LoginPage = () => {
       
       if (data.success) {
         // 保存用户信息和token
-        localStorage.setItem('token', data.data.token)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+        const token = data.token ?? data.data?.token
+        const user = data.user ?? data.data?.user
+        const userId = data.userId ?? data.data?.userId
+        const userStored = { ...(user || {}), id: userId }
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(userStored))
         
         // 触发自定义事件，通知Header组件更新状态
         window.dispatchEvent(new CustomEvent('userLoginStatusChanged'))

@@ -87,6 +87,10 @@ export const cancelOrder = async (orderId) => {
   return api.post(`/orders/${orderId}/cancel`)
 }
 
+export const refundOrder = async (orderId) => {
+  return api.post(`/orders/${orderId}/refund`)
+}
+
 export const getUserOrders = async (userId, params = {}) => {
   // TODO: 实现获取用户订单列表API调用
   return api.get(`/orders/user/${userId}`, { params })

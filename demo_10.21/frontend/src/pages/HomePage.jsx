@@ -154,38 +154,39 @@ const HomePage = () => {
                     />
                     {errors.to && <div className="error-message">{errors.to}</div>}
                   </div>
-                </div>
+
                 
-                <div className="form-group">
-                  <label htmlFor="date">出发日期</label>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={searchForm.date}
-                    onChange={handleInputChange}
-                    className="date-input"
-                    required
-                  />
-                  {errors.date && <div className="error-message">{errors.date}</div>}
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="trainType">车次类型</label>
-                  <select
-                    id="trainType"
-                    name="trainType"
-                    value={searchForm.trainType}
-                    onChange={handleInputChange}
-                    className="type-select"
-                  >
-                    <option value="all">全部</option>
-                    <option value="G">高速动车(G)</option>
-                    <option value="D">动车(D)</option>
-                    <option value="C">城际(C)</option>
-                    <option value="T">特快(T)</option>
-                    <option value="K">快速(K)</option>
-                  </select>
+                  <div className="form-group">
+                    <label htmlFor="date">出发日期</label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={searchForm.date}
+                      onChange={handleInputChange}
+                      className="date-input"
+                      required
+                    />
+                    {errors.date && <div className="error-message">{errors.date}</div>}
+                  </div>
+                  
+                  <div className="form-group">
+                    <label htmlFor="trainType">车次类型</label>
+                    <select
+                      id="trainType"
+                      name="trainType"
+                      value={searchForm.trainType}
+                      onChange={handleInputChange}
+                      className="type-select"
+                    >
+                      <option value="all">全部</option>
+                      <option value="G">高速动车(G)</option>
+                      <option value="D">动车(D)</option>
+                      <option value="C">城际(C)</option>
+                      <option value="T">特快(T)</option>
+                      <option value="K">快速(K)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               

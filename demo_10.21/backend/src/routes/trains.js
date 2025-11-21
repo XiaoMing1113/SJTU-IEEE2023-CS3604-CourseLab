@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { db } = require('../database/init');
 
-// 模拟列车数据
+// 兼容：若数据库不可用时的兜底数据（少量）
 const mockTrains = [
   {
     id: 1,
@@ -231,6 +232,51 @@ const mockTrains = [
       hardSeat: 200
     }
   }
+  ,
+  {
+    id: 13,
+    trainNumber: 'G103',
+    departureStation: '北京南',
+    arrivalStation: '上海虹桥',
+    departureTime: '06:20',
+    arrivalTime: '10:38',
+    duration: '4小时18分',
+    type: '高速',
+    seats: { businessClass: 3, firstClass: 9, secondClass: 120, premiumSleeper: 0, softSleeper: 0, hardSleeper: 0, hardSeat: 0 }
+  },
+  {
+    id: 14,
+    trainNumber: 'D102',
+    departureStation: '北京',
+    arrivalStation: '天津',
+    departureTime: '12:10',
+    arrivalTime: '13:00',
+    duration: '0小时50分',
+    type: '动车',
+    seats: { businessClass: 0, firstClass: 30, secondClass: 200, premiumSleeper: 0, softSleeper: 0, hardSleeper: 0, hardSeat: 0 }
+  },
+  {
+    id: 15,
+    trainNumber: 'Z22',
+    departureStation: '上海',
+    arrivalStation: '北京',
+    departureTime: '21:00',
+    arrivalTime: '08:00+1',
+    duration: '11小时00分',
+    type: '直达',
+    seats: { businessClass: 0, firstClass: 0, secondClass: 0, premiumSleeper: 8, softSleeper: 24, hardSleeper: 60, hardSeat: 0 }
+  },
+  {
+    id: 16,
+    trainNumber: 'K528',
+    departureStation: '北京',
+    arrivalStation: '济南',
+    departureTime: '06:00',
+    arrivalTime: '12:30',
+    duration: '6小时30分',
+    type: '快速',
+    seats: { businessClass: 0, firstClass: 0, secondClass: 0, premiumSleeper: 0, softSleeper: 10, hardSleeper: 30, hardSeat: 150 }
+  }
 ];
 
 // 验证日期格式
@@ -260,7 +306,7 @@ function isPastDate(dateString) {
 
 // GET /api/tickets/trains
 router.get('/search', (req, res) => {
-  const { from, to, date, trainType, page = 1, pageSize = 10 } = req.query;
+  const { from, to, date, trainType, departureTime: depRange, sortBy, page = 1, pageSize = 10 } = req.query;
 
   // 验证必填参数
   if (!from || !to || !date) {
@@ -286,48 +332,123 @@ router.get('/search', (req, res) => {
     });
   }
 
-  // 过滤列车类型
-  let filteredTrains = mockTrains;
-  if (trainType) {
-    // 根据车次号首字母过滤
-    filteredTrains = mockTrains.filter(train => train.trainNumber.startsWith(trainType));
+  // 从数据库查询
+  const validTypePrefixes = ['G','D','Z','T','K'];
+  const params = [];
+  let where = 'WHERE 1=1';
+  if (trainType && validTypePrefixes.includes(trainType)) {
+    where += ' AND train_number LIKE ?';
+    params.push(`${trainType}%`);
+  }
+  if (from) {
+    where += ' AND LOWER(departure_station) LIKE ?';
+    params.push(`%${String(from).trim().toLowerCase()}%`);
+  }
+  if (to) {
+    where += ' AND LOWER(arrival_station) LIKE ?';
+    params.push(`%${String(to).trim().toLowerCase()}%`);
   }
 
-  // 模拟根据出发地和目的地过滤（简化处理）
-  // 在实际应用中，这里应该根据实际的站点信息进行过滤
-  if (from === '不存在的城市' || to === '另一个不存在的城市') {
-    filteredTrains = [];
-  }
+  db.all(`SELECT * FROM trains ${where}`, params, (err, rows) => {
+    let filteredTrains;
+    if (err) {
+      console.error('查询列车库失败，使用兜底数据:', err.message);
+      filteredTrains = mockTrains;
+    } else {
+      filteredTrains = rows.map(r => ({
+        trainNumber: r.train_number,
+        departureStation: r.departure_station,
+        arrivalStation: r.arrival_station,
+        departureTime: r.departure_time,
+        arrivalTime: r.arrival_time,
+        duration: r.duration,
+        type: r.type_prefix,
+        seats: {
+          businessClass: r.business_class,
+          firstClass: r.first_class,
+          secondClass: r.second_class,
+          premiumSleeper: r.premium_sleeper,
+          softSleeper: r.soft_sleeper,
+          hardSleeper: r.hard_sleeper,
+          hardSeat: r.hard_seat
+        }
+      }));
+    }
+
+    // 出发时间筛选（例如 06-12）
+    if (depRange && /^(\d{2})-(\d{2})$/.test(depRange)) {
+      const [startH, endH] = depRange.split('-').map(n => parseInt(n, 10));
+      filteredTrains = filteredTrains.filter(train => {
+        const h = parseInt(train.departureTime.substring(0,2), 10);
+        return h >= startH && h < endH;
+      });
+    }
+
+    // 排序
+    const toMinutes = (dur) => {
+      const m1 = /([0-9]+)小时/.exec(dur);
+      const m2 = /([0-9]+)分/.exec(dur);
+      const h = m1 ? parseInt(m1[1],10) : 0;
+      const m = m2 ? parseInt(m2[1],10) : 0;
+      return h*60 + m;
+    };
+    if (sortBy === 'departure') {
+      filteredTrains.sort((a,b) => a.departureTime.localeCompare(b.departureTime));
+    } else if (sortBy === 'arrival') {
+      filteredTrains.sort((a,b) => a.arrivalTime.localeCompare(b.arrivalTime));
+    } else if (sortBy === 'duration') {
+      filteredTrains.sort((a,b) => toMinutes(a.duration) - toMinutes(b.duration));
+    }
 
   // 分页处理
   const pageNum = parseInt(page);
   const pageSizeNum = parseInt(pageSize);
   const startIndex = (pageNum - 1) * pageSizeNum;
   const endIndex = startIndex + pageSizeNum;
-  const paginatedTrains = filteredTrains.slice(startIndex, endIndex);
+    const paginatedTrains = filteredTrains.slice(startIndex, endIndex);
 
-  // 构造响应数据
-  const response = {
-    success: true,
-    data: paginatedTrains.map(train => ({
-      id: train.id,
-      trainNumber: train.trainNumber,
-      departureStation: train.departureStation,
-      arrivalStation: train.arrivalStation,
-      departureTime: train.departureTime,
-      arrivalTime: train.arrivalTime,
-      duration: train.duration,
-      type: train.type,
-      seats: train.seats
-    })),
-    pagination: {
-      page: pageNum,
-      pageSize: pageSizeNum,
-      total: filteredTrains.length
-    }
+  // 座位类型价格映射
+  const priceMap = {
+    businessClass: 1748,
+    firstClass: 933,
+    secondClass: 553,
+    premiumSleeper: 300,
+    softSleeper: 243,
+    hardSleeper: 156,
+    hardSeat: 89
   };
 
-  res.status(200).json(response);
+  // 转换为测试期望的数据结构
+    const transformedTrains = paginatedTrains.map(train => {
+      const seatTypes = Object.entries(train.seats).map(([key, available]) => ({
+        type: key,
+        price: priceMap[key] || 100,
+        available
+      }));
+
+      return {
+        trainNumber: train.trainNumber,
+        from: train.departureStation,
+        to: train.arrivalStation,
+        departureTime: train.departureTime,
+        arrivalTime: train.arrivalTime,
+        duration: train.duration,
+        seatTypes
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        trains: transformedTrains,
+        pagination: {
+          page: pageNum,
+          pageSize: pageSizeNum,
+          total: filteredTrains.length
+        }
+      }
+    });
+  });
 });
 
 module.exports = router;

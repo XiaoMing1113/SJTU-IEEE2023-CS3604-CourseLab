@@ -2,44 +2,38 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 
-// 模拟数据库存储
+// 模拟库存仍使用内存结构，订单持久化到数据库
 const orders = new Map();
 const ticketInventory = new Map();
+const { Order } = require('../models/Order');
+const { db } = require('../database/init');
 
 // 初始化票务库存
 const initializeInventory = () => {
-  const trains = ['G1', 'G3', 'D101', 'K1157', 'G7'];
-  const seatTypes = {
-    'G1': [
-      { type: '商务座', count: 5 }, { type: 'business', count: 5 },
-      { type: '一等座', count: 20 }, { type: 'first', count: 20 },
-      { type: '二等座', count: 50 }, { type: 'second', count: 50 }
-    ],
-    'G3': [
-      { type: '商务座', count: 3 }, { type: 'business', count: 3 },
-      { type: '一等座', count: 15 }, { type: 'first', count: 15 },
-      { type: '二等座', count: 80 }, { type: 'second', count: 80 }
-    ],
-    'D101': [
-      { type: '一等座', count: 25 }, { type: 'first', count: 25 },
-      { type: '二等座', count: 120 }, { type: 'second', count: 120 }
-    ],
-    'K1157': [
-      { type: '硬卧', count: 40 }, { type: 'hard_sleeper', count: 40 },
-      { type: '软卧', count: 20 }, { type: 'soft_sleeper', count: 20 },
-      { type: '硬座', count: 200 }, { type: 'hard_seat', count: 200 }
-    ],
-    'G7': [
-      { type: '商务座', count: 8 }, { type: 'business', count: 8 },
-      { type: '一等座', count: 30 }, { type: 'first', count: 30 },
-      { type: '二等座', count: 100 }, { type: 'second', count: 100 }
-    ]
-  };
-
-  trains.forEach(trainNumber => {
-    seatTypes[trainNumber].forEach(seat => {
-      const key = `${trainNumber}_${seat.type}`;
-      ticketInventory.set(key, seat.count);
+  db.all('SELECT train_number, business_class, first_class, second_class, premium_sleeper, soft_sleeper, hard_sleeper, hard_seat FROM trains', [], (err, rows) => {
+    if (err || !rows || rows.length === 0) {
+      // 兜底：如果数据库不可用，则不做填充，保持已有内存初始化
+      return;
+    }
+    rows.forEach(r => {
+      const trainNumber = r.train_number;
+      const pairs = [
+        ['business', r.business_class], ['商务座', r.business_class],
+        ['first', r.first_class], ['一等座', r.first_class],
+        ['second', r.second_class], ['二等座', r.second_class],
+        ['premium_sleeper', r.premium_sleeper],
+        ['soft_sleeper', r.soft_sleeper], ['软卧', r.soft_sleeper],
+        ['hard_sleeper', r.hard_sleeper], ['硬卧', r.hard_sleeper],
+        ['hard_seat', r.hard_seat], ['硬座', r.hard_seat]
+      ];
+      pairs.forEach(([type, count]) => {
+        if (count != null && count >= 0) {
+          const key = `${trainNumber}_${type}`;
+          if (!ticketInventory.has(key)) {
+            ticketInventory.set(key, count);
+          }
+        }
+      });
     });
   });
 };
@@ -82,7 +76,7 @@ function isValidPhoneNumber(phone) {
 }
 
 // POST /api/orders
-router.post('/', authenticateToken, (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   const { trainNumber, date, from, to, passengers } = req.body;
   const userId = req.user.userId;
 
@@ -160,139 +154,138 @@ router.post('/', authenticateToken, (req, res) => {
   }
 
   // 创建订单
-  const orderId = `ORDER${Date.now()}${Math.random().toString(36).substr(2, 9)}`;
-  const paymentDeadline = new Date(Date.now() + 30 * 60 * 1000).toISOString();
+  try {
+    const orderId = `ORDER${Date.now()}${Math.random().toString(36).substr(2, 9)}`;
+    const paymentDeadline = new Date(Date.now() + 30 * 60 * 1000).toISOString();
 
-  const order = {
-    orderId,
-    userId,
-    trainNumber,
-    date,
-    from,
-    to,
-    passengers,
-    totalAmount,
-    status: 'PENDING_PAYMENT',
-    paymentDeadline,
-    createdAt: new Date().toISOString()
-  };
-
-  orders.set(orderId, order);
-
-  res.status(201).json({
-    success: true,
-    data: {
+    await Order.create({
       orderId,
-      status: 'PENDING_PAYMENT',
+      userId,
+      trainNumber,
+      date,
+      from,
+      to,
       totalAmount,
+      status: 'PENDING_PAYMENT',
       paymentDeadline
-    }
-  });
+    });
+
+    await Order.addPassengers(orderId, passengers);
+
+    // 兼容旧逻辑：放入内存，供支付模块使用
+    orders.set(orderId, {
+      orderId,
+      userId,
+      trainNumber,
+      date,
+      from,
+      to,
+      passengers,
+      totalAmount,
+      status: 'PENDING_PAYMENT',
+      paymentDeadline,
+      createdAt: new Date().toISOString()
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        orderId,
+        status: 'PENDING_PAYMENT',
+        totalAmount,
+        paymentDeadline
+      }
+    });
+  } catch (e) {
+    console.error('创建订单失败:', e);
+    res.status(500).json({ success: false, message: '创建订单失败' });
+  }
 });
 
 // GET /api/orders/:orderId
-router.get('/:orderId', authenticateToken, (req, res) => {
+router.get('/:orderId', authenticateToken, async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.userId;
+  try {
+    const order = await Order.getById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: '订单不存在' });
+    }
+    if (order.userId !== userId) {
+      return res.status(403).json({ success: false, message: '无权访问此订单' });
+    }
 
-  const order = orders.get(orderId);
+    const responseData = {
+      orderId: order.orderId,
+      status: order.status,
+      trainInfo: {
+        trainNumber: order.trainNumber,
+        date: order.date,
+        from: order.from,
+        to: order.to
+      },
+      passengers: order.passengers,
+      totalAmount: order.totalAmount,
+      paymentDeadline: order.paymentDeadline,
+      createdAt: order.createdAt
+    };
 
-  if (!order) {
-    return res.status(404).json({ 
-      success: false, 
-      message: '订单不存在' 
-    });
+    if (order.status === 'PAID' && order.ticketInfo) {
+      responseData.ticketInfo = order.ticketInfo;
+    }
+
+    res.json({ success: true, data: responseData });
+  } catch (e) {
+    console.error('获取订单失败:', e);
+    res.status(500).json({ success: false, message: '获取订单失败' });
   }
-
-  // 检查订单是否属于当前用户
-  if (order.userId !== userId) {
-    return res.status(403).json({ 
-      success: false, 
-      message: '无权访问此订单' 
-    });
-  }
-
-  const responseData = {
-    orderId: order.orderId,
-    status: order.status,
-    trainInfo: {
-      trainNumber: order.trainNumber,
-      date: order.date,
-      from: order.from,
-      to: order.to
-    },
-    passengers: order.passengers,
-    totalAmount: order.totalAmount,
-    paymentDeadline: order.paymentDeadline,
-    createdAt: order.createdAt
-  };
-
-  // 如果订单已支付，包含票务信息
-  if (order.status === 'PAID' && order.ticketInfo) {
-    responseData.ticketInfo = order.ticketInfo;
-  }
-
-  res.json({
-    success: true,
-    data: responseData
-  });
 });
 
 // POST /api/orders/:orderId/cancel
-router.post('/:orderId/cancel', authenticateToken, (req, res) => {
+router.post('/:orderId/cancel', authenticateToken, async (req, res) => {
   const { orderId } = req.params;
   const userId = req.user.userId;
+  try {
+    const order = await Order.getById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: '订单不存在' });
+    }
+    if (order.userId !== userId) {
+      return res.status(403).json({ success: false, message: '无权访问此订单' });
+    }
+    if (order.status !== 'PENDING_PAYMENT') {
+      return res.status(400).json({ success: false, message: '订单状态不允许取消' });
+    }
 
-  const order = orders.get(orderId);
-  
-  if (!order) {
-    return res.status(404).json({ 
-      success: false, 
-      message: '订单不存在' 
-    });
+    // 恢复库存
+    const seatRequests = {};
+    for (const passenger of order.passengers) {
+      const seatType = passenger.seatType;
+      seatRequests[seatType] = (seatRequests[seatType] || 0) + 1;
+    }
+    for (const [seatType, count] of Object.entries(seatRequests)) {
+      const inventoryKey = `${order.trainNumber}_${seatType}`;
+      const currentInventory = ticketInventory.get(inventoryKey) || 0;
+      ticketInventory.set(inventoryKey, currentInventory + count);
+    }
+
+    await Order.updateStatus(orderId, 'CANCELLED');
+    // 兼容旧逻辑：同步内存
+    const mem = orders.get(orderId);
+    if (mem) {
+      mem.status = 'CANCELLED';
+      orders.set(orderId, mem);
+    }
+
+    res.json({ success: true, message: '订单取消成功' });
+  } catch (e) {
+    console.error('取消订单失败:', e);
+    res.status(500).json({ success: false, message: '取消订单失败' });
   }
-
-  // 检查订单是否属于当前用户
-  if (order.userId !== userId) {
-    return res.status(403).json({ 
-      success: false, 
-      message: '无权访问此订单' 
-    });
-  }
-
-  // 只有待支付状态的订单可以取消
-  if (order.status !== 'PENDING_PAYMENT') {
-    return res.status(400).json({ 
-      success: false, 
-      message: '订单状态不允许取消' 
-    });
-  }
-
-  // 恢复库存
-  const seatRequests = {};
-  for (const passenger of order.passengers) {
-    const seatType = passenger.seatType;
-    seatRequests[seatType] = (seatRequests[seatType] || 0) + 1;
-  }
-
-  for (const [seatType, count] of Object.entries(seatRequests)) {
-    const inventoryKey = `${order.trainNumber}_${seatType}`;
-    const currentInventory = ticketInventory.get(inventoryKey) || 0;
-    ticketInventory.set(inventoryKey, currentInventory + count);
-  }
-
-  // 更新订单状态
-  order.status = 'CANCELLED';
-  orders.set(orderId, order);
-
-  res.json({ 
-    success: true, 
-    message: '订单取消成功' 
-  });
 });
 
 // GET /api/orders/user/:userId
-router.get('/user/:userId', authenticateToken, (req, res) => {
+router.get('/user/:userId', authenticateToken, async (req, res) => {
   const { userId } = req.params;
   const { status, page = 1, pageSize = 10 } = req.query;
 
@@ -304,39 +297,60 @@ router.get('/user/:userId', authenticateToken, (req, res) => {
     });
   }
 
-  // 获取用户的所有订单
-  let userOrders = Array.from(orders.values()).filter(order => order.userId === userId);
-
-  // 按状态筛选
-  if (status) {
-    userOrders = userOrders.filter(order => order.status === status);
+  try {
+    const result = await Order.listByUser(userId, { status, page, pageSize });
+    res.json({
+      success: true,
+      data: result
+    });
+  } catch (e) {
+    console.error('获取用户订单列表失败:', e);
+    res.status(500).json({ success: false, message: '获取订单列表失败' });
   }
-
-  // 按创建时间倒序排列
-  userOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  // 分页
-  const pageNum = parseInt(page);
-  const pageSizeNum = parseInt(pageSize);
-  const startIndex = (pageNum - 1) * pageSizeNum;
-  const endIndex = startIndex + pageSizeNum;
-  const paginatedOrders = userOrders.slice(startIndex, endIndex);
-
-  res.json({
-    success: true,
-    data: {
-      orders: paginatedOrders,
-      pagination: {
-        page: pageNum,
-        pageSize: pageSizeNum,
-        totalPages: Math.ceil(userOrders.length / pageSizeNum),
-        totalOrders: userOrders.length,
-        hasNextPage: endIndex < userOrders.length,
-        hasPrevPage: pageNum > 1
-      }
-    }
-  });
 });
 
 module.exports = router;
 module.exports.orders = orders;
+
+// 退票（已支付订单取消并恢复库存）
+router.post('/:orderId/refund', authenticateToken, async (req, res) => {
+  const { orderId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const order = await Order.getById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: '订单不存在' });
+    }
+    if (order.userId !== userId) {
+      return res.status(403).json({ success: false, message: '无权访问此订单' });
+    }
+    if (order.status !== 'PAID') {
+      return res.status(400).json({ success: false, message: '仅支持已支付订单退票' });
+    }
+
+    // 恢复库存
+    const seatRequests = {};
+    for (const passenger of order.passengers) {
+      const seatType = passenger.seatType;
+      seatRequests[seatType] = (seatRequests[seatType] || 0) + 1;
+    }
+    for (const [seatType, count] of Object.entries(seatRequests)) {
+      const inventoryKey = `${order.trainNumber}_${seatType}`;
+      const currentInventory = ticketInventory.get(inventoryKey) || 0;
+      ticketInventory.set(inventoryKey, currentInventory + count);
+    }
+
+    await Order.updateStatus(orderId, 'CANCELLED');
+    const mem = orders.get(orderId);
+    if (mem) {
+      mem.status = 'CANCELLED';
+      orders.set(orderId, mem);
+    }
+
+    res.json({ success: true, message: '退票成功' });
+  } catch (e) {
+    console.error('退票失败:', e);
+    res.status(500).json({ success: false, message: '退票失败' });
+  }
+});

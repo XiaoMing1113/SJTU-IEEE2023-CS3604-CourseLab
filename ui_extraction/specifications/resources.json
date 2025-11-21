@@ -1,0 +1,254 @@
+{
+  "images": [
+    {
+      "alt": "加载中",
+      "height": 66,
+      "src": "https://kyfw.12306.cn/otn/resources/images/loading.gif",
+      "width": 66
+    },
+    {
+      "alt": "使用12306APP扫描本二维码进行登录",
+      "height": 0,
+      "src": "",
+      "width": 0
+    },
+    {
+      "alt": "",
+      "height": 360,
+      "src": "https://kyfw.12306.cn/otn/resources/images/code-tips.png",
+      "width": 310
+    },
+    {
+      "alt": "",
+      "height": 224,
+      "src": "https://kyfw.12306.cn/otn/resources/images/login-success.png",
+      "width": 132
+    },
+    {
+      "alt": "",
+      "height": 258,
+      "src": "https://kyfw.12306.cn/otn/resources/images/download.png",
+      "width": 258
+    },
+    {
+      "alt": "",
+      "height": 200,
+      "src": "https://kyfw.12306.cn/otn/resources/images/login/counter.png",
+      "width": 200
+    },
+    {
+      "alt": "中国国家铁路集团有限公司",
+      "height": 51,
+      "src": "https://kyfw.12306.cn/otn/resources/images/link05.png",
+      "width": 300
+    },
+    {
+      "alt": "中国铁路财产保险自保有限公司",
+      "height": 68,
+      "src": "https://kyfw.12306.cn/otn/resources/images/link02.png",
+      "width": 400
+    },
+    {
+      "alt": "中国铁路95306网",
+      "height": 136,
+      "src": "https://kyfw.12306.cn/otn/resources/images/link03.png",
+      "width": 800
+    },
+    {
+      "alt": "中铁快运股份有限公司",
+      "height": 68,
+      "src": "https://kyfw.12306.cn/otn/resources/images/link04.png",
+      "width": 400
+    },
+    {
+      "alt": "中国铁路官方微信",
+      "height": 344,
+      "src": "https://kyfw.12306.cn/otn/resources/images/zgtlwb.png",
+      "width": 344
+    },
+    {
+      "alt": "中国铁路官方微博",
+      "height": 800,
+      "src": "https://kyfw.12306.cn/otn/resources/images/zgtlwx.png",
+      "width": 800
+    },
+    {
+      "alt": "12306 公众号",
+      "height": 258,
+      "src": "https://kyfw.12306.cn/otn/resources/images/public.png",
+      "width": 258
+    },
+    {
+      "alt": "铁路12306",
+      "height": 258,
+      "src": "https://kyfw.12306.cn/otn/resources/images/download.png",
+      "width": 258
+    },
+    {
+      "alt": "中国国家铁路集团有限公司",
+      "height": 18,
+      "src": "https://kyfw.12306.cn/otn/resources/images/gongan.png",
+      "width": 18
+    },
+    {
+      "alt": "中国国家铁路集团有限公司",
+      "height": 47,
+      "src": "https://kyfw.12306.cn/otn/resources/images/footer-slh.jpg",
+      "width": 131
+    },
+    {
+      "alt": "滑动验证码",
+      "height": 288,
+      "src": "https://kyfw.12306.cn/otn/resources/images/slide.png",
+      "width": 560
+    },
+    {
+      "alt": "重新设置Shift+1",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/reflash1.png",
+      "width": 50
+    },
+    {
+      "alt": "声音",
+      "height": 60,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/sound_normal.png",
+      "width": 60
+    },
+    {
+      "alt": "语速",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/vol_normal.png",
+      "width": 50
+    },
+    {
+      "alt": "阅读方式",
+      "height": 41,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/point2.png",
+      "width": 44
+    },
+    {
+      "alt": "切换配色Shift+5",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/color1.png",
+      "width": 50
+    },
+    {
+      "alt": "网页放大Shift+6",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/enlarge1.png",
+      "width": 50
+    },
+    {
+      "alt": "网页缩小Shift+7",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/small1.png",
+      "width": 50
+    },
+    {
+      "alt": "当前大鼠标已关闭，开启大鼠标Shift+8",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/reflash2.png",
+      "width": 50
+    },
+    {
+      "alt": "当前十字光标已关闭，关闭十字光标Shift+9",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/cursor1.png",
+      "width": 50
+    },
+    {
+      "alt": "切换显示屏Shift+0",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/screen1.png",
+      "width": 50
+    },
+    {
+      "alt": "开启帮助Shift+问号键",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/help1.png",
+      "width": 50
+    },
+    {
+      "alt": "下载快捷方式 Shift+D",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/left_img5.png",
+      "width": 50
+    },
+    {
+      "alt": "读屏专用：快捷键Shift+N，适用于使用读屏软件的用户，若无读屏软件可通过Shift+2开启声音获取语音提示",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/toOriginal.png",
+      "width": 50
+    },
+    {
+      "alt": "关闭辅助工具Shift+Q",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/exit1.png",
+      "width": 50
+    },
+    {
+      "alt": "智能导盲区域指引",
+      "height": 74,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/top_pic.png",
+      "width": 140
+    },
+    {
+      "alt": "声音开关",
+      "height": 60,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/sound_normal.png",
+      "width": 60
+    },
+    {
+      "alt": "开启帮助Shift+问号键",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/help1.png",
+      "width": 50
+    },
+    {
+      "alt": "显示屏",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/screen1.png",
+      "width": 50
+    },
+    {
+      "alt": "老人服务：快捷键Shift+N",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/left_img2.png",
+      "width": 50
+    },
+    {
+      "alt": "关闭辅助工具Shift+Q",
+      "height": 50,
+      "src": "https://kyfw.12306.cn/otn/resources/toolbar/img/exit1.png",
+      "width": 50
+    }
+  ],
+  "scripts": [
+    "https://kyfw.12306.cn/otn/resources/toolbar/jquery.js",
+    "https://kyfw.12306.cn/otn/resources/toolbar/base64.js",
+    "https://kyfw.12306.cn/otn/resources/toolbar/soundmanager2.js",
+    "https://kyfw.12306.cn/otn/resources/toolbar/pinyin.js",
+    "https://kyfw.12306.cn/otn/resources/toolbar/handleInnerIframe.js",
+    "https://kyfw.12306.cn/otn/resources/toolbar/toolbar.js",
+    "https://kyfw.12306.cn/otn/resources/js/framework/jquery-1.9.1.js",
+    "https://g.alicdn.com/sd/ncpc/nc.js?t=2015052012",
+    "https://kyfw.12306.cn/otn/resources/js/framework/jquery.SuperSlide2.js",
+    "https://kyfw.12306.cn/otn/resources/js/framework/jquery.cookie.js",
+    "https://kyfw.12306.cn/otn/resources/js/framework/base64js.min.js",
+    "https://kyfw.12306.cn/otn/resources/js/framework/SM4.js",
+    "https://kyfw.12306.cn/otn/resources/js/login_new_v20221230.js",
+    "https://kyfw.12306.cn/otn/resources/route/kyfw.12306.cn/route.js",
+    "https://kyfw.12306.cn/otn/resources/route/kyfw.12306.cn/otn/route.js",
+    "https://kyfw.12306.cn/otn/resources/route/kyfw.12306.cn/otn/resources/route.js",
+    "https://kyfw.12306.cn/otn/resources/route/kyfw.12306.cn/otn/resources/login.html.js"
+  ],
+  "stylesheets": [
+    "https://kyfw.12306.cn/otn/resources/css/global.css",
+    "https://kyfw.12306.cn/otn/resources/css/common.css",
+    "https://kyfw.12306.cn/otn/resources/css/public.css",
+    "https://kyfw.12306.cn/otn/resources/css/login.css",
+    "https://kyfw.12306.cn/otn/resources/fonts/iconfont.css",
+    "https://kyfw.12306.cn/otn/resources/toolbar/css/toolbar.css",
+    "https://kyfw.12306.cn/otn/resources/toolbar/css/toolbarmain.css"
+  ]
+}

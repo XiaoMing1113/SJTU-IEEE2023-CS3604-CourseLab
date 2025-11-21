@@ -100,7 +100,7 @@
   border: 1px solid #ccc;
   border-radius: 3px;
   font-size: 13px;
-  min-width: 80px;
+  min-width: 160px;
   background: white;
 }
 
@@ -127,14 +127,19 @@
 }
 
 .swap-btn {
-  background: none;
+  background: #f8f9fa;
   border: 1px solid #ccc;
   color: #0066cc;
   cursor: pointer;
   font-size: 14px;
-  padding: 4px 8px;
-  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: all 0.3s;
+  margin: 0 8px;
 }
 
 .swap-btn:hover {

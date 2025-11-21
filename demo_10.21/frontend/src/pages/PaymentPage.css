@@ -1,0 +1,32 @@
+.payment-page { background: #f5f6fa; padding: 24px; display: flex; justify-content: center; }
+.payment-card { width: 800px; background: #fff; border: 1px solid #e0e6ef; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); overflow: hidden; }
+.card-header { background: linear-gradient(90deg,#1768fd,#4aa3ff); color: #fff; padding: 16px 20px; }
+.card-header .title { font-size: 18px; font-weight: 700; }
+.card-header .subtitle { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.order-info { display: flex; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f0f2f5; }
+.order-info .route { color: #495057; }
+.order-info .amount { color: #ff7a00; font-weight: 700; }
+.order-info .status { color: #6c757d; }
+.method-box { padding: 14px 20px; }
+.method-title { font-weight: 600; margin-bottom: 8px; }
+.method-options { display: flex; gap: 16px; }
+.method-option { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #e0e6ef; border-radius: 6px; cursor: pointer; }
+.method-option.active { border-color: #1768fd; background: #f0f6ff; }
+.actions { padding: 14px 20px; display: flex; flex-direction: column; gap: 12px; }
+.primary-btn { background: #1768fd; color: #fff; border: none; border-radius: 6px; padding: 10px 16px; cursor: pointer; }
+.qr-box { display: flex; align-items: center; gap: 16px; }
+.qr-box img { width: 160px; height: 160px; border: 1px solid #e0e6ef; border-radius: 6px; }
+.qr-tip { color: #6c757d; }
+.link-btn { color: #1768fd; text-decoration: none; border: 1px solid #1768fd; border-radius: 6px; padding: 8px 12px; display: inline-block; }
+.simulate-box { display: flex; gap: 8px; }
+.success-btn { background: #28a745; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+.danger-btn { background: #dc3545; color: #fff; border: none; border-radius: 6px; padding: 8px 12px; cursor: pointer; }
+
+/* 支付结果弹窗 */
+.pay-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.pay-modal-card { width: 520px; background: #fff; border-radius: 10px; box-shadow: 0 10px 24px rgba(0,0,0,0.2); overflow: hidden; }
+.pay-modal-title { padding: 12px 16px; font-weight: 700; color: #fff; }
+.pay-modal-title.success { background: #28a745; }
+.pay-modal-title.danger { background: #dc3545; }
+.pay-modal-content { padding: 16px; color: #444; }
+.pay-modal-actions { padding: 0 16px 16px; display: flex; justify-content: flex-end; }

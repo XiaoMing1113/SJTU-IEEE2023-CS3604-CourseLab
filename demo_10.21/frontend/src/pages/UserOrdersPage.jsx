@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getUserOrders, cancelOrder, refundOrder } from '../services/api'
 import './UserOrdersPage.css'
 
 const UserOrdersPage = () => {
@@ -7,53 +8,52 @@ const UserOrdersPage = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('all')
-
-  // 模拟订单数据
-  const mockOrders = [
-    {
-      id: 'E123456789',
-      trainNumber: 'G103',
-      date: '2024-01-15',
-      departureTime: '06:20',
-      arrivalTime: '10:38',
-      from: '北京南',
-      to: '上海虹桥',
-      passengers: [
-        { name: '张三', idCard: '110101199001011234', seatType: '二等座', seatNumber: '05车06A' }
-      ],
-      totalAmount: 553,
-      status: 'PAID',
-      orderTime: '2024-01-10 14:30:25',
-      paymentTime: '2024-01-10 14:32:15'
-    },
-    {
-      id: 'E987654321',
-      trainNumber: 'G1',
-      date: '2024-01-20',
-      departureTime: '07:00',
-      arrivalTime: '11:05',
-      from: '北京南',
-      to: '上海虹桥',
-      passengers: [
-        { name: '李四', idCard: '110101199002021234', seatType: '一等座', seatNumber: '03车02A' }
-      ],
-      totalAmount: 933,
-      status: 'COMPLETED',
-      orderTime: '2024-01-15 09:15:30',
-      paymentTime: '2024-01-15 09:17:45'
-    }
-  ]
+  const [confirmModal, setConfirmModal] = useState({ visible: false, type: '', orderId: '', submitting: false, error: '' })
 
   useEffect(() => {
-    // 模拟API调用
-    setTimeout(() => {
-      setOrders(mockOrders)
-      setLoading(false)
-    }, 1000)
+    const fetchOrders = async () => {
+      try {
+        const userRaw = localStorage.getItem('user')
+        const user = userRaw ? JSON.parse(userRaw) : null
+        const userId = user?.id || user?.userId || user?.user_id
+        if (!userId) {
+          setOrders([])
+          setLoading(false)
+          return
+        }
+        const res = await getUserOrders(userId)
+        const list = res?.data?.orders || []
+        // 映射为界面展示所需字段
+        const mapped = list
+          .filter(o => o.status !== 'CANCELLED')
+          .map(o => ({
+            id: o.orderId,
+            trainNumber: o.trainNumber,
+            date: o.date,
+            from: o.from,
+            to: o.to,
+            passengers: (o.ticketInfo?.passengers && o.status === 'PAID' ? o.ticketInfo.passengers : (o.passengers || [])).map(p => ({
+              name: p.name,
+              seatType: p.seatType,
+              seatNumber: ''
+            })),
+            totalAmount: o.totalAmount,
+            status: o.status,
+            orderTime: o.createdAt,
+            paymentTime: o.paidAt || ''
+          }))
+        setOrders(mapped)
+      } catch (e) {
+        setOrders([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchOrders()
   }, [])
 
   const filteredOrders = orders.filter(order => {
-    if (activeTab === 'all') return true
+    if (activeTab === 'all') return order.status !== 'CANCELLED'
     if (activeTab === 'unpaid') return order.status === 'PENDING_PAYMENT'
     if (activeTab === 'upcoming') return order.status === 'PAID'
     if (activeTab === 'completed') return order.status === 'COMPLETED'
@@ -218,11 +218,7 @@ const UserOrdersPage = () => {
                       </button>
                       <button 
                         className="action-btn danger"
-                        onClick={() => {
-                          if (window.confirm('确定要取消订单吗？')) {
-                            // TODO: 实现取消订单逻辑
-                          }
-                        }}
+                        onClick={() => setConfirmModal({ visible: true, type: 'cancel', orderId: order.id, submitting: false, error: '' })}
                       >
                         取消订单
                       </button>
@@ -230,14 +226,15 @@ const UserOrdersPage = () => {
                   )}
                   
                   {order.status === 'PAID' && (
-                    <button 
-                      className="action-btn secondary"
-                      onClick={() => {
-                        // TODO: 实现退票逻辑
-                      }}
-                    >
-                      申请退票
-                    </button>
+                    <>
+                      <button className="action-btn disabled" disabled>已支付</button>
+                      <button 
+                        className="action-btn secondary"
+                        onClick={() => setConfirmModal({ visible: true, type: 'refund', orderId: order.id, submitting: false, error: '' })}
+                      >
+                        申请退票
+                      </button>
+                    </>
                   )}
                   
                   {order.status === 'COMPLETED' && (
@@ -254,6 +251,39 @@ const UserOrdersPage = () => {
           </div>
         )}
       </div>
+      {confirmModal.visible && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <div className="modal-title">{confirmModal.type === 'cancel' ? '取消订单' : '申请退票'}</div>
+            <div className="modal-content">
+              {confirmModal.type === 'cancel' ? '确定要取消该订单吗？取消后不可恢复。' : '确定要为该已支付订单申请退票吗？退票后将恢复余票。'}
+              {confirmModal.error && <div className="modal-error">{confirmModal.error}</div>}
+            </div>
+            <div className="modal-actions">
+              <button className="modal-btn" onClick={() => setConfirmModal({ visible: false, type: '', orderId: '', submitting: false, error: '' })}>再想想</button>
+              <button 
+                className="modal-btn primary" 
+                disabled={confirmModal.submitting}
+                onClick={async () => {
+                  try {
+                    setConfirmModal({ ...confirmModal, submitting: true, error: '' })
+                    if (confirmModal.type === 'cancel') {
+                      await cancelOrder(confirmModal.orderId)
+                    } else {
+                      await refundOrder(confirmModal.orderId)
+                    }
+                    window.location.reload()
+                  } catch (e) {
+                    setConfirmModal({ ...confirmModal, submitting: false, error: (e?.toString?.() || '操作失败') })
+                  }
+                }}
+              >
+                {confirmModal.submitting ? '处理中…' : '确认'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

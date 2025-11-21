@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../styles/SearchResults.css';
+import { searchTrains } from '../services/api';
+import './SearchResults.css';
 
 const SearchResultsPage = () => {
   const location = useLocation();
@@ -30,188 +31,49 @@ const SearchResultsPage = () => {
   const fetchTrains = async () => {
     setLoading(true);
     setError(null);
-    
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // 模拟数据 - 更丰富的车次信息
-      const mockTrains = [
-        {
-          id: 'G103',
-          trainNumber: 'G103',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '06:20',
-          arrivalTime: '10:38',
-          duration: '4小时18分',
-          businessSeat: '3',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G1',
-          trainNumber: 'G1',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '07:00',
-          arrivalTime: '11:05',
-          duration: '4小时5分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G105',
-          trainNumber: 'G105',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '07:17',
-          arrivalTime: '11:40',
-          duration: '4小时23分',
-          businessSeat: '10',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G107',
-          trainNumber: 'G107',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '07:25',
-          arrivalTime: '11:47',
-          duration: '4小时22分',
-          businessSeat: '10',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G3',
-          trainNumber: 'G3',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '07:40',
-          arrivalTime: '11:52',
-          duration: '4小时12分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G109',
-          trainNumber: 'G109',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '07:45',
-          arrivalTime: '12:04',
-          duration: '4小时19分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G111',
-          trainNumber: 'G111',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '08:16',
-          arrivalTime: '12:35',
-          duration: '4小时19分',
-          businessSeat: '2',
-          firstClass: '2',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G113',
-          trainNumber: 'G113',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '08:34',
-          arrivalTime: '12:47',
-          duration: '4小时13分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G5',
-          trainNumber: 'G5',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '09:00',
-          arrivalTime: '13:17',
-          duration: '4小时17分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
-        },
-        {
-          id: 'G115',
-          trainNumber: 'G115',
-          departureStation: searchConditions.from || '北京南',
-          arrivalStation: searchConditions.to || '上海虹桥',
-          departureTime: '09:10',
-          arrivalTime: '13:38',
-          duration: '4小时28分',
-          businessSeat: '有',
-          firstClass: '有',
-          secondClass: '有',
-          hardSleeper: '--',
-          softSleeper: '--',
-          hardSeat: '--',
-          noSeat: '--',
-          price: '553'
+      const today = new Date();
+      const isoDate = today.toISOString().slice(0,10);
+      const params = {
+        ...searchConditions,
+        date: searchConditions.date || isoDate,
+        trainType: filters.trainType === 'all' ? undefined : filters.trainType,
+        departureTime: filters.departureTime === 'all' ? undefined : filters.departureTime,
+        sortBy
+      };
+      const result = await searchTrains(params);
+      // API 返回可能是数组或包含 data.trains
+      const list = Array.isArray(result) ? result : result?.data?.trains || [];
+      const normalized = list.map(t => {
+        if (t.seatTypes && !t.seats) {
+          const seatsObj = {};
+          t.seatTypes.forEach(s => {
+            const map = {
+              '商务座': 'businessClass', 'business': 'businessClass',
+              '一等座': 'firstClass', 'first': 'firstClass',
+              '二等座': 'secondClass', 'second': 'secondClass',
+              '软卧': 'softSleeper', 'soft_sleeper': 'softSleeper',
+              '硬卧': 'hardSleeper', 'hard_sleeper': 'hardSleeper',
+              '硬座': 'hardSeat', 'hard_seat': 'hardSeat'
+            };
+            const key = map[s.type] || s.type;
+            seatsObj[key] = { available: s.available ?? s.count ?? 0, price: s.price ?? (key === 'businessClass' ? 1748 : key === 'firstClass' ? 933 : key === 'secondClass' ? 553 : key === 'softSleeper' ? 243 : key === 'hardSleeper' ? 156 : key === 'hardSeat' ? 89 : 100) };
+          });
+          return {
+            trainNumber: t.trainNumber,
+            departureStation: t.from || t.departureStation,
+            arrivalStation: t.to || t.arrivalStation,
+            departureTime: t.departureTime,
+            arrivalTime: t.arrivalTime,
+            duration: t.duration,
+            seats: seatsObj
+          };
         }
-      ];
-      
-      setTrains(mockTrains);
+        return t;
+      });
+      setTrains(normalized);
     } catch (err) {
-      setError('获取车次信息失败，请重试');
+      setError(err?.toString?.() || String(err));
     } finally {
       setLoading(false);
     }
@@ -234,6 +96,7 @@ const SearchResultsPage = () => {
 
   const handleBooking = (train) => {
     // 跳转到订票页面
+    console.log('点击预订', train.trainNumber);
     navigate('/booking', { state: { train, searchConditions } });
   };
 
@@ -427,22 +290,32 @@ const SearchResultsPage = () => {
 
       {/* 车次列表 */}
       <div className="results-container">
+        {!loading && !error && (
+          <div className="results-summary">
+            <span>{searchConditions.from}</span>
+            <span> → </span>
+            <span>{searchConditions.to}</span>
+            <span> · </span>
+            <span>{searchConditions.date}</span>
+          </div>
+        )}
         {loading && (
           <div className="loading">
-            <span className="loading-text">正在加载车次信息</span>
+            <span className="loading-text">正在搜索列车信息...</span>
           </div>
         )}
 
         {error && (
           <div className="error">
-            {error}
+            <div>搜索失败：{error}</div>
+            <button className="retry-btn" onClick={fetchTrains}>重新搜索</button>
           </div>
         )}
 
         {!loading && !error && trains.length === 0 && (
           <div className="no-results">
-            <h3>未找到符合条件的车次</h3>
-            <p>请尝试修改搜索条件或选择其他日期</p>
+            <h3>未找到符合条件的列车</h3>
+            <p>请尝试修改搜索条件</p>
           </div>
         )}
 
@@ -453,18 +326,19 @@ const SearchResultsPage = () => {
               <div>出发站</div>
               <div>到达站</div>
               <div>历时</div>
-              <div>商务座</div>
-              <div>一等座</div>
-              <div>二等座</div>
+              <div>商务</div>
+              <div>一等</div>
+              <div>二等</div>
               <div>硬卧</div>
               <div>软卧</div>
               <div>硬座</div>
               <div>无座</div>
-              <div>预订</div>
+              <div>操作</div>
             </div>
+            {/* 已移除中间的刷新按钮，若需刷新可使用顶部“查询” */}
             <div className="train-list">
-              {trains.map((train) => (
-                <div key={train.id} className="train-item">
+              {trains.map((train, idx) => (
+                <div key={train.trainNumber + idx} className="train-item">
                   <div className="train-number">{train.trainNumber}</div>
                   <div className="station-info">
                     <div className="station-name">{train.departureStation}</div>
@@ -475,26 +349,20 @@ const SearchResultsPage = () => {
                     <div className="station-time">{train.arrivalTime}</div>
                   </div>
                   <div className="duration">{train.duration}</div>
-                  <div className={`seat-info ${getSeatClass(train.businessSeat)}`}>
-                    {train.businessSeat}
+                  <div className="seat-block">
+                    <div className="seat-type">商务座</div>
+                    <div className="seat-price">{`¥${train.seats?.businessClass?.price ?? ''}`}</div>
+                    <div className="seat-available">{train.seats?.businessClass?.available > 0 ? `余${train.seats.businessClass.available}张` : '无票'}</div>
                   </div>
-                  <div className={`seat-info ${getSeatClass(train.firstClass)}`}>
-                    {train.firstClass}
+                  <div className="seat-block">
+                    <div className="seat-type">一等座</div>
+                    <div className="seat-price">{`¥${train.seats?.firstClass?.price ?? ''}`}</div>
+                    <div className="seat-available">{train.seats?.firstClass?.available > 0 ? `余${train.seats.firstClass.available}张` : '无票'}</div>
                   </div>
-                  <div className={`seat-info ${getSeatClass(train.secondClass)}`}>
-                    {train.secondClass}
-                  </div>
-                  <div className={`seat-info ${getSeatClass(train.hardSleeper)}`}>
-                    {train.hardSleeper}
-                  </div>
-                  <div className={`seat-info ${getSeatClass(train.softSleeper)}`}>
-                    {train.softSleeper}
-                  </div>
-                  <div className={`seat-info ${getSeatClass(train.hardSeat)}`}>
-                    {train.hardSeat}
-                  </div>
-                  <div className={`seat-info ${getSeatClass(train.noSeat)}`}>
-                    {train.noSeat}
+                  <div className="seat-block">
+                    <div className="seat-type">二等座</div>
+                    <div className="seat-price">{`¥${train.seats?.secondClass?.price ?? ''}`}</div>
+                    <div className="seat-available">{train.seats?.secondClass?.available > 0 ? `余${train.seats.secondClass.available}张` : '无票'}</div>
                   </div>
                   <button 
                     className="book-btn"

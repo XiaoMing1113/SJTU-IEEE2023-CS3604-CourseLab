@@ -1,0 +1,1698 @@
+{
+    "version": "v1.1",
+    "source_version": "v1.0",
+    "total_sub_requirements": 260,
+    
+    "function_details": {
+      "F001": {
+        "function_name": "导航栏访问",
+        "type": "auxiliary",
+        "page_id": "P001",
+        "sub_requirement_count": 9,
+        "sub_requirements": [
+          {
+            "sub_id": "F001-S01",
+            "category": "basic_display",
+            "description": "导航栏固定顶部"
+          },
+          {
+            "sub_id": "F001-S02",
+            "category": "basic_display",
+            "description": "显示登录/注册入口（未登录状态）"
+          },
+          {
+            "sub_id": "F001-S03",
+            "category": "basic_display",
+            "description": "显示用户名+头像（已登录状态）"
+          },
+          {
+            "sub_id": "F001-S04",
+            "category": "basic_display",
+            "description": "主要功能入口：首页、查询、个人中心"
+          },
+          {
+            "sub_id": "F001-S05",
+            "category": "interaction",
+            "description": "点击登录按钮跳转P003",
+            "triggers": ["N002"]
+          },
+          {
+            "sub_id": "F001-S06",
+            "category": "interaction",
+            "description": "点击注册按钮跳转P004",
+            "triggers": ["N003"]
+          },
+          {
+            "sub_id": "F001-S07",
+            "category": "interaction",
+            "description": "点击用户名显示下拉菜单（个人中心/退出登录）"
+          },
+          {
+            "sub_id": "F001-S08",
+            "category": "interaction",
+            "description": "当前页面高亮显示"
+          },
+          {
+            "sub_id": "F001-S09",
+            "category": "edge_case",
+            "description": "登录态过期自动跳转登录页",
+            "triggers": ["N002"]
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["N002", "N003", "N004"]
+      },
+      
+      "F002": {
+        "function_name": "快捷入口访问",
+        "type": "auxiliary",
+        "page_id": "P001",
+        "sub_requirement_count": 9,
+        "sub_requirements": [
+          {
+            "sub_id": "F002-S01",
+            "category": "basic_display",
+            "description": "常用功能卡片：车票查询、订单查询、改签退票"
+          },
+          {
+            "sub_id": "F002-S02",
+            "category": "basic_display",
+            "description": "个性化推荐（已登录用户）"
+          },
+          {
+            "sub_id": "F002-S03",
+            "category": "basic_display",
+            "description": "历史查询记录（最多5条）"
+          },
+          {
+            "sub_id": "F002-S04",
+            "category": "interaction",
+            "description": "点击车票查询跳转P002",
+            "triggers": ["N001"]
+          },
+          {
+            "sub_id": "F002-S05",
+            "category": "interaction",
+            "description": "点击订单查询跳转P006订单管理"
+          },
+          {
+            "sub_id": "F002-S06",
+            "category": "interaction",
+            "description": "点击历史记录自动填充查询条件"
+          },
+          {
+            "sub_id": "F002-S07",
+            "category": "interaction",
+            "description": "清除历史记录需确认弹窗"
+          },
+          {
+            "sub_id": "F002-S08",
+            "category": "edge_case",
+            "description": "未登录仅显示基础功能"
+          },
+          {
+            "sub_id": "F002-S09",
+            "category": "edge_case",
+            "description": "推荐加载失败降级显示默认入口"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["N001"]
+      },
+      
+      "F003": {
+        "function_name": "车票查询",
+        "type": "core",
+        "page_id": "P002",
+        "sub_requirement_count": 24,
+        "sub_requirements": [
+          {
+            "sub_id": "F003-S01",
+            "category": "input_processing",
+            "description": "出发地/目的地支持模糊搜索（拼音/中文）"
+          },
+          {
+            "sub_id": "F003-S02",
+            "category": "input_processing",
+            "description": "显示热门城市列表"
+          },
+          {
+            "sub_id": "F003-S03",
+            "category": "input_processing",
+            "description": "显示最近搜索记录（最多3条）"
+          },
+          {
+            "sub_id": "F003-S04",
+            "category": "input_processing",
+            "description": "站点互换按钮"
+          },
+          {
+            "sub_id": "F003-S05",
+            "category": "input_processing",
+            "description": "日期选择器支持30天内日期"
+          },
+          {
+            "sub_id": "F003-S06",
+            "category": "input_processing",
+            "description": "快捷日期选择：今天、明天、后天"
+          },
+          {
+            "sub_id": "F003-S07",
+            "category": "input_processing",
+            "description": "日期显示星期几"
+          },
+          {
+            "sub_id": "F003-S08",
+            "category": "input_processing",
+            "description": "禁用过去日期"
+          },
+          {
+            "sub_id": "F003-S09",
+            "category": "input_processing",
+            "description": "高级选项：车次类型筛选（高铁/动车/普快）"
+          },
+          {
+            "sub_id": "F003-S10",
+            "category": "input_processing",
+            "description": "高级选项：出发时间段筛选"
+          },
+          {
+            "sub_id": "F003-S11",
+            "category": "input_processing",
+            "description": "高级选项：仅显示有票"
+          },
+          {
+            "sub_id": "F003-S12",
+            "category": "query_execution",
+            "description": "验证必填项完整性"
+          },
+          {
+            "sub_id": "F003-S13",
+            "category": "query_execution",
+            "description": "提交查询请求（含加载状态）"
+          },
+          {
+            "sub_id": "F003-S14",
+            "category": "query_execution",
+            "description": "接收并解析返回数据"
+          },
+          {
+            "sub_id": "F003-S15",
+            "category": "query_execution",
+            "description": "渲染车次列表并触发F004"
+          },
+          {
+            "sub_id": "F003-S16",
+            "category": "result_display",
+            "description": "显示车次信息：车次号、发到站、时间、历时"
+          },
+          {
+            "sub_id": "F003-S17",
+            "category": "result_display",
+            "description": "显示余票信息：各席别余票数量"
+          },
+          {
+            "sub_id": "F003-S18",
+            "category": "result_display",
+            "description": "显示票价信息：各席别价格"
+          },
+          {
+            "sub_id": "F003-S19",
+            "category": "result_display",
+            "description": "特殊标识：始发站、经停站、可改签"
+          },
+          {
+            "sub_id": "F003-S20",
+            "category": "result_display",
+            "description": "无结果时推荐中转方案",
+            "triggers": ["F006"]
+          },
+          {
+            "sub_id": "F003-S21",
+            "category": "edge_case",
+            "description": "出发地=目的地时提示错误"
+          },
+          {
+            "sub_id": "F003-S22",
+            "category": "edge_case",
+            "description": "未选择日期时默认今天"
+          },
+          {
+            "sub_id": "F003-S23",
+            "category": "edge_case",
+            "description": "接口超时提示重试"
+          },
+          {
+            "sub_id": "F003-S24",
+            "category": "edge_case",
+            "description": "网络异常显示缓存结果（若有）"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["F004", "F006"]
+      },
+      
+      "F004": {
+        "function_name": "车次筛选",
+        "type": "core",
+        "page_id": "P002",
+        "sub_requirement_count": 18,
+        "sub_requirements": [
+          {
+            "sub_id": "F004-S01",
+            "category": "filter_dimension",
+            "description": "车次类型筛选：高铁（G）、动车（D）、城际（C）"
+          },
+          {
+            "sub_id": "F004-S02",
+            "category": "filter_dimension",
+            "description": "车次类型筛选：特快（T）、快速（K）、普快（其他）"
+          },
+          {
+            "sub_id": "F004-S03",
+            "category": "filter_dimension",
+            "description": "车次类型支持多选"
+          },
+          {
+            "sub_id": "F004-S04",
+            "category": "filter_dimension",
+            "description": "出发时间段：凌晨（00:00-06:00）"
+          },
+          {
+            "sub_id": "F004-S05",
+            "category": "filter_dimension",
+            "description": "出发时间段：上午（06:00-12:00）"
+          },
+          {
+            "sub_id": "F004-S06",
+            "category": "filter_dimension",
+            "description": "出发时间段：下午（12:00-18:00）"
+          },
+          {
+            "sub_id": "F004-S07",
+            "category": "filter_dimension",
+            "description": "出发时间段：晚上（18:00-24:00）"
+          },
+          {
+            "sub_id": "F004-S08",
+            "category": "filter_dimension",
+            "description": "席别筛选：商务座、一等座、二等座、硬卧、软卧、硬座"
+          },
+          {
+            "sub_id": "F004-S09",
+            "category": "filter_dimension",
+            "description": "席别筛选仅显示有票席别"
+          },
+          {
+            "sub_id": "F004-S10",
+            "category": "filter_dimension",
+            "description": "出发/到达车站筛选（多站点城市）"
+          },
+          {
+            "sub_id": "F004-S11",
+            "category": "filter_dimension",
+            "description": "始发站优先标识"
+          },
+          {
+            "sub_id": "F004-S12",
+            "category": "filter_dimension",
+            "description": "高级筛选：历时范围（滑块选择）"
+          },
+          {
+            "sub_id": "F004-S13",
+            "category": "filter_dimension",
+            "description": "高级筛选：价格区间"
+          },
+          {
+            "sub_id": "F004-S14",
+            "category": "filter_dimension",
+            "description": "高级筛选：可改签/可退票"
+          },
+          {
+            "sub_id": "F004-S15",
+            "category": "filter_logic",
+            "description": "实时过滤车次列表"
+          },
+          {
+            "sub_id": "F004-S16",
+            "category": "filter_logic",
+            "description": "显示筛选结果数量"
+          },
+          {
+            "sub_id": "F004-S17",
+            "category": "filter_logic",
+            "description": "多条件AND逻辑组合"
+          },
+          {
+            "sub_id": "F004-S18",
+            "category": "edge_case",
+            "description": "筛选结果为空提示放宽条件"
+          }
+        ],
+        "depends_on": ["F003"],
+        "triggers": []
+      },
+      
+      "F005": {
+        "function_name": "车票预订",
+        "type": "core",
+        "page_id": "P002",
+        "sub_requirement_count": 18,
+        "sub_requirements": [
+          {
+            "sub_id": "F005-S01",
+            "category": "pre_check",
+            "description": "验证登录状态，未登录跳转P003",
+            "triggers": ["N007"]
+          },
+          {
+            "sub_id": "F005-S02",
+            "category": "pre_check",
+            "description": "检查余票数量"
+          },
+          {
+            "sub_id": "F005-S03",
+            "category": "pre_check",
+            "description": "验证乘车人信息完整性"
+          },
+          {
+            "sub_id": "F005-S04",
+            "category": "pre_check",
+            "description": "显示锁票时间提示（通常15分钟）"
+          },
+          {
+            "sub_id": "F005-S05",
+            "category": "seat_selection",
+            "description": "显示可用席别及余票"
+          },
+          {
+            "sub_id": "F005-S06",
+            "category": "seat_selection",
+            "description": "选择席别及购票数量"
+          },
+          {
+            "sub_id": "F005-S07",
+            "category": "seat_selection",
+            "description": "席别介绍悬浮提示"
+          },
+          {
+            "sub_id": "F005-S08",
+            "category": "seat_selection",
+            "description": "票价实时计算"
+          },
+          {
+            "sub_id": "F005-S09",
+            "category": "passenger_selection",
+            "description": "加载常用乘车人列表（来自F012）",
+            "depends_on": ["F012"]
+          },
+          {
+            "sub_id": "F005-S10",
+            "category": "passenger_selection",
+            "description": "多选支持（最多5人）"
+          },
+          {
+            "sub_id": "F005-S11",
+            "category": "passenger_selection",
+            "description": "快速添加新乘车人"
+          },
+          {
+            "sub_id": "F005-S12",
+            "category": "passenger_selection",
+            "description": "身份证/护照类型适配"
+          },
+          {
+            "sub_id": "F005-S13",
+            "category": "passenger_selection",
+            "description": "证件有效期校验"
+          },
+          {
+            "sub_id": "F005-S14",
+            "category": "booking_confirmation",
+            "description": "显示订单明细：车次、席别、乘车人、总价"
+          },
+          {
+            "sub_id": "F005-S15",
+            "category": "booking_confirmation",
+            "description": "勾选购票协议"
+          },
+          {
+            "sub_id": "F005-S16",
+            "category": "booking_confirmation",
+            "description": "提交预订请求，锁票成功跳转P005",
+            "triggers": ["N006"]
+          },
+          {
+            "sub_id": "F005-S17",
+            "category": "edge_case",
+            "description": "余票不足提示选择其他席别或车次"
+          },
+          {
+            "sub_id": "F005-S18",
+            "category": "edge_case",
+            "description": "网络中断保存草稿，稍后恢复"
+          }
+        ],
+        "depends_on": ["F012"],
+        "triggers": ["N006", "N007"]
+      },
+      
+      "F006": {
+        "function_name": "中转换乘查询",
+        "type": "auxiliary",
+        "page_id": "P002",
+        "sub_requirement_count": 16,
+        "sub_requirements": [
+          {
+            "sub_id": "F006-S01",
+            "category": "trigger_entry",
+            "description": "直达车次查询无结果时自动推荐"
+          },
+          {
+            "sub_id": "F006-S02",
+            "category": "trigger_entry",
+            "description": "用户主动选择中转方案"
+          },
+          {
+            "sub_id": "F006-S03",
+            "category": "trigger_entry",
+            "description": "显示预计可节省时间/费用"
+          },
+          {
+            "sub_id": "F006-S04",
+            "category": "plan_generation",
+            "description": "查询可用中转站（主要枢纽站）"
+          },
+          {
+            "sub_id": "F006-S05",
+            "category": "plan_generation",
+            "description": "计算换乘时间（最少30分钟，最多4小时）"
+          },
+          {
+            "sub_id": "F006-S06",
+            "category": "plan_generation",
+            "description": "生成多个中转方案（最多5个）"
+          },
+          {
+            "sub_id": "F006-S07",
+            "category": "plan_generation",
+            "description": "按总历时/总价排序"
+          },
+          {
+            "sub_id": "F006-S08",
+            "category": "plan_display",
+            "description": "第一程：车次、时间、价格"
+          },
+          {
+            "sub_id": "F006-S09",
+            "category": "plan_display",
+            "description": "中转站：换乘时间、站内导航提示"
+          },
+          {
+            "sub_id": "F006-S10",
+            "category": "plan_display",
+            "description": "第二程：车次、时间、价格"
+          },
+          {
+            "sub_id": "F006-S11",
+            "category": "plan_display",
+            "description": "总计：总历时、总价、换乘次数"
+          },
+          {
+            "sub_id": "F006-S12",
+            "category": "plan_display",
+            "description": "风险提示：建议换乘时间、晚点风险"
+          },
+          {
+            "sub_id": "F006-S13",
+            "category": "booking_process",
+            "description": "选择中转方案分别预订两段车票（串行）"
+          },
+          {
+            "sub_id": "F006-S14",
+            "category": "booking_process",
+            "description": "第一段成功自动预订第二段"
+          },
+          {
+            "sub_id": "F006-S15",
+            "category": "edge_case",
+            "description": "无可用中转方案提示选择其他日期"
+          },
+          {
+            "sub_id": "F006-S16",
+            "category": "edge_case",
+            "description": "换乘时间不足警告提示用户"
+          }
+        ],
+        "depends_on": ["F003"],
+        "triggers": []
+      },
+      
+      "F007": {
+        "function_name": "用户登录",
+        "type": "core",
+        "page_id": "P003",
+        "sub_requirement_count": 21,
+        "sub_requirements": [
+          {
+            "sub_id": "F007-S01",
+            "category": "login_method",
+            "description": "账号密码登录：用户名/手机号/邮箱输入"
+          },
+          {
+            "sub_id": "F007-S02",
+            "category": "login_method",
+            "description": "密码输入支持显示/隐藏切换"
+          },
+          {
+            "sub_id": "F007-S03",
+            "category": "login_method",
+            "description": "记住密码选项（本地加密存储）"
+          },
+          {
+            "sub_id": "F007-S04",
+            "category": "login_method",
+            "description": "图形验证码（连续失败3次后启用）"
+          },
+          {
+            "sub_id": "F007-S05",
+            "category": "login_method",
+            "description": "手机验证码登录：手机号输入+格式验证"
+          },
+          {
+            "sub_id": "F007-S06",
+            "category": "login_method",
+            "description": "发送验证码（60秒倒计时）"
+          },
+          {
+            "sub_id": "F007-S07",
+            "category": "login_method",
+            "description": "验证码输入（6位数字）"
+          },
+          {
+            "sub_id": "F007-S08",
+            "category": "login_method",
+            "description": "验证码有效期5分钟"
+          },
+          {
+            "sub_id": "F007-S09",
+            "category": "login_method",
+            "description": "第三方登录：微信/支付宝快速登录（可选）"
+          },
+          {
+            "sub_id": "F007-S10",
+            "category": "login_method",
+            "description": "首次第三方登录需绑定手机号"
+          },
+          {
+            "sub_id": "F007-S11",
+            "category": "login_validation",
+            "description": "前端表单验证"
+          },
+          {
+            "sub_id": "F007-S12",
+            "category": "login_validation",
+            "description": "后端凭证校验"
+          },
+          {
+            "sub_id": "F007-S13",
+            "category": "login_validation",
+            "description": "生成会话token"
+          },
+          {
+            "sub_id": "F007-S14",
+            "category": "login_validation",
+            "description": "记录登录日志（IP、时间、设备）"
+          },
+          {
+            "sub_id": "F007-S15",
+            "category": "login_success",
+            "description": "跳转来源页面（有来源）或首页P001",
+            "triggers": ["N009", "N010"]
+          },
+          {
+            "sub_id": "F007-S16",
+            "category": "login_success",
+            "description": "更新导航栏登录状态"
+          },
+          {
+            "sub_id": "F007-S17",
+            "category": "auxiliary_function",
+            "description": "忘记密码跳转找回流程"
+          },
+          {
+            "sub_id": "F007-S18",
+            "category": "auxiliary_function",
+            "description": "注册账号跳转P004",
+            "triggers": ["N008"]
+          },
+          {
+            "sub_id": "F007-S19",
+            "category": "auxiliary_function",
+            "description": "取消登录返回上一页或首页",
+            "triggers": ["N011"]
+          },
+          {
+            "sub_id": "F007-S20",
+            "category": "edge_case",
+            "description": "用户名不存在提示用户名或密码错误（防爆破）"
+          },
+          {
+            "sub_id": "F007-S21",
+            "category": "edge_case",
+            "description": "网络异常提示检查网络"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["N008", "N009", "N010", "N011"]
+      },
+      
+      "F008": {
+        "function_name": "用户注册",
+        "type": "core",
+        "page_id": "P004",
+        "sub_requirement_count": 20,
+        "sub_requirements": [
+          {
+            "sub_id": "F008-S01",
+            "category": "basic_info",
+            "description": "手机号11位格式验证"
+          },
+          {
+            "sub_id": "F008-S02",
+            "category": "basic_info",
+            "description": "检查手机号是否已注册"
+          },
+          {
+            "sub_id": "F008-S03",
+            "category": "basic_info",
+            "description": "发送验证码（60秒倒计时）"
+          },
+          {
+            "sub_id": "F008-S04",
+            "category": "basic_info",
+            "description": "验证码6位数字，5分钟有效期"
+          },
+          {
+            "sub_id": "F008-S05",
+            "category": "basic_info",
+            "description": "验证码验证成功后才可继续"
+          },
+          {
+            "sub_id": "F008-S06",
+            "category": "basic_info",
+            "description": "密码设置8-20位字符"
+          },
+          {
+            "sub_id": "F008-S07",
+            "category": "basic_info",
+            "description": "密码必须包含字母+数字"
+          },
+          {
+            "sub_id": "F008-S08",
+            "category": "basic_info",
+            "description": "密码强度提示（弱/中/强）"
+          },
+          {
+            "sub_id": "F008-S09",
+            "category": "basic_info",
+            "description": "确认密码二次验证"
+          },
+          {
+            "sub_id": "F008-S10",
+            "category": "basic_info",
+            "description": "图形验证码4位字母数字组合"
+          },
+          {
+            "sub_id": "F008-S11",
+            "category": "basic_info",
+            "description": "图形验证码点击刷新，不区分大小写"
+          },
+          {
+            "sub_id": "F008-S12",
+            "category": "realname_info",
+            "description": "实名信息可选但推荐：真实姓名、身份证号"
+          },
+          {
+            "sub_id": "F008-S13",
+            "category": "realname_info",
+            "description": "身份证号18位格式验证+校验位算法"
+          },
+          {
+            "sub_id": "F008-S14",
+            "category": "realname_info",
+            "description": "身份证正反面上传+OCR识别（实名时必需）"
+          },
+          {
+            "sub_id": "F008-S15",
+            "category": "agreement",
+            "description": "用户服务协议和隐私政策必须勾选"
+          },
+          {
+            "sub_id": "F008-S16",
+            "category": "agreement",
+            "description": "点击可查看协议详情"
+          },
+          {
+            "sub_id": "F008-S17",
+            "category": "registration_process",
+            "description": "前端数据验证后后端创建账户"
+          },
+          {
+            "sub_id": "F008-S18",
+            "category": "registration_process",
+            "description": "发送欢迎短信/邮件"
+          },
+          {
+            "sub_id": "F008-S19",
+            "category": "registration_process",
+            "description": "自动登录跳转P001或P003",
+            "triggers": ["N013"]
+          },
+          {
+            "sub_id": "F008-S20",
+            "category": "edge_case",
+            "description": "手机号已注册提示直接登录"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["N012", "N013", "N014"]
+      },
+      
+      "F009": {
+        "function_name": "订单填写",
+        "type": "core",
+        "page_id": "P005",
+        "sub_requirement_count": 22,
+        "sub_requirements": [
+          {
+            "sub_id": "F009-S01",
+            "category": "order_confirmation",
+            "description": "显示车次信息（只读）：车次号、发到站、时间"
+          },
+          {
+            "sub_id": "F009-S02",
+            "category": "order_confirmation",
+            "description": "显示席别、数量"
+          },
+          {
+            "sub_id": "F009-S03",
+            "category": "order_confirmation",
+            "description": "显示票价明细"
+          },
+          {
+            "sub_id": "F009-S04",
+            "category": "order_confirmation",
+            "description": "订单倒计时15分钟，剩余时间实时显示"
+          },
+          {
+            "sub_id": "F009-S05",
+            "category": "order_confirmation",
+            "description": "少于5分钟红色警告"
+          },
+          {
+            "sub_id": "F009-S06",
+            "category": "order_confirmation",
+            "description": "超时自动释放座位并提示重新预订"
+          },
+          {
+            "sub_id": "F009-S07",
+            "category": "passenger_info",
+            "description": "显示已选乘车人列表（来自F005）",
+            "depends_on": ["F005"]
+          },
+          {
+            "sub_id": "F009-S08",
+            "category": "passenger_info",
+            "description": "乘车人信息卡片：姓名、证件类型、证件号"
+          },
+          {
+            "sub_id": "F009-S09",
+            "category": "passenger_info",
+            "description": "手机号（用于接收通知）"
+          },
+          {
+            "sub_id": "F009-S10",
+            "category": "passenger_info",
+            "description": "席别选择（若多席别）"
+          },
+          {
+            "sub_id": "F009-S11",
+            "category": "passenger_info",
+            "description": "删除乘车人按钮"
+          },
+          {
+            "sub_id": "F009-S12",
+            "category": "ticket_type",
+            "description": "票种选择：成人票、儿童票、学生票"
+          },
+          {
+            "sub_id": "F009-S13",
+            "category": "ticket_type",
+            "description": "学生票需上传学生证"
+          },
+          {
+            "sub_id": "F009-S14",
+            "category": "ticket_type",
+            "description": "儿童票自动计算优惠"
+          },
+          {
+            "sub_id": "F009-S15",
+            "category": "contact_info",
+            "description": "联系人手机号（必填），默认填充当前用户手机号"
+          },
+          {
+            "sub_id": "F009-S16",
+            "category": "contact_info",
+            "description": "支持修改联系人手机号"
+          },
+          {
+            "sub_id": "F009-S17",
+            "category": "contact_info",
+            "description": "备用联系人：姓名+手机号（可选）"
+          },
+          {
+            "sub_id": "F009-S18",
+            "category": "invoice_info",
+            "description": "发票信息可选：电子发票/纸质发票"
+          },
+          {
+            "sub_id": "F009-S19",
+            "category": "invoice_info",
+            "description": "个人/企业发票，企业需填写单位名称、税号"
+          },
+          {
+            "sub_id": "F009-S20",
+            "category": "insurance",
+            "description": "交通意外险推荐，保费金额及保障说明"
+          },
+          {
+            "sub_id": "F009-S21",
+            "category": "insurance",
+            "description": "保险默认不勾选"
+          },
+          {
+            "sub_id": "F009-S22",
+            "category": "edge_case",
+            "description": "临时保存草稿，刷新页面可恢复"
+          }
+        ],
+        "depends_on": ["F005"],
+        "triggers": []
+      },
+      
+      "F010": {
+        "function_name": "提交订单",
+        "type": "core",
+        "page_id": "P005",
+        "sub_requirement_count": 16,
+        "sub_requirements": [
+          {
+            "sub_id": "F010-S01",
+            "category": "pre_validation",
+            "description": "检查所有必填项完整性"
+          },
+          {
+            "sub_id": "F010-S02",
+            "category": "pre_validation",
+            "description": "验证证件号格式正确性"
+          },
+          {
+            "sub_id": "F010-S03",
+            "category": "pre_validation",
+            "description": "确认订单未超时"
+          },
+          {
+            "sub_id": "F010-S04",
+            "category": "pre_validation",
+            "description": "检查余票是否仍然充足"
+          },
+          {
+            "sub_id": "F010-S05",
+            "category": "pre_validation",
+            "description": "计算总价（含保险等）"
+          },
+          {
+            "sub_id": "F010-S06",
+            "category": "order_creation",
+            "description": "生成唯一订单号"
+          },
+          {
+            "sub_id": "F010-S07",
+            "category": "order_creation",
+            "description": "锁定座位资源"
+          },
+          {
+            "sub_id": "F010-S08",
+            "category": "order_creation",
+            "description": "创建订单记录，关联乘车人信息"
+          },
+          {
+            "sub_id": "F010-S09",
+            "category": "order_creation",
+            "description": "设置支付超时时间（30分钟）"
+          },
+          {
+            "sub_id": "F010-S10",
+            "category": "submit_success",
+            "description": "显示订单创建成功提示"
+          },
+          {
+            "sub_id": "F010-S11",
+            "category": "submit_success",
+            "description": "展示订单号及二维码"
+          },
+          {
+            "sub_id": "F010-S12",
+            "category": "submit_success",
+            "description": "跳转P006订单管理（订单详情）",
+            "triggers": ["N016"]
+          },
+          {
+            "sub_id": "F010-S13",
+            "category": "submit_success",
+            "description": "发送短信通知，引导用户立即支付"
+          },
+          {
+            "sub_id": "F010-S14",
+            "category": "submit_failure",
+            "description": "余票不足提示选择其他车次"
+          },
+          {
+            "sub_id": "F010-S15",
+            "category": "submit_failure",
+            "description": "系统繁忙提示稍后重试"
+          },
+          {
+            "sub_id": "F010-S16",
+            "category": "edge_case",
+            "description": "重复提交防抖处理（提交后禁用按钮）"
+          }
+        ],
+        "depends_on": ["F009"],
+        "triggers": ["N015", "N016", "N017"]
+      },
+      
+      "F011": {
+        "function_name": "个人信息管理",
+        "type": "core",
+        "page_id": "P006",
+        "sub_requirement_count": 23,
+        "sub_requirements": [
+          {
+            "sub_id": "F011-S01",
+            "category": "info_display",
+            "description": "基本信息：用户名（不可修改）"
+          },
+          {
+            "sub_id": "F011-S02",
+            "category": "info_display",
+            "description": "真实姓名"
+          },
+          {
+            "sub_id": "F011-S03",
+            "category": "info_display",
+            "description": "身份证号（脱敏显示）"
+          },
+          {
+            "sub_id": "F011-S04",
+            "category": "info_display",
+            "description": "手机号（脱敏显示）"
+          },
+          {
+            "sub_id": "F011-S05",
+            "category": "info_display",
+            "description": "邮箱（脱敏显示）"
+          },
+          {
+            "sub_id": "F011-S06",
+            "category": "info_display",
+            "description": "账户信息：注册时间、最后登录时间"
+          },
+          {
+            "sub_id": "F011-S07",
+            "category": "info_display",
+            "description": "账户等级/积分"
+          },
+          {
+            "sub_id": "F011-S08",
+            "category": "info_display",
+            "description": "实名认证状态"
+          },
+          {
+            "sub_id": "F011-S09",
+            "category": "info_display",
+            "description": "当前头像展示及更换按钮"
+          },
+          {
+            "sub_id": "F011-S10",
+            "category": "modify_phone",
+            "description": "修改手机号：验证旧手机号（发送验证码）"
+          },
+          {
+            "sub_id": "F011-S11",
+            "category": "modify_phone",
+            "description": "输入新手机号并验证（发送验证码）"
+          },
+          {
+            "sub_id": "F011-S12",
+            "category": "modify_phone",
+            "description": "确认修改手机号"
+          },
+          {
+            "sub_id": "F011-S13",
+            "category": "modify_email",
+            "description": "修改邮箱：输入新邮箱"
+          },
+          {
+            "sub_id": "F011-S14",
+            "category": "modify_email",
+            "description": "发送验证链接到邮箱，点击邮件链接验证"
+          },
+          {
+            "sub_id": "F011-S15",
+            "category": "modify_email",
+            "description": "确认修改邮箱"
+          },
+          {
+            "sub_id": "F011-S16",
+            "category": "modify_password",
+            "description": "修改密码：输入旧密码"
+          },
+          {
+            "sub_id": "F011-S17",
+            "category": "modify_password",
+            "description": "输入新密码（强度验证）并确认"
+          },
+          {
+            "sub_id": "F011-S18",
+            "category": "modify_password",
+            "description": "提交修改并重新登录"
+          },
+          {
+            "sub_id": "F011-S19",
+            "category": "avatar_update",
+            "description": "上传头像图片（支持jpg/png，最大2MB）"
+          },
+          {
+            "sub_id": "F011-S20",
+            "category": "avatar_update",
+            "description": "裁剪工具（1:1比例）并预览确认"
+          },
+          {
+            "sub_id": "F011-S21",
+            "category": "realname_auth",
+            "description": "未认证状态：提示认证好处，开始认证按钮"
+          },
+          {
+            "sub_id": "F011-S22",
+            "category": "realname_auth",
+            "description": "已认证状态：显示认证标识，认证信息不可修改"
+          },
+          {
+            "sub_id": "F011-S23",
+            "category": "edge_case",
+            "description": "旧密码错误提示重新输入"
+          }
+        ],
+        "depends_on": [],
+        "triggers": []
+      },
+      
+      "F012": {
+        "function_name": "乘客管理",
+        "type": "core",
+        "page_id": "P006",
+        "sub_requirement_count": 24,
+        "sub_requirements": [
+          {
+            "sub_id": "F012-S01",
+            "category": "passenger_list",
+            "description": "显示所有常用乘车人"
+          },
+          {
+            "sub_id": "F012-S02",
+            "category": "passenger_list",
+            "description": "乘车人卡片：姓名、证件类型+号码（脱敏）"
+          },
+          {
+            "sub_id": "F012-S03",
+            "category": "passenger_list",
+            "description": "手机号（可选）"
+          },
+          {
+            "sub_id": "F012-S04",
+            "category": "passenger_list",
+            "description": "旅客类型（成人/儿童/学生）"
+          },
+          {
+            "sub_id": "F012-S05",
+            "category": "passenger_list",
+            "description": "设为默认、编辑、删除按钮"
+          },
+          {
+            "sub_id": "F012-S06",
+            "category": "passenger_list",
+            "description": "默认乘车人标识"
+          },
+          {
+            "sub_id": "F012-S07",
+            "category": "passenger_list",
+            "description": "乘车人数量限制（最多15个）"
+          },
+          {
+            "sub_id": "F012-S08",
+            "category": "add_passenger",
+            "description": "基本信息：姓名（中文/英文）"
+          },
+          {
+            "sub_id": "F012-S09",
+            "category": "add_passenger",
+            "description": "证件类型（身份证/护照/港澳通行证等）"
+          },
+          {
+            "sub_id": "F012-S10",
+            "category": "add_passenger",
+            "description": "证件号码及手机号（可选）"
+          },
+          {
+            "sub_id": "F012-S11",
+            "category": "add_passenger",
+            "description": "旅客类型选择"
+          },
+          {
+            "sub_id": "F012-S12",
+            "category": "certificate_validation",
+            "description": "身份证：18位格式+校验位验证"
+          },
+          {
+            "sub_id": "F012-S13",
+            "category": "certificate_validation",
+            "description": "护照、通行证：格式验证"
+          },
+          {
+            "sub_id": "F012-S14",
+            "category": "certificate_validation",
+            "description": "实时验证反馈"
+          },
+          {
+            "sub_id": "F012-S15",
+            "category": "special_passenger",
+            "description": "学生票资格：上传学生证照片"
+          },
+          {
+            "sub_id": "F012-S16",
+            "category": "special_passenger",
+            "description": "填写学校信息及有效期设置"
+          },
+          {
+            "sub_id": "F012-S17",
+            "category": "special_passenger",
+            "description": "儿童票：自动识别年龄（基于身份证）"
+          },
+          {
+            "sub_id": "F012-S18",
+            "category": "special_passenger",
+            "description": "需填写监护人信息"
+          },
+          {
+            "sub_id": "F012-S19",
+            "category": "edit_passenger",
+            "description": "加载现有信息"
+          },
+          {
+            "sub_id": "F012-S20",
+            "category": "edit_passenger",
+            "description": "可修改字段：姓名、手机号、旅客类型"
+          },
+          {
+            "sub_id": "F012-S21",
+            "category": "edit_passenger",
+            "description": "证件信息一般不可修改（需重新添加）"
+          },
+          {
+            "sub_id": "F012-S22",
+            "category": "delete_passenger",
+            "description": "删除确认弹窗，提示删除后不可恢复"
+          },
+          {
+            "sub_id": "F012-S23",
+            "category": "edge_case",
+            "description": "证件号已存在提示重复"
+          },
+          {
+            "sub_id": "F012-S24",
+            "category": "edge_case",
+            "description": "达到数量上限禁用添加按钮"
+          }
+        ],
+        "depends_on": [],
+        "triggers": []
+      },
+      
+      "F013": {
+        "function_name": "订单管理",
+        "type": "core",
+        "page_id": "P006",
+        "sub_requirement_count": 28,
+        "sub_requirements": [
+          {
+            "sub_id": "F013-S01",
+            "category": "filter_condition",
+            "description": "订单状态筛选：全部/待支付/已支付/已完成/已取消"
+          },
+          {
+            "sub_id": "F013-S02",
+            "category": "filter_condition",
+            "description": "时间范围：近一个月/三个月/半年/自定义"
+          },
+          {
+            "sub_id": "F013-S03",
+            "category": "filter_condition",
+            "description": "搜索框：订单号/车次号"
+          },
+          {
+            "sub_id": "F013-S04",
+            "category": "order_card",
+            "description": "订单号"
+          },
+          {
+            "sub_id": "F013-S05",
+            "category": "order_card",
+            "description": "车次信息（出发地→目的地）"
+          },
+          {
+            "sub_id": "F013-S06",
+            "category": "order_card",
+            "description": "出发时间"
+          },
+          {
+            "sub_id": "F013-S07",
+            "category": "order_card",
+            "description": "乘车人姓名（多人显示数量）"
+          },
+          {
+            "sub_id": "F013-S08",
+            "category": "order_card",
+            "description": "订单金额及状态标签"
+          },
+          {
+            "sub_id": "F013-S09",
+            "category": "order_card",
+            "description": "操作按钮（根据状态不同）"
+          },
+          {
+            "sub_id": "F013-S10",
+            "category": "order_sorting",
+            "description": "按创建时间倒序（默认）"
+          },
+          {
+            "sub_id": "F013-S11",
+            "category": "order_sorting",
+            "description": "按出发时间排序"
+          },
+          {
+            "sub_id": "F013-S12",
+            "category": "order_sorting",
+            "description": "按订单金额排序"
+          },
+          {
+            "sub_id": "F013-S13",
+            "category": "pagination",
+            "description": "每页显示10条"
+          },
+          {
+            "sub_id": "F013-S14",
+            "category": "pagination",
+            "description": "滚动加载更多，显示总数量"
+          },
+          {
+            "sub_id": "F013-S15",
+            "category": "order_detail",
+            "description": "点击订单卡片展开详情"
+          },
+          {
+            "sub_id": "F013-S16",
+            "category": "order_detail",
+            "description": "订单状态流程图"
+          },
+          {
+            "sub_id": "F013-S17",
+            "category": "order_detail",
+            "description": "车次完整信息及所有乘车人信息"
+          },
+          {
+            "sub_id": "F013-S18",
+            "category": "order_detail",
+            "description": "联系人信息、订单金额明细"
+          },
+          {
+            "sub_id": "F013-S19",
+            "category": "order_detail",
+            "description": "创建时间/支付时间、发票信息（若有）"
+          },
+          {
+            "sub_id": "F013-S20",
+            "category": "e_ticket",
+            "description": "乘车二维码"
+          },
+          {
+            "sub_id": "F013-S21",
+            "category": "e_ticket",
+            "description": "下载电子客票"
+          },
+          {
+            "sub_id": "F013-S22",
+            "category": "e_ticket",
+            "description": "分享订单信息"
+          },
+          {
+            "sub_id": "F013-S23",
+            "category": "order_operation",
+            "description": "待支付：立即支付→跳转F014"
+          },
+          {
+            "sub_id": "F013-S24",
+            "category": "order_operation",
+            "description": "待支付：取消订单→确认弹窗"
+          },
+          {
+            "sub_id": "F013-S25",
+            "category": "order_operation",
+            "description": "已支付：改签→跳转F015，退票→退票流程"
+          },
+          {
+            "sub_id": "F013-S26",
+            "category": "order_operation",
+            "description": "已完成：再次购买（填充查询条件）"
+          },
+          {
+            "sub_id": "F013-S27",
+            "category": "edge_case",
+            "description": "无订单显示空状态+引导购票"
+          },
+          {
+            "sub_id": "F013-S28",
+            "category": "edge_case",
+            "description": "筛选结果为空提示调整条件"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["F014", "F015"]
+      },
+      
+      "F014": {
+        "function_name": "订单支付",
+        "type": "core",
+        "page_id": "P006",
+        "sub_requirement_count": 25,
+        "sub_requirements": [
+          {
+            "sub_id": "F014-S01",
+            "category": "payment_method",
+            "description": "微信支付：扫码支付（PC端）"
+          },
+          {
+            "sub_id": "F014-S02",
+            "category": "payment_method",
+            "description": "微信支付：APP内支付（移动端）"
+          },
+          {
+            "sub_id": "F014-S03",
+            "category": "payment_method",
+            "description": "支付宝支付：扫码支付（PC端）"
+          },
+          {
+            "sub_id": "F014-S04",
+            "category": "payment_method",
+            "description": "支付宝支付：APP内支付（移动端）"
+          },
+          {
+            "sub_id": "F014-S05",
+            "category": "payment_method",
+            "description": "银行卡支付：快捷支付（已绑卡）"
+          },
+          {
+            "sub_id": "F014-S06",
+            "category": "payment_method",
+            "description": "银行卡支付：网银支付、添加新卡"
+          },
+          {
+            "sub_id": "F014-S07",
+            "category": "payment_method",
+            "description": "余额支付（若有），显示当前余额"
+          },
+          {
+            "sub_id": "F014-S08",
+            "category": "payment_method",
+            "description": "余额不足时组合支付"
+          },
+          {
+            "sub_id": "F014-S09",
+            "category": "payment_confirmation",
+            "description": "订单号"
+          },
+          {
+            "sub_id": "F014-S10",
+            "category": "payment_confirmation",
+            "description": "订单金额、优惠信息（若有）"
+          },
+          {
+            "sub_id": "F014-S11",
+            "category": "payment_confirmation",
+            "description": "实付金额"
+          },
+          {
+            "sub_id": "F014-S12",
+            "category": "payment_confirmation",
+            "description": "支付倒计时（30分钟）"
+          },
+          {
+            "sub_id": "F014-S13",
+            "category": "payment_process",
+            "description": "创建支付订单"
+          },
+          {
+            "sub_id": "F014-S14",
+            "category": "payment_process",
+            "description": "调起支付接口，跳转第三方支付页面"
+          },
+          {
+            "sub_id": "F014-S15",
+            "category": "payment_process",
+            "description": "用户完成支付，返回结果页面"
+          },
+          {
+            "sub_id": "F014-S16",
+            "category": "payment_result",
+            "description": "轮询支付状态（最多3分钟）"
+          },
+          {
+            "sub_id": "F014-S17",
+            "category": "payment_result",
+            "description": "支付成功更新订单状态"
+          },
+          {
+            "sub_id": "F014-S18",
+            "category": "payment_result",
+            "description": "接收第三方回调，验证签名"
+          },
+          {
+            "sub_id": "F014-S19",
+            "category": "payment_result",
+            "description": "发送支付成功通知"
+          },
+          {
+            "sub_id": "F014-S20",
+            "category": "payment_success",
+            "description": "显示支付成功页面"
+          },
+          {
+            "sub_id": "F014-S21",
+            "category": "payment_success",
+            "description": "订单信息摘要、查看订单详情按钮"
+          },
+          {
+            "sub_id": "F014-S22",
+            "category": "payment_failure",
+            "description": "显示失败原因"
+          },
+          {
+            "sub_id": "F014-S23",
+            "category": "payment_failure",
+            "description": "重新支付按钮、更换支付方式按钮"
+          },
+          {
+            "sub_id": "F014-S24",
+            "category": "edge_case",
+            "description": "支付超时订单自动取消"
+          },
+          {
+            "sub_id": "F014-S25",
+            "category": "edge_case",
+            "description": "支付回调延迟轮询查询补偿"
+          }
+        ],
+        "depends_on": ["F013"],
+        "triggers": []
+      },
+      
+      "F015": {
+        "function_name": "车票改签",
+        "type": "auxiliary",
+        "page_id": "P006",
+        "sub_requirement_count": 19,
+        "sub_requirements": [
+          {
+            "sub_id": "F015-S01",
+            "category": "eligibility_check",
+            "description": "验证订单状态（已支付且未使用）"
+          },
+          {
+            "sub_id": "F015-S02",
+            "category": "eligibility_check",
+            "description": "检查车票类型（部分车票不可改签）"
+          },
+          {
+            "sub_id": "F015-S03",
+            "category": "eligibility_check",
+            "description": "检查改签次数（限改签1次）"
+          },
+          {
+            "sub_id": "F015-S04",
+            "category": "eligibility_check",
+            "description": "检查时间限制（开车前30分钟）"
+          },
+          {
+            "sub_id": "F015-S05",
+            "category": "eligibility_check",
+            "description": "显示改签规则说明"
+          },
+          {
+            "sub_id": "F015-S06",
+            "category": "select_train",
+            "description": "默认显示同一路线车次"
+          },
+          {
+            "sub_id": "F015-S07",
+            "category": "select_train",
+            "description": "筛选条件：日期范围（前后3天）"
+          },
+          {
+            "sub_id": "F015-S08",
+            "category": "select_train",
+            "description": "筛选条件：车次类型、席别类型"
+          },
+          {
+            "sub_id": "F015-S09",
+            "category": "select_train",
+            "description": "车次列表：显示可改签车次、余票信息"
+          },
+          {
+            "sub_id": "F015-S10",
+            "category": "select_train",
+            "description": "价格差异标识、选择按钮"
+          },
+          {
+            "sub_id": "F015-S11",
+            "category": "fee_calculation",
+            "description": "原票价、新票价"
+          },
+          {
+            "sub_id": "F015-S12",
+            "category": "fee_calculation",
+            "description": "差价计算：补差价/退差价/无需补退"
+          },
+          {
+            "sub_id": "F015-S13",
+            "category": "fee_calculation",
+            "description": "改签手续费（若有）"
+          },
+          {
+            "sub_id": "F015-S14",
+            "category": "confirm_change",
+            "description": "显示改签明细：原车次、新车次、乘车人、费用"
+          },
+          {
+            "sub_id": "F015-S15",
+            "category": "confirm_change",
+            "description": "改签协议确认、提交改签请求"
+          },
+          {
+            "sub_id": "F015-S16",
+            "category": "change_result",
+            "description": "改签成功：显示新订单信息，原订单标记为已改签"
+          },
+          {
+            "sub_id": "F015-S17",
+            "category": "change_result",
+            "description": "发送短信通知，更新电子票"
+          },
+          {
+            "sub_id": "F015-S18",
+            "category": "edge_case",
+            "description": "新车次余票不足提示选择其他车次"
+          },
+          {
+            "sub_id": "F015-S19",
+            "category": "edge_case",
+            "description": "改签提交后座位被占回滚并提示"
+          }
+        ],
+        "depends_on": ["F013"],
+        "triggers": ["N021"]
+      },
+      
+      "F016": {
+        "function_name": "用户登出",
+        "type": "core",
+        "page_id": "P006",
+        "sub_requirement_count": 8,
+        "sub_requirements": [
+          {
+            "sub_id": "F016-S01",
+            "category": "logout_trigger",
+            "description": "点击导航栏退出登录"
+          },
+          {
+            "sub_id": "F016-S02",
+            "category": "logout_trigger",
+            "description": "个人中心安全退出"
+          },
+          {
+            "sub_id": "F016-S03",
+            "category": "logout_trigger",
+            "description": "登出确认弹窗（可选）"
+          },
+          {
+            "sub_id": "F016-S04",
+            "category": "logout_process",
+            "description": "清除本地token"
+          },
+          {
+            "sub_id": "F016-S05",
+            "category": "logout_process",
+            "description": "清除session及用户缓存信息"
+          },
+          {
+            "sub_id": "F016-S06",
+            "category": "logout_process",
+            "description": "记录登出日志，通知后端失效token"
+          },
+          {
+            "sub_id": "F016-S07",
+            "category": "after_logout",
+            "description": "跳转首页P001，更新导航栏状态",
+            "triggers": ["N020"]
+          },
+          {
+            "sub_id": "F016-S08",
+            "category": "edge_case",
+            "description": "网络异常本地强制登出"
+          }
+        ],
+        "depends_on": [],
+        "triggers": ["N020"]
+      }
+    }
+  }

@@ -86,6 +86,7 @@ router.post('/register', async (req, res) => {
 
   // 验证参数
   if (!phone || !verificationCode || !password || !realName || !idNumber) {
+    console.log('注册失败: 参数缺失');
     return res.status(400).json({ 
       success: false, 
       message: '参数错误或验证码无效' 
@@ -93,6 +94,7 @@ router.post('/register', async (req, res) => {
   }
 
   if (!isValidPhoneNumber(phone)) {
+    console.log('注册失败: 手机号格式不正确');
     return res.status(400).json({ 
       success: false, 
       message: '参数错误或验证码无效' 
@@ -101,6 +103,7 @@ router.post('/register', async (req, res) => {
 
   // 验证身份证号格式
   if (!isValidIdNumber(idNumber)) {
+    console.log('注册失败: 身份证号格式不正确');
     return res.status(400).json({ 
       success: false, 
       message: '身份证号格式不正确' 
@@ -118,6 +121,7 @@ router.post('/register', async (req, res) => {
     }
 
     if (!isValidCode) {
+      console.log('注册失败: 验证码无效', process.env.NODE_ENV, verificationCode);
       return res.status(400).json({ 
         success: false, 
         message: '验证码错误或已过期' 
@@ -127,6 +131,7 @@ router.post('/register', async (req, res) => {
     // 检查用户是否已存在
     const existingUser = await User.findByPhone(phone);
     if (existingUser) {
+      console.log('注册失败: 手机号已存在');
       return res.status(400).json({ 
         success: false,
         message: '手机号已存在'
@@ -253,11 +258,25 @@ router.get('/debug/users', async (req, res) => {
 
 // 测试环境下的清理端点
 if (process.env.NODE_ENV === 'test') {
+  const { db } = require('../database/init');
   router.post('/clear-test-data', async (req, res) => {
     try {
-      // 清理数据库中的测试数据
-      // 这里可以添加清理逻辑
       phoneCodeTimestamps.clear();
+
+      await new Promise((resolve, reject) => {
+        db.run('DELETE FROM users', [], function(err) {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+
+      await new Promise((resolve, reject) => {
+        db.run('DELETE FROM verification_codes', [], function(err) {
+          if (err) return reject(err);
+          resolve();
+        });
+      });
+
       res.json({ success: true, message: '测试数据已清理' });
     } catch (error) {
       res.status(500).json({ success: false, message: '清理失败' });

@@ -30,12 +30,11 @@ project_root/
 │   ├── interface_specifications.md # 接口规范
 │   └── interface_history.md      # 接口历史记录
 ├── .ui_design/                   # Prompt4.5 输出
-│   ├── ui_structure.md           # 界面结构设计
-│   ├── component_library.md      # 组件库设计
-│   ├── design_system.md          # 设计规范
-│   ├── asset_requirements.md     # 素材需求清单
-│   ├── implementation_guide.md   # 实现指导
-│   └── ui_design_history.md      # UI设计历史记录
+│   ├── ui_structure.yml          # 界面结构设计（页面架构、组件库、用户流程）
+│   ├── design_system.yml         # 设计系统规范（颜色、字体、间距、动画等）
+│   ├── asset_requirements.yml    # 素材需求清单（图片、图标、字体及获取指导）
+│   ├── implementation_guide.md   # 开发实现指导（技术选型、文件结构、优先级）
+│   └── design_history.md         # UI设计历史记录
 ├── backend/                      # Prompt5 输出 - 后端代码和测试
 │   ├── src/                      # 源代码（代码骨架）
 │   │   ├── controllers/          # API控制器
@@ -158,20 +157,19 @@ project_root/
 ### Prompt4.5 (UI设计Agent)
 
 **输入来源:**
-- `.interfaces/api_design.md` (来自Prompt4)
-- `.interfaces/data_models.md` (来自Prompt4)
-- `.artifacts/test_scenarios.md` (来自Prompt3)
-- 现有UI设计基线 (如果存在)
-- `.ui_design/ui_design_history.md` (历史记录)
+- `.docs/interface_requirements.md` (来自Prompt3)
+- `.artifacts/ui_interface.yml`, `.artifacts/api_interface.yml` (来自Prompt4)
+- `.requirements/detailed_requirements.md` (项目需求)
+- 现有UI设计基线: `.ui_design/ui_structure.yml`, `.ui_design/design_system.yml`
+- `.ui_design/design_history.md` (历史记录)
 - 项目技术栈信息 (package.json等)
 
 **输出位置:**
-- **界面结构**: `.ui_design/ui_structure.md` (页面架构和导航关系)
-- **组件设计**: `.ui_design/component_library.md` (可复用组件规划)
-- **设计规范**: `.ui_design/design_system.md` (颜色、字体、间距等)
-- **素材需求**: `.ui_design/asset_requirements.md` (图片、图标、字体需求)
-- **实现指导**: `.ui_design/implementation_guide.md` (开发实现指导)
-- **历史记录**: `.ui_design/ui_design_history.md` (追加模式)
+- **界面结构**: `.ui_design/ui_structure.yml` (页面架构、组件库、用户流程)
+- **设计规范**: `.ui_design/design_system.yml` (颜色、字体、间距、动画等)
+- **素材需求**: `.ui_design/asset_requirements.yml` (图片、图标、字体及获取指导)
+- **实现指导**: `.ui_design/implementation_guide.md` (技术选型、文件结构、优先级)
+- **历史记录**: `.ui_design/design_history.md` (追加模式)
 
 **增量策略:**
 - **完全重复** → **复用**: 引用现有UI设计方案
@@ -180,17 +178,20 @@ project_root/
 
 **特殊功能:**
 - **素材需求分析**: 明确所需的图片、图标、字体等素材
-- **获取指导**: 提供素材来源和获取方法
+- **获取指导**: 提供素材来源和获取方法（免费资源推荐）
 - **占位符方案**: 为缺失素材提供替代方案
 - **响应式设计**: 考虑多设备适配
 - **可访问性**: 考虑无障碍访问需求
+- **标准化输出**: 采用YAML格式确保结构化和可解析性
 
 ### Prompt5 (测试自动化Agent)
 
 **输入来源:**
 - `.interfaces/api_design.md` (来自Prompt4)
-- `.ui_design/ui_structure.md` (来自Prompt4.5)
-- `.ui_design/component_library.md` (来自Prompt4.5)
+- `.ui_design/ui_structure.yml` (来自Prompt4.5)
+- `.ui_design/design_system.yml` (来自Prompt4.5)
+- `.ui_design/asset_requirements.yml` (来自Prompt4.5)
+- `.ui_design/implementation_guide.md` (来自Prompt4.5)
 - `.artifacts/test_scenarios.md` (来自Prompt3)
 - 现有项目代码结构 (backend/, frontend/, shared/)
 - 现有测试文件基线 (如果存在)
