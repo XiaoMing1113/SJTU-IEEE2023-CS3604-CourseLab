@@ -1,93 +1,90 @@
-/* Header 组件样式 - 12306风格 */
+/* Header.css - 12306 风格 */
 
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+/* 通用容器限制，让内容居中对齐 */
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
 }
 
-/* 顶部信息栏 */
+.header {
+  width: 100%;
+  background: #fff;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+}
+
+/* --- 1. 顶部细条 --- */
 .top-bar {
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-  font-size: 12px;
-  color: #666;
   height: 30px;
   line-height: 30px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+  color: #666;
 }
 
 .top-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.top-left {
-  display: flex;
-  gap: 20px;
-}
-
-.top-right {
-  display: flex;
-  gap: 15px;
-  align-items: center;
 }
 
 .top-link {
   color: #666;
+  cursor: pointer;
   text-decoration: none;
-  transition: color 0.3s;
+  transition: color 0.2s;
 }
 
 .top-link:hover {
-  color: #0066cc;
+  color: #3B99FC;
 }
 
-.time, .weather {
+.separator {
+  margin: 0 8px;
+  color: #ddd;
+}
+
+.login-link {
+  color: #3B99FC;
+  margin-right: 10px;
+}
+
+.text-logout-btn {
+  background: none;
+  border: none;
   color: #666;
-}
-
-.language {
-  color: #0066cc;
   cursor: pointer;
+  font-size: 12px;
+  margin-left: 5px;
 }
 
-/* 主导航栏 */
-.main-header {
-  background: #fff;
+.text-logout-btn:hover {
+  color: #f40;
+}
+
+/* --- 2. 品牌栏 --- */
+.brand-bar {
   height: 80px;
-  border-bottom: 1px solid #e0e0e0;
+  background: #fff;
 }
 
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.brand-container {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* Logo */
-.logo {
+.logo-wrapper {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #333;
-  gap: 12px;
+  gap: 10px;
 }
 
 .logo-icon {
-  font-size: 30px;
-  color: #0066cc;
+  font-size: 42px;
+  line-height: 1;
 }
 
 .logo-text {
@@ -95,327 +92,82 @@
   flex-direction: column;
 }
 
-.logo-main {
-  font-size: 20px;
+.logo-cn {
+  font-size: 24px;
   font-weight: bold;
-  color: #0066cc;
-  line-height: 1;
+  color: #3B99FC;
+  /* 12306蓝 */
+  letter-spacing: 2px;
 }
 
-.logo-sub {
+.logo-en {
   font-size: 12px;
-  color: #666;
+  color: #333;
+  letter-spacing: 1px;
   margin-top: 2px;
 }
 
-/* 主导航 */
-.main-nav {
+/* 顶部搜索框 */
+.search-site {
   display: flex;
-  gap: 30px;
+  align-items: center;
+  width: 400px;
+}
+
+.search-site input {
   flex: 1;
-  justify-content: center;
-}
-
-.nav-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: #333 !important;
-  padding: 12px 20px;
-  border-radius: 6px;
-  transition: all 0.3s;
-  position: relative;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.nav-icon {
-  font-size: 20px;
-  margin-bottom: 4px;
-}
-
-.nav-link span {
-  color: #333 !important;
-}
-
-.nav-link:hover {
-  background: #f0f8ff;
-  color: #0066cc !important;
-}
-
-.nav-link:hover span {
-  color: #0066cc !important;
-}
-
-/* 用户区域 */
-.user-section {
-  display: flex;
-  align-items: center;
-}
-
-/* 用户登录状态 */
-.user-logged-in {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-greeting {
-  font-size: 14px;
-  color: #333;
-  font-weight: 500;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-}
-
-.user-avatar {
-  width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: #0066cc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 0 10px;
+  border: 2px solid #3B99FC;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  font-size: 13px;
+}
+
+.search-site button {
+  width: 50px;
+  height: 36px;
+  background: #3B99FC;
+  border: none;
+  border-radius: 0 4px 4px 0;
   color: white;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  margin-bottom: 2px;
-}
-
-.user-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.user-link {
-  font-size: 12px;
-  color: #666;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.user-link:hover {
-  color: #0066cc;
-}
-
-.logout-btn {
-  font-size: 14px;
-  color: #666;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 4px;
   cursor: pointer;
-  padding: 6px 12px;
-  transition: all 0.3s;
+  font-size: 16px;
 }
 
-.logout-btn:hover {
-  color: #ff4444;
-  border-color: #ff4444;
-  background: rgba(255, 68, 68, 0.05);
-}
-
-.auth-buttons {
-  display: flex;
-  gap: 12px;
-}
-
-.login-btn, .register-btn {
-  padding: 8px 20px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s;
-  border: 1px solid #0066cc;
-}
-
-.login-btn {
-  color: #0066cc;
-  background: transparent;
-}
-
-.login-btn:hover {
-  background: #0066cc;
-  color: white;
-}
-
-.register-btn {
-  background: #0066cc;
-  color: white;
-}
-
-.register-btn:hover {
-  background: #0052a3;
-}
-
-/* 二级导航栏 */
-.sub-header {
-  background: #f8f9fa;
+/* --- 3. 主导航栏 (蓝色背景) --- */
+.main-nav-bar {
+  background-color: #3B99FC;
   height: 40px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
-.sub-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+.nav-container {
+  display: flex;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-}
-
-.breadcrumb-link {
-  color: #666;
+.nav-item {
+  color: white;
   text-decoration: none;
-  transition: color 0.3s;
-}
-
-.breadcrumb-link:hover {
-  color: #0066cc;
-}
-
-.breadcrumb-separator {
-  color: #999;
-}
-
-.breadcrumb-current {
-  color: #0066cc;
+  padding: 0 25px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 15px;
   font-weight: 500;
-}
-
-.quick-links {
+  transition: background 0.3s;
   display: flex;
-  gap: 20px;
+  align-items: center;
 }
 
-.quick-link {
-  font-size: 12px;
-  color: #666;
-  text-decoration: none;
-  transition: color 0.3s;
+.nav-item:hover,
+.nav-item.active {
+  background-color: #2a70b8;
+  /* 深一点的蓝色 */
 }
 
-.quick-link:hover {
-  color: #0066cc;
-}
-
-/* 响应式设计 */
-@media (max-width: 1024px) {
-  .main-nav {
-    gap: 20px;
-  }
-  
-  .nav-link span:last-child {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .top-bar {
-    display: none;
-  }
-  
-  .main-header {
-    height: 60px;
-  }
-  
-  .header-container {
-    padding: 0 15px;
-  }
-  
-  .main-nav {
-    display: none;
-  }
-  
-  .logo-text {
-    display: none;
-  }
-  
-  .sub-header {
-    display: none;
-  }
-  
-  .user-details {
-    display: none;
-  }
-  
-  .auth-buttons {
-    gap: 8px;
-  }
-  
-  .login-btn, .register-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-}
-
-/* 动画效果 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.header {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* 悬浮效果 */
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: #0066cc;
-  transition: all 0.3s;
-  transform: translateX(-50%);
-}
-
-.nav-link:hover::after {
-  width: 80%;
-}
-
-/* 用户信息悬浮效果 */
-.user-info:hover .user-actions {
-  opacity: 1;
-  visibility: visible;
-}
-
-.user-actions {
-  opacity: 1;
-  visibility: visible;
-  transition: all 0.3s;
+.arrow {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
 }

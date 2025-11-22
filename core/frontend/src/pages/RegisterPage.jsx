@@ -5,24 +5,29 @@ import './RegisterPage.css'
 
 const RegisterPage = () => {
   const navigate = useNavigate()
+
+  // 扩展表单状态以匹配官网
   const [formData, setFormData] = useState({
-    phone: '',
-    verificationCode: '',
+    username: '', // 新增：用户名
     password: '',
     confirmPassword: '',
+    certType: '1', // 新增：证件类型，默认二代身份证
     realName: '',
-    idNumber: ''
+    idNumber: '',
+    passengerType: '1', // 新增：旅客类型，默认成人
+    email: '', // 新增：邮箱
+    phone: '',
+    verificationCode: '',
+    agreed: false
   })
+
   const [isCodeSent, setIsCodeSent] = useState(false)
   const [countdown, setCountdown] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [sendingCode, setSendingCode] = useState(false)
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
-  const [fieldErrors, setFieldErrors] = useState({})
   const [passwordStrength, setPasswordStrength] = useState(0)
-  const [agreed, setAgreed] = useState(false)
 
+  // 倒计时逻辑
   useEffect(() => {
     let timer
     if (countdown > 0) {
@@ -31,392 +36,243 @@ const RegisterPage = () => {
     return () => clearTimeout(timer)
   }, [countdown])
 
-  const validatePhone = (phone) => {
-    const phoneRegex = /^1[3-9]\d{9}$/
-    return phoneRegex.test(phone)
-  }
-
-  const validateIdNumber = (idNumber) => {
-    const idRegex = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/
-    return idRegex.test(idNumber)
-  }
-
-  const calculatePasswordStrength = (password) => {
-    let strength = 0
-    if (password.length >= 6) strength++
-    if (password.length >= 8) strength++
-    if (/[a-z]/.test(password)) strength++
-    if (/[A-Z]/.test(password)) strength++
-    if (/[0-9]/.test(password)) strength++
-    if (/[^A-Za-z0-9]/.test(password)) strength++
-    return Math.min(strength, 3)
-  }
-
-  const validateForm = () => {
-    const errors = {}
-    
-    if (!formData.phone) {
-      errors.phone = '请输入手机号'
-    } else if (!validatePhone(formData.phone)) {
-      errors.phone = '请输入正确的手机号格式'
-    }
-    
-    if (!formData.verificationCode) {
-      errors.verificationCode = '请输入验证码'
-    } else if (formData.verificationCode.length !== 6) {
-      errors.verificationCode = '验证码应为6位数字'
-    }
-    
-    if (!formData.password) {
-      errors.password = '请输入密码'
-    } else if (formData.password.length < 6) {
-      errors.password = '密码长度至少6位'
-    }
-    
-    if (!formData.confirmPassword) {
-      errors.confirmPassword = '请确认密码'
-    } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = '两次输入的密码不一致'
-    }
-    
-    if (!formData.realName) {
-      errors.realName = '请输入真实姓名'
-    } else if (formData.realName.length < 2) {
-      errors.realName = '姓名长度不能少于2位'
-    } else if (!/^[\u4e00-\u9fa5]+$/.test(formData.realName)) {
-      errors.realName = '请输入正确的真实姓名'
-    }
-    
-    if (!formData.idNumber) {
-      errors.idNumber = '请输入身份证号'
-    } else if (!validateIdNumber(formData.idNumber)) {
-      errors.idNumber = '请输入正确的身份证号格式'
-    }
-    
-    if (!agreed) {
-      errors.agreement = '请先同意用户协议'
-    }
-    
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
+  // 密码强度计算
+  const calculateStrength = (val) => {
+    let s = 0
+    if (val.length >= 6) s++
+    if (/[A-Z]/.test(val)) s++
+    if (/[0-9]/.test(val)) s++
+    if (/[^A-Za-z0-9]/.test(val)) s++
+    return Math.min(s, 3)
   }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    
-    // 计算密码强度
-    if (name === 'password') {
-      setPasswordStrength(calculatePasswordStrength(value))
-    }
-    
-    // 清除对应字段的错误
-    if (fieldErrors[name]) {
-      setFieldErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
-    
-    // 清除全局错误
-    if (error) {
-      setError('')
-    }
-  }
+    const { name, value, type, checked } = e.target
+    const val = type === 'checkbox' ? checked : value
 
-  const handleBlur = (e) => {
-    const { name, value } = e.target
-    
-    // 实时验证
-    if (name === 'phone' && value && !validatePhone(value)) {
-      setFieldErrors(prev => ({ ...prev, phone: '请输入正确的手机号格式' }))
-    }
-    
-    if (name === 'password' && value && value.length < 6) {
-      setFieldErrors(prev => ({ ...prev, password: '密码长度至少6位' }))
-    }
-    
-    if (name === 'confirmPassword' && value && formData.password !== value) {
-      setFieldErrors(prev => ({ ...prev, confirmPassword: '两次输入的密码不一致' }))
-    }
-    
-    if (name === 'realName' && value && !/^[\u4e00-\u9fa5]+$/.test(value)) {
-      setFieldErrors(prev => ({ ...prev, realName: '请输入正确的真实姓名' }))
-    }
-    
-    if (name === 'idNumber' && value && !validateIdNumber(value)) {
-      setFieldErrors(prev => ({ ...prev, idNumber: '请输入正确的身份证号格式' }))
+    setFormData(prev => ({ ...prev, [name]: val }))
+
+    if (name === 'password') {
+      setPasswordStrength(calculateStrength(val))
     }
   }
 
   const handleSendCode = async () => {
-    if (!formData.phone) {
-      setFieldErrors(prev => ({ ...prev, phone: '请先输入手机号' }))
+    if (!/^1[3-9]\d{9}$/.test(formData.phone)) {
+      alert('请输入正确的手机号')
       return
     }
-    
-    if (!validatePhone(formData.phone)) {
-      setFieldErrors(prev => ({ ...prev, phone: '请输入正确的手机号格式' }))
-      return
-    }
-    
-    setSendingCode(true)
-    setError('')
-    
-    try {
-      const response = await sendVerificationCode(formData.phone)
-      
-      if (response.success) {
-        setIsCodeSent(true)
-        setCountdown(60)
-        setSuccess('验证码已发送，请查收短信')
-        setTimeout(() => setSuccess(''), 3000)
-      } else {
-        setError(response.message || '发送验证码失败，请重试')
-      }
-    } catch (err) {
-      console.error('发送验证码错误:', err)
-      setError(err.message || '发送验证码失败，请检查网络连接')
-    } finally {
-      setSendingCode(false)
-    }
+    setIsCodeSent(true)
+    setCountdown(60)
+    // 这里调用你的 sendVerificationCode API
+    // await sendVerificationCode(formData.phone)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!validateForm()) {
-      return
-    }
-    
+    if (!formData.agreed) return alert('请同意服务条款')
+
     setLoading(true)
-    setError('')
-    
     try {
-      const response = await register({
-        phone: formData.phone,
-        verificationCode: formData.verificationCode,
-        password: formData.password,
-        realName: formData.realName,
-        idNumber: formData.idNumber
-      })
-      
-      if (response.success) {
-        setSuccess('注册成功！即将跳转到登录页面...')
-        navigate('/login')
-      } else {
-        setError(response.message || '注册失败，请重试')
-      }
+      // 模拟注册
+      await register(formData)
+      alert('注册成功')
+      navigate('/login')
     } catch (err) {
-      console.error('注册错误:', err)
-      setError(err.message || '注册失败，请检查网络连接')
+      setError('注册失败，请检查输入')
     } finally {
       setLoading(false)
     }
   }
 
-  const getPasswordStrengthText = () => {
-    switch (passwordStrength) {
-      case 0:
-      case 1:
-        return '弱'
-      case 2:
-        return '中'
-      case 3:
-        return '强'
-      default:
-        return ''
-    }
-  }
-
-  const getPasswordStrengthClass = () => {
-    switch (passwordStrength) {
-      case 0:
-      case 1:
-        return 'weak'
-      case 2:
-        return 'medium'
-      case 3:
-        return 'strong'
-      default:
-        return ''
-    }
-  }
-
   return (
-    <div className="register-page">
-      <div className="register-container">
-        <h2>用户注册</h2>
-        
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-        
-        {success && (
-          <div className="success-message">
-            {success}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="register-form" role="form">
-          <div className={`form-group ${fieldErrors.phone ? 'error' : ''}`}>
-            <label htmlFor="phone" className="required">手机号</label>
-            <input
-              id="phone"
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              placeholder="请输入手机号"
-              maxLength="11"
-              aria-label="手机号"
-            />
-            {fieldErrors.phone && (
-              <div className="field-error">{fieldErrors.phone}</div>
-            )}
+    <div className="register-page-official">
+      <div className="reg-content-wrapper">
+
+        {/* 1. 面包屑导航 */}
+        <div className="breadcrumb-nav">
+          您现在的位置：<Link to="/">客运首页</Link> &gt; 注册
+        </div>
+
+        {/* 2. 注册主面板 */}
+        <div className="register-panel">
+          {/* 蓝色标题栏 */}
+          <div className="panel-header">
+            账户信息
           </div>
 
-          <div className={`form-group verification-group ${fieldErrors.verificationCode ? 'error' : ''}`}>
-            <label htmlFor="verificationCode" className="required">验证码</label>
-            <div className="verification-input">
-              <input
-                id="verificationCode"
-                type="text"
-                name="verificationCode"
-                value={formData.verificationCode}
-                onChange={handleInputChange}
-                placeholder="请输入验证码"
-                maxLength="6"
-                aria-label="验证码"
-              />
-              <button
-                type="button"
-                onClick={handleSendCode}
-                disabled={countdown > 0 || sendingCode}
-                className="send-code-btn"
-              >
-                {sendingCode ? '发送中...' : countdown > 0 ? `${countdown}s后重新发送` : '发送验证码'}
-              </button>
-            </div>
-            {fieldErrors.verificationCode && (
-              <div className="field-error">{fieldErrors.verificationCode}</div>
-            )}
-          </div>
+          <div className="panel-body">
+            <form onSubmit={handleSubmit}>
 
-          <div className={`form-group ${fieldErrors.password ? 'error' : ''}`}>
-            <label htmlFor="password" className="required">密码</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              placeholder="请输入密码（至少6位）"
-              aria-label="密码"
-            />
-            {formData.password && (
-              <div className="password-strength">
-                <div className={`strength-bar ${passwordStrength >= 1 ? getPasswordStrengthClass() : ''}`}></div>
-                <div className={`strength-bar ${passwordStrength >= 2 ? getPasswordStrengthClass() : ''}`}></div>
-                <div className={`strength-bar ${passwordStrength >= 3 ? getPasswordStrengthClass() : ''}`}></div>
+              {/* --- 用户名 --- */}
+              <div className="register-row">
+                <div className="row-label required">用户名：</div>
+                <div className="row-input">
+                  <input
+                    type="text"
+                    name="username"
+                    placeholder="用户名设置成功后不可修改"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="row-tip orange-tip">6-30位字母、数字或“_”,字母开头</div>
               </div>
-            )}
-            {formData.password && (
-              <div className="strength-text">
-                密码强度：{getPasswordStrengthText()}
+
+              {/* --- 密码 --- */}
+              <div className="register-row">
+                <div className="row-label required">登录密码：</div>
+                <div className="row-input">
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
+                  {/* 密码强度条 */}
+                  {formData.password && (
+                    <div className="strength-meter">
+                      <span className={`level level-1 ${passwordStrength >= 1 ? 'active' : ''}`}></span>
+                      <span className={`level level-2 ${passwordStrength >= 2 ? 'active' : ''}`}></span>
+                      <span className={`level level-3 ${passwordStrength >= 3 ? 'active' : ''}`}></span>
+                    </div>
+                  )}
+                </div>
+                <div className="row-tip">6-20位字母、数字或符号</div>
               </div>
-            )}
-            {fieldErrors.password && (
-              <div className="field-error">{fieldErrors.password}</div>
-            )}
+
+              {/* --- 确认密码 --- */}
+              <div className="register-row">
+                <div className="row-label required">确认密码：</div>
+                <div className="row-input">
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="再次输入您的登录密码"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              {/* --- 证件类型 --- */}
+              <div className="register-row">
+                <div className="row-label required">证件类型：</div>
+                <div className="row-input">
+                  <select name="certType" value={formData.certType} onChange={handleInputChange}>
+                    <option value="1">中国居民身份证</option>
+                    <option value="2">港澳居民来往内地通行证</option>
+                    <option value="3">台湾居民来往大陆通行证</option>
+                    <option value="4">护照</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* --- 姓名 --- */}
+              <div className="register-row">
+                <div className="row-label required">姓名：</div>
+                <div className="row-input">
+                  <input
+                    type="text"
+                    name="realName"
+                    placeholder="请输入姓名"
+                    value={formData.realName}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="row-tip orange-tip">姓名填写规则（用于身份核验，请正确填写）</div>
+              </div>
+
+              {/* --- 证件号码 --- */}
+              <div className="register-row">
+                <div className="row-label required">证件号码：</div>
+                <div className="row-input">
+                  <input
+                    type="text"
+                    name="idNumber"
+                    placeholder="请输入您的证件号码"
+                    value={formData.idNumber}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="row-tip orange-tip">（用于身份核验，请正确填写）</div>
+              </div>
+
+              {/* --- 邮箱 --- */}
+              <div className="register-row dashed-top">
+                <div className="row-label">邮箱：</div>
+                <div className="row-input">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="请正确填写邮箱地址"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              {/* --- 手机号 --- */}
+              <div className="register-row">
+                <div className="row-label required">手机号码：</div>
+                <div className="row-input">
+                  <div className="phone-group">
+                    <select className="phone-prefix">
+                      <option>+86 中国</option>
+                    </select>
+                    <input
+                      type="text"
+                      name="phone"
+                      className="phone-input"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="row-tip orange-tip">请正确填写手机号码，稍后将向该手机号发送短信验证码</div>
+              </div>
+
+              {/* --- 旅客类型 --- */}
+              <div className="register-row">
+                <div className="row-label required">优惠（待）类型：</div>
+                <div className="row-input">
+                  <select name="passengerType" value={formData.passengerType} onChange={handleInputChange}>
+                    <option value="1">成人</option>
+                    <option value="2">儿童</option>
+                    <option value="3">学生</option>
+                    <option value="4">残疾军人、伤残人民警察</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* --- 协议 --- */}
+              <div className="register-row agreement-row">
+                <div className="row-label"></div>
+                <div className="row-input full-width">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="agreed"
+                      checked={formData.agreed}
+                      onChange={handleInputChange}
+                    />
+                    我已阅读并同意遵守 <Link to="#">《中国铁路客户服务中心网站服务条款》</Link> <Link to="#">《隐私权政策》</Link>
+                  </label>
+                </div>
+              </div>
+
+              {/* --- 按钮 --- */}
+              <div className="register-row btn-row">
+                <div className="row-label"></div>
+                <div className="row-input">
+                  <button type="submit" className="next-btn" disabled={loading}>
+                    下一步
+                  </button>
+                </div>
+              </div>
+
+            </form>
           </div>
-
-          <div className={`form-group ${fieldErrors.confirmPassword ? 'error' : ''}`}>
-            <label htmlFor="confirmPassword" className="required">确认密码</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              placeholder="请再次输入密码"
-              aria-label="确认密码"
-            />
-            {fieldErrors.confirmPassword && (
-              <div className="field-error">{fieldErrors.confirmPassword}</div>
-            )}
-            {formData.confirmPassword && formData.password === formData.confirmPassword && (
-              <div className="field-success">密码一致</div>
-            )}
-          </div>
-
-          <div className={`form-group ${fieldErrors.realName ? 'error' : ''}`}>
-            <label htmlFor="realName" className="required">真实姓名</label>
-            <input
-              id="realName"
-              type="text"
-              name="realName"
-              value={formData.realName}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              placeholder="请输入真实姓名"
-              aria-label="真实姓名"
-            />
-            {fieldErrors.realName && (
-              <div className="field-error">{fieldErrors.realName}</div>
-            )}
-          </div>
-
-          <div className={`form-group ${fieldErrors.idNumber ? 'error' : ''}`}>
-            <label htmlFor="idNumber" className="required">身份证号</label>
-            <input
-              id="idNumber"
-              type="text"
-              name="idNumber"
-              value={formData.idNumber}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              placeholder="请输入身份证号"
-              maxLength="18"
-              aria-label="身份证号"
-            />
-            {fieldErrors.idNumber && (
-              <div className="field-error">{fieldErrors.idNumber}</div>
-            )}
-          </div>
-
-          <div className="agreement">
-            <label>
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-              />
-              我已阅读并同意
-              <Link to="/terms" target="_blank">用户协议</Link>
-              和
-              <Link to="/privacy" target="_blank">隐私政策</Link>
-            </label>
-            {fieldErrors.agreement && (
-              <div className="field-error">{fieldErrors.agreement}</div>
-            )}
-          </div>
-
-          <button type="submit" className="register-btn" disabled={loading}>
-            {loading ? '注册中...' : '注册'}
-          </button>
-        </form>
-
-        <div className="back-to-login">
-          <Link to="/login">已有账号？立即登录</Link>
         </div>
       </div>
     </div>

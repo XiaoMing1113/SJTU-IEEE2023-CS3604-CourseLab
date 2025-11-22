@@ -1,387 +1,202 @@
-/* 注册页面样式 - 12306风格 */
+/* RegisterPage.css - 12306 官网风格复刻 */
 
-.register-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.register-page-official {
+  background-color: #fff;
+  min-height: 600px;
+  padding-bottom: 50px;
+  font-size: 12px;
+  /* 官网字号偏小 */
+  color: #333;
+}
+
+.reg-content-wrapper {
+  width: 980px;
+  /* 12306 标准内容宽度 */
+  margin: 0 auto;
+}
+
+/* 1. 面包屑 */
+.breadcrumb-nav {
+  padding: 15px 0;
+  color: #666;
+}
+
+.breadcrumb-nav a {
+  color: #333;
+  text-decoration: none;
+}
+
+/* 2. 注册面板 */
+.register-panel {
+  border: 1px solid #3B99FC;
+  /* 蓝色边框 */
+  margin-top: 10px;
+}
+
+/* 蓝色标题栏 */
+.panel-header {
+  height: 32px;
+  line-height: 32px;
+  background: linear-gradient(to bottom, #3B99FC 0%, #2a70b8 100%);
+  /* 渐变蓝 */
+  color: white;
+  padding-left: 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.panel-body {
+  padding: 40px 0;
+}
+
+/* --- 表单行布局 --- */
+.register-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
-  margin-top: 150px; /* 为header留出空间 */
+  /* 垂直居中 */
+  margin-bottom: 20px;
+  line-height: 30px;
 }
 
-.register-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  width: 100%;
-  max-width: 500px;
-  position: relative;
-  overflow: hidden;
-}
-
-.register-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #0066cc, #0052a3);
-}
-
-.register-container h2 {
-  text-align: center;
+/* Label (第一列) */
+.row-label {
+  width: 280px;
+  /* 固定宽度 */
+  text-align: right;
+  padding-right: 10px;
   color: #333;
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: 600;
-  position: relative;
 }
 
-.register-container h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: #0066cc;
-}
-
-.register-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  position: relative;
-}
-
-.required::after {
+.required::before {
   content: '*';
   color: #ff4d4f;
-  margin-left: 4px;
+  margin-right: 4px;
 }
 
-.form-group input {
-  padding: 12px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.3s;
-  background: #fafafa;
+/* Input (第二列) */
+.row-input {
+  width: 300px;
+  /* 输入框容器宽度 */
 }
 
-.form-group input:focus {
-  outline: none;
-  border-color: #0066cc;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-}
-
-.form-group input::placeholder {
-  color: #999;
-}
-
-/* 验证码输入组 */
-.verification-group .verification-input {
-  display: flex;
-  gap: 10px;
-}
-
-.verification-input input {
-  flex: 1;
-}
-
-.send-code-btn {
-  background: #0066cc;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  white-space: nowrap;
-  min-width: 120px;
-}
-
-.send-code-btn:hover:not(:disabled) {
-  background: #0052a3;
-  transform: translateY(-1px);
-}
-
-.send-code-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.register-btn {
-  background: linear-gradient(135deg, #0066cc, #0052a3);
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 10px;
-  position: relative;
-  overflow: hidden;
-}
-
-.register-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
+.row-input input,
+.row-input select {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.register-btn:hover::before {
-  left: 100%;
-}
-
-.register-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
-}
-
-.register-btn:active {
-  transform: translateY(0);
-}
-
-/* 错误提示样式 */
-.error-message {
-  background: #fff2f0;
-  border: 1px solid #ffccc7;
-  color: #ff4d4f;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.error-message::before {
-  content: '⚠️';
-  font-size: 16px;
-}
-
-/* 成功提示样式 */
-.success-message {
-  background: #f6ffed;
-  border: 1px solid #b7eb8f;
-  color: #52c41a;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.success-message::before {
-  content: '✅';
-  font-size: 16px;
-}
-
-/* 输入验证状态 */
-.form-group.error input {
-  border-color: #ff4d4f;
-  background: #fff2f0;
-}
-
-.form-group.success input {
-  border-color: #52c41a;
-  background: #f6ffed;
-}
-
-.field-error {
-  color: #ff4d4f;
-  font-size: 12px;
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.field-error::before {
-  content: '⚠️';
+  height: 30px;
+  border: 1px solid #CFCDC7;
+  padding: 0 5px;
+  outline: none;
   font-size: 12px;
 }
 
-.field-success {
-  color: #52c41a;
-  font-size: 12px;
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+.row-input input:focus {
+  border-color: #3B99FC;
+  box-shadow: 0 0 3px rgba(59, 153, 252, 0.3);
 }
 
-.field-success::before {
-  content: '✅';
-  font-size: 12px;
-}
-
-/* 加载状态 */
-.register-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.register-btn:disabled:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-
-
-/* 密码强度指示器 */
-.password-strength {
-  margin-top: 8px;
-  display: flex;
-  gap: 4px;
-}
-
-.strength-bar {
-  height: 4px;
+/* Tip (第三列) */
+.row-tip {
+  margin-left: 15px;
+  color: #999;
   flex: 1;
-  background: #e0e0e0;
-  border-radius: 2px;
-  transition: background 0.3s;
+  /* 占据剩余空间 */
 }
 
-.strength-bar.weak {
-  background: #ff4d4f;
+.orange-tip {
+  color: #FF8000;
 }
 
-.strength-bar.medium {
-  background: #faad14;
-}
+/* --- 特殊组件样式 --- */
 
-.strength-bar.strong {
-  background: #52c41a;
-}
-
-.strength-text {
-  font-size: 12px;
-  margin-top: 4px;
-  color: #666;
-}
-
-/* 用户协议 */
-.agreement {
-  margin-top: 20px;
+/* 虚线分隔 */
+.dashed-top {
+  border-top: 1px dashed #eee;
   padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
 }
 
-.agreement label {
+/* 密码强度条 */
+.strength-meter {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 12px;
-  color: #666;
-  cursor: pointer;
+  margin-top: 5px;
+  height: 6px;
+  gap: 2px;
 }
 
-.agreement input[type="checkbox"] {
-  margin-top: 2px;
+.strength-meter .level {
+  flex: 1;
+  background: #ddd;
 }
 
-.agreement a {
-  color: #0066cc;
+.strength-meter .level-1.active {
+  background: #FF4400;
+}
+
+/* 弱 - 红 */
+.strength-meter .level-2.active {
+  background: #FF9900;
+}
+
+/* 中 - 橙 */
+.strength-meter .level-3.active {
+  background: #52C41A;
+}
+
+/* 强 - 绿 */
+
+/* 手机号组合框 */
+.phone-group {
+  display: flex;
+  gap: 5px;
+}
+
+.phone-prefix {
+  width: 90px !important;
+}
+
+.phone-input {
+  flex: 1;
+}
+
+/* 协议行 */
+.agreement-row .full-width {
+  width: auto;
+}
+
+.agreement-row a {
+  color: #0077FF;
   text-decoration: none;
 }
 
-.agreement a:hover {
-  text-decoration: underline;
-}
-
-/* 响应式设计 */
-@media (max-width: 480px) {
-  .register-page {
-    padding: 10px;
-    margin-top: 120px;
-  }
-  
-  .register-container {
-    padding: 30px 20px;
-  }
-  
-  .register-container h2 {
-    font-size: 20px;
-  }
-  
-  .verification-input {
-    flex-direction: column;
-  }
-  
-  .send-code-btn {
-    min-width: auto;
-  }
-}
-
-/* 动画效果 */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.register-container {
-  animation: slideInUp 0.6s ease-out;
-}
-
-/* 输入框图标 */
-
-
-/* 返回登录链接 */
-.back-to-login {
-  text-align: center;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid #f0f0f0;
-}
-
-.back-to-login a {
-  color: #0066cc;
-  text-decoration: none;
+/* 按钮行 */
+.next-btn {
+  width: 120px;
+  height: 36px;
+  background: #FF9A00;
+  /* 12306 橙色 */
+  border: 1px solid #D98201;
+  color: white;
   font-size: 14px;
-  transition: color 0.3s;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 3px;
 }
 
-.back-to-login a:hover {
-  color: #0052a3;
-  text-decoration: underline;
+.next-btn:hover {
+  background: #ff8c00;
+}
+
+/* 响应式微调 (虽然官网不是响应式的，但防止手机看太乱) */
+@media (max-width: 1000px) {
+  .reg-content-wrapper {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .row-label {
+    width: 120px;
+  }
+
+  .row-tip {
+    font-size: 10px;
+  }
 }

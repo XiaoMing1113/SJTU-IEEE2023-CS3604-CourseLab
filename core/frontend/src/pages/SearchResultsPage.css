@@ -1,0 +1,294 @@
+/* SearchResultsPage.css - 12306 风格重构 */
+
+.search-results-page {
+  background-color: #fff;
+  min-height: 100vh;
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+}
+
+/* --- 1. 顶部紧凑搜索条 --- */
+.quick-search-bar {
+  background: #eef1f8;
+  border-bottom: 1px solid #b0cceb;
+  padding: 12px 0;
+}
+
+.search-wrapper {
+  width: 1190px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 12px;
+  color: #333;
+}
+
+.input-group input {
+  border: 1px solid #999;
+  padding: 4px 8px;
+  width: 140px;
+  font-size: 13px;
+}
+
+.btn-swap {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.btn-query {
+  background-color: #ff9a00;
+  /* 橙色按钮 */
+  color: white;
+  border: 1px solid #d07d00;
+  padding: 4px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.btn-query:hover {
+  background-color: #e68b00;
+}
+
+/* --- 2. 蓝色日期导航 --- */
+.date-navigation {
+  background-color: #298cce;
+  /* 官网深蓝 */
+  height: 54px;
+  margin-bottom: 10px;
+}
+
+.date-nav-wrapper {
+  width: 1190px;
+  margin: 0 auto;
+  display: flex;
+  height: 100%;
+}
+
+.nav-prev,
+.nav-next {
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a4d8ff;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.date-list {
+  flex: 1;
+  display: flex;
+}
+
+.date-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.2s;
+}
+
+.date-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.date-item.active {
+  background-color: #3B99FC;
+  /* 选中亮蓝 */
+  font-weight: bold;
+}
+
+.date-fmt {
+  font-size: 14px;
+}
+
+.week-fmt {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* --- 3. 表格区域 --- */
+.train-table-container {
+  width: 1190px;
+  margin: 0 auto 50px;
+}
+
+.table-header-info {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.train-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #298cce;
+  font-size: 12px;
+}
+
+/* 表头 */
+.train-table thead {
+  background: #298cce;
+  color: white;
+}
+
+.train-table th {
+  padding: 10px 2px;
+  font-weight: normal;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+/* 单元格通用 */
+.train-table td {
+  padding: 12px 4px;
+  text-align: center;
+  border-bottom: 1px solid #e7e7e7;
+  color: #333;
+}
+
+/* 斑马纹 */
+.bg-even {
+  background-color: #fff;
+}
+
+.bg-odd {
+  background-color: #f8f9fa;
+}
+
+/* 列宽微调 */
+.col-train {
+  width: 90px;
+}
+
+.col-station {
+  width: 110px;
+}
+
+.col-time {
+  width: 90px;
+}
+
+.col-duration {
+  width: 80px;
+}
+
+/* 特殊列样式 */
+.cell-train-code .code {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.cell-stations {
+  text-align: left;
+  padding-left: 10px !important;
+  line-height: 1.6;
+}
+
+.icon-start,
+.icon-end {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  color: white;
+  border-radius: 3px;
+  margin-right: 4px;
+  font-size: 11px;
+}
+
+.icon-start {
+  background-color: #ff7200;
+}
+
+/* 始-橙 */
+.icon-end {
+  background-color: #52c41a;
+}
+
+/* 终-绿 */
+
+.cell-times {
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+.time-start {
+  font-size: 16px;
+}
+
+.time-end {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 席位状态颜色 */
+.cell-available {
+  color: #26a306;
+  /* 有票-绿色 */
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cell-number {
+  color: #333;
+  font-weight: bold;
+}
+
+.cell-none {
+  color: #ccc;
+  /* 无票-灰色 */
+}
+
+.cell-empty {
+  color: #eee;
+  font-weight: 200;
+}
+
+/* 预订按钮 */
+.btn-book {
+  background-color: #0077FF;
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-book:hover {
+  background-color: #0066cc;
+}
+
+/* 加载/错误/空状态 */
+.loading-state,
+.error-state,
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  background: #fcfcfc;
+  border: 1px solid #eee;
+  margin-top: 20px;
+  color: #666;
+}

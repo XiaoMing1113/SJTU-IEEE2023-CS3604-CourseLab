@@ -5,6 +5,9 @@ import './LoginPage.css'
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  // 登录方式：'scan' (扫码) | 'account' (账号)
+  const [loginType, setLoginType] = useState('account')
+
   const [formData, setFormData] = useState({
     phone: '',
     password: ''
@@ -20,50 +23,15 @@ const LoginPage = () => {
     return phoneRegex.test(phone)
   }
 
-  const validateForm = () => {
-    const errors = {}
-    
-    if (!formData.phone) {
-      errors.phone = '请输入手机号'
-    } else if (!validatePhone(formData.phone)) {
-      errors.phone = '请输入正确的手机号格式'
-    }
-    
-    if (!formData.password) {
-      errors.password = '请输入密码'
-    } else if (formData.password.length < 6) {
-      errors.password = '密码长度不能少于6位'
-    }
-    
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
-
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    
-    // 清除对应字段的错误
-    if (fieldErrors[name]) {
-      setFieldErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
-    }
-    
-    // 清除全局错误
-    if (error) {
-      setError('')
-    }
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (fieldErrors[name]) setFieldErrors(prev => ({ ...prev, [name]: '' }))
+    if (error) setError('')
   }
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSubmit(e)
-    }
+    if (e.key === 'Enter') handleSubmit(e)
   }
 
   const handleSubmit = async (e) => {
@@ -71,23 +39,15 @@ const LoginPage = () => {
     setError('')
     setFieldErrors({})
 
-    // 检查登录尝试次数（在6次失败后阻止进一步尝试）
     if (loginAttempts >= 6) {
       setError('登录尝试次数过多，请稍后再试')
       return
     }
 
-    // 验证表单
     const errors = {}
-    if (!formData.phone) {
-      errors.phone = '请输入手机号'
-    } else if (!validatePhone(formData.phone)) {
-      errors.phone = '请输入正确的手机号'
-    }
-
-    if (!formData.password) {
-      errors.password = '请输入密码'
-    }
+    if (!formData.phone) errors.phone = '请输入手机号'
+    else if (!validatePhone(formData.phone)) errors.phone = '请输入正确的手机号'
+    if (!formData.password) errors.password = '请输入密码'
 
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
@@ -97,131 +57,171 @@ const LoginPage = () => {
     setLoading(true)
     try {
       const data = await login(formData)
-      
-      console.log('登录响应数据:', data)
-      
+
       if (data.success) {
-        // 保存用户信息和token
         const token = data.token ?? data.data?.token
         const user = data.user ?? data.data?.user
         const userId = data.userId ?? data.data?.userId
         const userStored = { ...(user || {}), id: userId }
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(userStored))
-        
-        // 触发自定义事件，通知Header组件更新状态
+
         window.dispatchEvent(new CustomEvent('userLoginStatusChanged'))
-        
-        // 重置登录尝试次数
         setLoginAttempts(0)
-        
-        console.log('登录成功，即将跳转到首页')
-        
-        // 跳转到首页
         navigate('/')
       } else {
         const newAttempts = loginAttempts + 1
         setLoginAttempts(newAttempts)
         setError(data.message || '登录失败')
-        
-        // 如果达到6次失败，延迟显示限制消息
-        if (newAttempts >= 6) {
-          setTimeout(() => {
-            setError('登录尝试次数过多，请稍后再试')
-          }, 100)
-        }
       }
     } catch (err) {
-      console.error('登录错误:', err)
       const newAttempts = loginAttempts + 1
       setLoginAttempts(newAttempts)
-      const errorMessage = err.message || err.response?.data?.message || '登录失败，请稍后重试'
-      setError(errorMessage)
-      
-      // 如果达到6次失败，延迟显示限制消息
-      if (newAttempts >= 6) {
-        setTimeout(() => {
-          setError('登录尝试次数过多，请稍后再试')
-        }, 100)
-      }
+      setError(err.message || err.response?.data?.message || '登录失败，请稍后重试')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <h2>用户登录</h2>
-        
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
-        
-        <form onSubmit={handleSubmit} className="login-form" role="form">
-          <div className={`form-group ${fieldErrors.phone ? 'error' : ''}`}>
-            <label htmlFor="phone" className="required">手机号</label>
-            <input
-              id="phone"
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="请输入手机号"
-              maxLength="11"
-            />
-            {fieldErrors.phone && (
-              <div className="field-error">{fieldErrors.phone}</div>
-            )}
-          </div>
+    <div className="login-page-wrapper">
+      {/* 1. 简易头部 */}
+      <div className="login-header-simple">
+        <div className="header-content">
+          <Link to="/" className="simple-logo">
+            <span className="logo-icon">🚄</span>
+            <div className="logo-text">
+              <span className="cn">中国铁路12306</span>
+              <span className="en">China Railway</span>
+            </div>
+          </Link>
+          <span className="welcome-text">欢迎登录12306</span>
+        </div>
+      </div>
 
-          <div className={`form-group ${fieldErrors.password ? 'error' : ''}`}>
-            <label htmlFor="password" className="required">密码</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              placeholder="请输入密码"
-            />
-            {fieldErrors.password && (
-              <div className="field-error">{fieldErrors.password}</div>
-            )}
-            <div className="forgot-password">
-              <Link to="/forgot-password">忘记密码？</Link>
+      {/* 2. 主体背景区域 */}
+      <div className="login-main-bg">
+        <div className="login-content-container">
+
+          {/* 左侧：营销展示区 */}
+          <div className="marketing-area">
+            {/* 这里通常放一张大的APP宣传图，我们用CSS模拟布局 */}
+            <div className="app-promo">
+              <h1 className="promo-title">铁路12306 - 中国铁路官方APP</h1>
+              <div className="promo-features">
+                <div className="feature-item">✅ 个人行程提醒</div>
+                <div className="feature-item">✅ 积分兑换</div>
+                <div className="feature-item">✅ 餐饮·特产</div>
+                <div className="feature-item">✅ 车站大屏</div>
+              </div>
+              <div className="qr-download">
+                <div className="qr-placeholder">
+                  {/* 模拟二维码 */}
+                  <div style={{ width: '100px', height: '100px', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #ddd' }}>
+                    二维码
+                  </div>
+                </div>
+                <div className="download-text">
+                  扫码下载<br />安装 铁路12306
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="checkbox-label">
-              <input
-                id="remember"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <span className="checkmark"></span>
-              记住登录状态
-            </label>
+          {/* 右侧：悬浮登录框 */}
+          <div className="login-box-floating">
+            {/* Tab 切换 */}
+            <div className="login-tabs">
+              <div
+                className={`tab-item ${loginType === 'scan' ? 'active' : ''}`}
+                onClick={() => setLoginType('scan')}
+              >
+                扫码登录
+              </div>
+              <div className="tab-divider">|</div>
+              <div
+                className={`tab-item ${loginType === 'account' ? 'active' : ''}`}
+                onClick={() => setLoginType('account')}
+              >
+                账号登录
+              </div>
+            </div>
+
+            {/* 登录框内容 */}
+            <div className="login-box-content">
+              {loginType === 'scan' ? (
+                <div className="scan-login-view">
+                  <div className="scan-qr-wrapper">
+                    {/* 模拟二维码 */}
+                    <div style={{ width: '160px', height: '160px', background: '#f0f0f0', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+                      二维码区域
+                    </div>
+                  </div>
+                  <p className="scan-tip">打开 <span style={{ color: '#FC8302' }}>铁路12306手机APP</span> 扫一扫登录</p>
+                </div>
+              ) : (
+                /* 账号登录表单 */
+                <form onSubmit={handleSubmit} className="account-login-form">
+                  {error && <div className="login-error-banner">{error}</div>}
+
+                  <div className={`input-row ${fieldErrors.phone ? 'has-error' : ''}`}>
+                    <span className="input-icon">👤</span>
+                    <input
+                      type="text"
+                      name="phone"
+                      placeholder="用户名/邮箱/手机号"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className={`input-row ${fieldErrors.password ? 'has-error' : ''}`}>
+                    <span className="input-icon">🔒</span>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="密码"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-options">
+                    <label className="remember-me">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
+                      自动登录
+                    </label>
+                    <Link to="/forgot-password">忘记密码？</Link>
+                  </div>
+
+                  <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading ? '登录中...' : '立即登录'}
+                  </button>
+
+                  <div className="register-row">
+                    <Link to="/register">注册12306账号</Link>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* 底部提示 */}
+            <div className="login-box-footer">
+              铁路12306每日5:00至次日1:00（周二为5:00至24:00）提供服务。
+            </div>
           </div>
 
-          <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? '登录中...' : '登录'}
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>
-            <Link to="/register" className="register-link">
-              没有账号？立即注册
-            </Link>
-          </p>
         </div>
+      </div>
+
+      {/* 3. 简易页脚 */}
+      <div className="login-footer-simple">
+        <p>© 2008-2025 中国铁道科学研究院集团有限公司</p>
+        <p>京ICP备05020493号-4 | ICP证：京B2-20202537</p>
       </div>
     </div>
   )
