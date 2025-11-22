@@ -36,6 +36,23 @@ const HomePage = () => {
     navigate('/search-results', { state: searchForm })
   }
 
+  // 新增：底部 Tab 状态
+  const [activeFooterTab, setActiveFooterTab] = useState('latest')
+  
+  // 新增：模拟新闻数据
+  const newsData = {
+    latest: [
+      { title: '关于2025年部分旅客列车时刻调整的公告', date: '2025-11-20' },
+      { title: '关于优化铁路车票改签规则的公告', date: '2025-11-18' },
+      { title: '铁路旅客禁止、限制携带和托运物品目录', date: '2025-11-15' },
+      { title: '关于铁路车票预售期调整的公告', date: '2025-11-10' },
+      { title: '中国铁路上海局集团有限公司关于2025年11月21日列车停运公告', date: '2025-11-21' },
+      { title: '铁路12306 App 推出“同车接续”功能', date: '2025-11-08' },
+      { title: '关于打击倒票、制贩假票的公告', date: '2025-11-05' },
+      { title: '多地铁路部门推出“静音车厢”服务', date: '2025-11-01' },
+    ]
+  }
+
   // 定义轮播图组数
   const bannerImages = [
     'https://www.12306.cn/index/images/pic/banner10.jpg',
@@ -183,32 +200,53 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* 3. 底部展示区 (会员、保险等) */}
       <div className="promo-section container">
-        <div className="promo-card card-blue">
-          <div className="card-content">
-            <h3>会员服务</h3>
-            <p>铁路畅行 尊享体验</p>
-            <p className="small">12306铁路会员积分服务</p>
+        {/* 第一行 */}
+        <div className="promo-row">
+          <div className="promo-card card-member">
+            {/* 如果你有爬下来的图片，用 img 标签替换这里 */}
+            {/* <img src={memberImg} className="card-bg-img" /> */}
           </div>
-          <div className="card-icon">💎</div>
+          <div className="promo-card card-food">
+          </div>
         </div>
-        <div className="promo-card card-green">
-          <div className="card-content">
-            <h3>餐饮·特产</h3>
-            <p>带有温度的旅途配餐</p>
-            <p className="small">享受星级的体验和家乡的味道</p>
+        {/* 第二行 */}
+        <div className="promo-row">
+          <div className="promo-card card-insurance">
           </div>
-          <div className="card-icon">🍱</div>
+          <div className="promo-card card-ticket">
+          </div>
         </div>
       </div>
 
-      {/* 简单的页脚占位 */}
-      <div className="simple-footer container">
-        <div className="footer-tabs">
-          <span>最新发布</span>
-          <span>常见问题</span>
-          <span>信用信息</span>
+      {/* --- 4. 修改：底部信息区域 (带列表) --- */}
+      <div className="info-footer-section">
+        <div className="container">
+          {/* Tab 头 */}
+          <div className="footer-tabs">
+            <div
+              className={`footer-tab ${activeFooterTab === 'latest' ? 'active' : ''}`}
+              onClick={() => setActiveFooterTab('latest')}
+            >
+              最新发布
+            </div>
+            <div className="footer-tab">常见问题</div>
+            <div className="footer-tab">信用信息</div>
+          </div>
+
+          {/* 列表内容 */}
+          <div className="footer-content">
+            <ul className="news-list">
+              {newsData.latest.map((item, index) => (
+                <li key={index}>
+                  <span className="news-icon">▪</span>
+                  <a href="#" className="news-link">{item.title}</a>
+                  <span className="news-date">{item.date}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="more-link">更多 &gt;</div>
+          </div>
         </div>
       </div>
 
