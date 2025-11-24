@@ -66,10 +66,14 @@ router.post('/send-code', async (req, res) => {
     // 模拟发送短信（实际应调用短信服务）
     console.log(`发送验证码到 ${phone}: ${code}`);
 
+    const data = { codeId };
+    if (process.env.NODE_ENV !== 'production') {
+      data.code = code;
+    }
     res.json({ 
       success: true,
       message: '验证码发送成功', 
-      data: { codeId }
+      data
     });
   } catch (error) {
     console.error('发送验证码失败:', error);

@@ -25,6 +25,7 @@ const RegisterPage = () => {
   const [countdown, setCountdown] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [serverCode, setServerCode] = useState('')
   const [passwordStrength, setPasswordStrength] = useState(0)
 
   // 倒计时逻辑
@@ -62,10 +63,17 @@ const RegisterPage = () => {
       alert('请输入正确的手机号')
       return
     }
-    setIsCodeSent(true)
-    setCountdown(60)
-    // 这里调用你的 sendVerificationCode API
-    // await sendVerificationCode(formData.phone)
+    try {
+      setIsCodeSent(true)
+      setCountdown(60)
+      const resp = await sendVerificationCode(formData.phone)
+      const maybeCode = resp?.data?.code
+      if (maybeCode) setServerCode(maybeCode)
+    } catch (e) {
+      setIsCodeSent(false)
+      setCountdown(0)
+      setError(typeof e === 'string' ? e : '发送验证码失败')
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -74,12 +82,26 @@ const RegisterPage = () => {
 
     setLoading(true)
     try {
-      // 模拟注册
-      await register(formData)
+      if (formData.password !== formData.confirmPassword) {
+        setError('两次输入的密码不一致')
+        return
+      }
+      if (!/^\d{6}$/.test(formData.verificationCode)) {
+        setError('请输入6位短信验证码')
+        return
+      }
+      const payload = {
+        phone: formData.phone,
+        verificationCode: formData.verificationCode,
+        password: formData.password,
+        realName: formData.realName,
+        idNumber: formData.idNumber
+      }
+      await register(payload)
       alert('注册成功')
       navigate('/login')
     } catch (err) {
-      setError('注册失败，请检查输入')
+      setError(typeof err === 'string' ? err : '注册失败，请检查输入')
     } finally {
       setLoading(false)
     }
@@ -212,25 +234,50 @@ const RegisterPage = () => {
                 </div>
               </div>
 
-              {/* --- 手机号 --- */}
-              <div className="register-row">
-                <div className="row-label required">手机号码：</div>
-                <div className="row-input">
-                  <div className="phone-group">
-                    <select className="phone-prefix">
-                      <option>+86 中国</option>
-                    </select>
-                    <input
-                      type="text"
-                      name="phone"
-                      className="phone-input"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="row-tip orange-tip">请正确填写手机号码，稍后将向该手机号发送短信验证码</div>
+          {/* --- 手机号 --- */}
+          <div className="register-row">
+            <div className="row-label required">手机号码：</div>
+            <div className="row-input">
+              <div className="phone-group">
+                <select className="phone-prefix">
+                  <option>+86 中国</option>
+                </select>
+                <input
+                  type="text"
+                  name="phone"
+                  className="phone-input"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                />
+                <button
+                  type="button"
+                  className="send-code-btn"
+                  onClick={handleSendCode}
+                  disabled={countdown > 0}
+                >
+                  {countdown > 0 ? `重新发送(${countdown}s)` : (isCodeSent ? '重新发送' : '发送验证码')}
+                </button>
               </div>
+            </div>
+            <div className="row-tip orange-tip">请正确填写手机号码，稍后将向该手机号发送短信验证码</div>
+          </div>
+
+          {/* --- 短信验证码 --- */}
+          <div className="register-row">
+            <div className="row-label required">短信验证码：</div>
+            <div className="row-input">
+              <input
+                type="text"
+                name="verificationCode"
+                placeholder="请输入短信验证码"
+                value={formData.verificationCode}
+                onChange={handleInputChange}
+              />
+              {serverCode && (
+                <div className="debug-code-tip">开发环境验证码：{serverCode}</div>
+              )}
+            </div>
+          </div>
 
               {/* --- 旅客类型 --- */}
               <div className="register-row">
@@ -264,18 +311,27 @@ const RegisterPage = () => {
               {/* --- 按钮 --- */}
               <div className="register-row btn-row">
                 <div className="row-label"></div>
+              <div className="row-input">
+                <button type="submit" className="next-btn" disabled={loading}>
+                  下一步
+                </button>
+              </div>
+            </div>
+
+            {error && (
+              <div className="register-row">
+                <div className="row-label"></div>
                 <div className="row-input">
-                  <button type="submit" className="next-btn" disabled={loading}>
-                    下一步
-                  </button>
+                  <div className="error-tip">{error}</div>
                 </div>
               </div>
+            )}
 
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
+  </div>
   )
 }
 
