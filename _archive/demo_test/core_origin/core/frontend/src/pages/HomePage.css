@@ -1,0 +1,473 @@
+/* HomePage.css */
+
+.home-page {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* --- Hero Section (全屏大图区域) --- */
+.hero-section {
+  height: 450px;
+  /* 官网大致高度 */
+  position: relative;
+  background-color: #1e3c72;
+  /* 备用底色 */
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* 这里使用 Unsplash 的一张图片模拟高铁背景 */
+  /* background-image: url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); */
+  background-image: url('https://www.12306.cn/index/images/pic/banner0619.jpg');
+  background-color: #f8f9fa;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.9;
+}
+
+
+/* --- 新增：轮播图容器 --- */
+.hero-carousel-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  /* 放在最底层，但在背景色之上 */
+}
+
+/* --- 新增：每一张轮播图的样式 --- */
+.carousel-bg-item {
+  width: 100%;
+  height: 450px;
+  /* 必须和 hero-section 高度一致 */
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* 调整内容层级，确保搜索框浮在轮播图上面 */
+.hero-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  /* 关键：必须比轮播图 (z-index: 1) 高 */
+}
+
+.hero-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: space-between;
+  /* 左右分布 */
+  z-index: 2;
+}
+
+/* --- 搜索卡片 --- */
+.search-card {
+  width: 500px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.search-card-tabs {
+  display: flex;
+  background: #f0f0f0;
+}
+
+.card-tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  background: #eee;
+}
+
+.card-tab.active {
+  background: #fff;
+  color: #3B99FC;
+  font-weight: bold;
+  border-top: 2px solid #3B99FC;
+}
+
+.search-card-body {
+  padding: 20px 30px;
+  background: #fff;
+}
+
+/* 表单行通用样式 */
+.form-line {
+  margin-bottom: 20px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="date"] {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.input-group input:focus {
+  border-bottom-color: #3B99FC;
+}
+
+/* 出发地-目的地 特殊布局 */
+.stations-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.stations-line .input-group {
+  width: 42%;
+}
+
+.swap-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.swap-icon:hover {
+  color: #3B99FC;
+  background: #e6f1fc;
+}
+
+.icon-map {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  color: #ccc;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* 选项行 */
+.options-line {
+  display: flex;
+  gap: 20px;
+}
+
+.checkbox-label {
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 查询按钮 */
+.hero-search-btn {
+  width: 100%;
+  background: #ff8c00;
+  /* 12306 橙色 */
+  color: white;
+  border: none;
+  padding: 12px 0;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.hero-search-btn:hover {
+  background: #e67e00;
+}
+
+/* --- 右侧广告文字 --- */
+.hero-promo {
+  color: white;
+  text-align: right;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.promo-title {
+  font-size: 48px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+}
+
+.promo-sub {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.promo-desc {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* --- 中部服务栏 --- */
+.service-bar {
+  background: #fff;
+  padding: 30px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.service-grid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.service-item:hover {
+  transform: translateY(-5px);
+}
+
+.service-icon-circle {
+  width: 70px;
+  /* 稍微加大一点圈圈 */
+  height: 70px;
+  border-radius: 50%;
+  background: #f0f8ff;
+  /* 淡蓝色背景 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* font-size: 24px;  <-- 删掉这一行，不再需要字体大小 */
+  margin-bottom: 10px;
+  transition: all 0.3s;
+}
+
+/* 新增：控制图标图片的样式 */
+.service-img {
+  width: 36px;
+  /* 图标大小，根据实际图片调整 */
+  height: 36px;
+  object-fit: contain;
+}
+
+/* 鼠标悬停效果增强 */
+.service-item:hover .service-icon-circle {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(59, 153, 252, 0.3);
+  transform: translateY(-2px);
+}
+
+.service-title {
+  font-size: 14px;
+  color: #333;
+}
+
+/* --- 3. 中部展示区 (4个卡片) --- */
+.promo-section {
+  margin-bottom: 40px;
+}
+
+.promo-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.promo-card {
+  flex: 1;
+  height: 180px;
+  /* 增加高度 */
+  border-radius: 2px;
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+  /* 默认灰色背景，防止图片加载失败难看 */
+  background-color: #f5f5f5;
+}
+
+.promo-card:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 模拟原图的渐变色，如果你有图片，把 background-image url(...) 加在这里 */
+.card-member {
+  background-image: url('https://www.12306.cn/index/images/abanner01.jpg');
+  background-size: cover;
+}
+
+.card-food {
+  background-image: url('https://www.12306.cn/index/images/abanner02.jpg');
+  background-size: cover;
+}
+
+.card-insurance {
+  background-image: url('https://www.12306.cn/index/images/abanner05.jpg');
+  background-size: cover;
+}
+
+.card-ticket {
+  background-image: url('https://www.12306.cn/index/images/abanner06.jpg');
+  background-size: cover;
+}
+
+.card-text h3 {
+  font-size: 24px;
+  color: #333;
+  /* 原版标题是深色，不是白色 */
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+.card-text h3:hover {
+  color: #3B99FC;
+}
+
+.card-text p {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 10px 0;
+}
+
+.card-tag {
+  display: inline-block;
+  border: 1px solid #3B99FC;
+  color: #3B99FC;
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+/* --- 4. 底部信息区域 --- */
+.info-footer-section {
+  background: white;
+  border: 1px solid #eee;
+  margin-bottom: 40px;
+}
+
+.footer-tabs {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 2px solid #3B99FC;
+  /* 底部蓝线 */
+}
+
+.footer-tab {
+  width: 150px;
+  text-align: center;
+  padding: 15px 0;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.footer-tab.active {
+  background: #3B99FC;
+  color: white;
+}
+
+.footer-content {
+  padding: 20px 30px;
+  min-height: 200px;
+  position: relative;
+}
+
+.news-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* 两列布局 */
+  column-gap: 60px;
+  row-gap: 15px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.news-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.news-icon {
+  color: #3B99FC;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+.news-link {
+  flex: 1;
+  color: #333;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-right: 20px;
+}
+
+.news-link:hover {
+  color: #3B99FC;
+  text-decoration: underline;
+}
+
+.news-date {
+  color: #999;
+  font-family: Arial, sans-serif;
+}
+
+.more-link {
+  position: absolute;
+  right: 20px;
+  bottom: 15px;
+  font-size: 12px;
+  color: #999;
+  cursor: pointer;
+}
+
+.more-link:hover {
+  color: #3B99FC;
+}

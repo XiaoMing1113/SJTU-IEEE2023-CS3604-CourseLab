@@ -1,0 +1,173 @@
+/* Header.css - 12306 风格 */
+
+/* 通用容器限制，让内容居中对齐 */
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+.header {
+  width: 100%;
+  background: #fff;
+  font-family: "Microsoft YaHei", Arial, sans-serif;
+}
+
+/* --- 1. 顶部细条 --- */
+.top-bar {
+  height: 30px;
+  line-height: 30px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  font-size: 12px;
+  color: #666;
+}
+
+.top-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.top-link {
+  color: #666;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.top-link:hover {
+  color: #3B99FC;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #ddd;
+}
+
+.login-link {
+  color: #3B99FC;
+  margin-right: 10px;
+}
+
+.text-logout-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.text-logout-btn:hover {
+  color: #f40;
+}
+
+/* --- 2. 品牌栏 --- */
+.brand-bar {
+  height: 80px;
+  background: #fff;
+}
+
+.brand-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 42px;
+  line-height: 1;
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-cn {
+  font-size: 24px;
+  font-weight: bold;
+  color: #3B99FC;
+  /* 12306蓝 */
+  letter-spacing: 2px;
+}
+
+.logo-en {
+  font-size: 12px;
+  color: #333;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+/* 顶部搜索框 */
+.search-site {
+  display: flex;
+  align-items: center;
+  width: 400px;
+}
+
+.search-site input {
+  flex: 1;
+  height: 36px;
+  padding: 0 10px;
+  border: 2px solid #3B99FC;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  font-size: 13px;
+}
+
+.search-site button {
+  width: 50px;
+  height: 36px;
+  background: #3B99FC;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* --- 3. 主导航栏 (蓝色背景) --- */
+.main-nav-bar {
+  background-color: #3B99FC;
+  height: 40px;
+}
+
+.nav-container {
+  display: flex;
+  height: 100%;
+}
+
+.nav-item {
+  color: white;
+  text-decoration: none;
+  padding: 0 25px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background-color: #2a70b8;
+  /* 深一点的蓝色 */
+}
+
+.arrow {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
+}

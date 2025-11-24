@@ -1,0 +1,298 @@
+/* LoginPage.css - 12306 官方风格复刻 */
+
+/* 1. 简易头部 */
+.login-header-simple {
+  background: white;
+  height: 80px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 10;
+}
+
+.header-content {
+  width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.simple-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  gap: 12px;
+}
+
+.simple-logo .logo-icon {
+  font-size: 40px;
+}
+
+.simple-logo .logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.simple-logo .cn {
+  font-size: 22px;
+  color: #3B99FC;
+  font-weight: bold;
+}
+
+.simple-logo .en {
+  font-size: 12px;
+  color: #666;
+}
+
+.welcome-text {
+  font-size: 20px;
+  color: #333;
+  border-left: 1px solid #ddd;
+  padding-left: 20px;
+  margin-left: -600px;
+  /* 简单调整位置，可根据需要微调 */
+}
+
+/* 2. 主体背景区域 */
+.login-main-bg {
+  /* 模拟官网的深蓝色背景图 */
+  background: linear-gradient(135deg, #3b73da 0%, #004cb3 100%);
+  height: 600px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-content-container {
+  width: 1200px;
+  height: 450px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+/* 左侧营销区 */
+.marketing-area {
+  flex: 1;
+  color: white;
+  padding-left: 40px;
+}
+
+.promo-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.promo-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+  font-size: 18px;
+}
+
+.qr-download {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.download-text {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* 右侧：悬浮登录框 */
+.login-box-floating {
+  width: 380px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.login-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-item {
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  padding: 0 15px;
+  font-weight: 500;
+}
+
+.tab-item.active {
+  color: #FF8000;
+  /* 12306橙 */
+  font-weight: bold;
+}
+
+.tab-divider {
+  color: #eee;
+}
+
+.login-box-content {
+  padding: 25px 30px;
+  min-height: 250px;
+}
+
+/* 扫码视图 */
+.scan-login-view {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.scan-tip {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* 账号登录表单 */
+.account-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-error-banner {
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+  padding: 8px;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 2px;
+}
+
+.input-row {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  background: white;
+  transition: border-color 0.3s;
+}
+
+.input-row.has-error {
+  border-color: #ff4d4f;
+}
+
+.input-row:focus-within {
+  border-color: #FF8000;
+  box-shadow: 0 0 0 2px rgba(255, 128, 0, 0.1);
+}
+
+.input-icon {
+  padding: 0 10px;
+  color: #ccc;
+  font-size: 16px;
+}
+
+.input-row input {
+  flex: 1;
+  border: none;
+  padding: 12px 10px 12px 0;
+  outline: none;
+  font-size: 14px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.form-options a {
+  color: #0077FF;
+  text-decoration: none;
+}
+
+.submit-btn {
+  width: 100%;
+  background: #FF8000;
+  /* 官方橙色 */
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background: #e67300;
+}
+
+.submit-btn:disabled {
+  background: #ffdcb2;
+  cursor: not-allowed;
+}
+
+.register-row {
+  text-align: center;
+  font-size: 14px;
+  margin-top: -10px;
+}
+
+.register-row a {
+  color: #FF8000;
+  text-decoration: none;
+}
+
+/* 底部提示条 */
+.login-box-footer {
+  background: #fdfdfd;
+  border-top: 1px solid #f0f0f0;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* 3. 简易页脚 */
+.login-footer-simple {
+  text-align: center;
+  padding: 40px 0;
+  color: #999;
+  font-size: 12px;
+}
+
+.login-footer-simple p {
+  margin: 5px 0;
+}
+
+/* 响应式适配 */
+@media (max-width: 1200px) {
+  .login-content-container {
+    width: 100%;
+    padding: 0 20px;
+    justify-content: center;
+  }
+
+  .marketing-area {
+    display: none;
+    /* 小屏幕隐藏左侧营销区 */
+  }
+
+  .welcome-text {
+    margin-left: 20px;
+    border: none;
+  }
+}

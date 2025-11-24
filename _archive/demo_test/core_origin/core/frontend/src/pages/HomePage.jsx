@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Carousel } from 'antd'
-
 import './HomePage.css'
-import iconBooking from '../../assets/images/booking.png'
-import iconLost from '../../assets/images/lost.png'
-import iconCar from '../../assets/images/car.png'
-import iconDelivery from '../../assets/images/Delivery.png'
-import iconStation from '../../assets/images/station.png'
-import iconFeature from '../../assets/images/feature.png'
-import iconFeedback from '../../assets/images/feedback.png'
 
-export const swapLogic = ({ from, to }) => ({ from: to, to: to })
+import iconBooking from '../assets/images/booking.png'
+import iconLost from '../assets/images/lost.png' // 暂代
+import iconCar from '../assets/images/car.png'    // 暂代
+import iconDelivery from '../assets/images/Delivery.png' // 暂代
+import iconStation from '../assets/images/station.png' // 暂代
+import iconFeature from '../assets/images/feature.png'
+import iconFeedback from '../assets/images/feedback.png' // 暂代
 
 const HomePage = () => {
   const navigate = useNavigate()
@@ -46,7 +44,8 @@ const HomePage = () => {
   const handleSwap = () => {
     setSearchForm(prev => ({
       ...prev,
-      ...swapLogic({ from: prev.from, to: prev.to })
+      from: prev.to,
+      to: prev.to
     }))
   }
 
@@ -54,7 +53,7 @@ const HomePage = () => {
     e.preventDefault()
     // 简单的校验
     if (!searchForm.from || !searchForm.to) return alert("请输入出发地和目的地")
-    navigate('/search', { state: searchForm })
+    navigate('/search-results', { state: searchForm })
   }
 
   // 新增：底部 Tab 状态

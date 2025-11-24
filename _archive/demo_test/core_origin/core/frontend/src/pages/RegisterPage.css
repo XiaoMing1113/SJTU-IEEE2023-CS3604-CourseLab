@@ -1,0 +1,202 @@
+/* RegisterPage.css - 12306 官网风格复刻 */
+
+.register-page-official {
+  background-color: #fff;
+  min-height: 600px;
+  padding-bottom: 50px;
+  font-size: 12px;
+  /* 官网字号偏小 */
+  color: #333;
+}
+
+.reg-content-wrapper {
+  width: 980px;
+  /* 12306 标准内容宽度 */
+  margin: 0 auto;
+}
+
+/* 1. 面包屑 */
+.breadcrumb-nav {
+  padding: 15px 0;
+  color: #666;
+}
+
+.breadcrumb-nav a {
+  color: #333;
+  text-decoration: none;
+}
+
+/* 2. 注册面板 */
+.register-panel {
+  border: 1px solid #3B99FC;
+  /* 蓝色边框 */
+  margin-top: 10px;
+}
+
+/* 蓝色标题栏 */
+.panel-header {
+  height: 32px;
+  line-height: 32px;
+  background: linear-gradient(to bottom, #3B99FC 0%, #2a70b8 100%);
+  /* 渐变蓝 */
+  color: white;
+  padding-left: 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.panel-body {
+  padding: 40px 0;
+}
+
+/* --- 表单行布局 --- */
+.register-row {
+  display: flex;
+  align-items: center;
+  /* 垂直居中 */
+  margin-bottom: 20px;
+  line-height: 30px;
+}
+
+/* Label (第一列) */
+.row-label {
+  width: 280px;
+  /* 固定宽度 */
+  text-align: right;
+  padding-right: 10px;
+  color: #333;
+}
+
+.required::before {
+  content: '*';
+  color: #ff4d4f;
+  margin-right: 4px;
+}
+
+/* Input (第二列) */
+.row-input {
+  width: 300px;
+  /* 输入框容器宽度 */
+}
+
+.row-input input,
+.row-input select {
+  width: 100%;
+  height: 30px;
+  border: 1px solid #CFCDC7;
+  padding: 0 5px;
+  outline: none;
+  font-size: 12px;
+}
+
+.row-input input:focus {
+  border-color: #3B99FC;
+  box-shadow: 0 0 3px rgba(59, 153, 252, 0.3);
+}
+
+/* Tip (第三列) */
+.row-tip {
+  margin-left: 15px;
+  color: #999;
+  flex: 1;
+  /* 占据剩余空间 */
+}
+
+.orange-tip {
+  color: #FF8000;
+}
+
+/* --- 特殊组件样式 --- */
+
+/* 虚线分隔 */
+.dashed-top {
+  border-top: 1px dashed #eee;
+  padding-top: 20px;
+}
+
+/* 密码强度条 */
+.strength-meter {
+  display: flex;
+  margin-top: 5px;
+  height: 6px;
+  gap: 2px;
+}
+
+.strength-meter .level {
+  flex: 1;
+  background: #ddd;
+}
+
+.strength-meter .level-1.active {
+  background: #FF4400;
+}
+
+/* 弱 - 红 */
+.strength-meter .level-2.active {
+  background: #FF9900;
+}
+
+/* 中 - 橙 */
+.strength-meter .level-3.active {
+  background: #52C41A;
+}
+
+/* 强 - 绿 */
+
+/* 手机号组合框 */
+.phone-group {
+  display: flex;
+  gap: 5px;
+}
+
+.phone-prefix {
+  width: 90px !important;
+}
+
+.phone-input {
+  flex: 1;
+}
+
+/* 协议行 */
+.agreement-row .full-width {
+  width: auto;
+}
+
+.agreement-row a {
+  color: #0077FF;
+  text-decoration: none;
+}
+
+/* 按钮行 */
+.next-btn {
+  width: 120px;
+  height: 36px;
+  background: #FF9A00;
+  /* 12306 橙色 */
+  border: 1px solid #D98201;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.next-btn:hover {
+  background: #ff8c00;
+}
+
+/* 响应式微调 (虽然官网不是响应式的，但防止手机看太乱) */
+@media (max-width: 1000px) {
+  .reg-content-wrapper {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .row-label {
+    width: 120px;
+  }
+
+  .row-tip {
+    font-size: 10px;
+  }
+}
