@@ -1,3 +1,4 @@
 node_modules/
 worklog.md
 downloaded_assets
+core/backend/database/*.db
