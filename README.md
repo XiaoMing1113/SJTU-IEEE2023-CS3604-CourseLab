@@ -104,68 +104,81 @@ npm test Header
 
 ## 🛠 开发与协作规范 (Git Workflow & Issues)
 
-本项目采用 **GitHub Issues** 驱动的开发模式。请严格遵守以下规范以确保任务可追踪。
+采用“双线并行”的简化协作模型：`develop` 为实时开发线，`main` 为稳定发布线。所有合并由仓库 owner 直接在命令行完成。
 
-### 🚫 三大红线 (Don'ts)
-1. **禁止** 直接在 `main` 分支上修改代码！`main` 分支应永远保持可运行状态。
-2. **禁止** 提交 `node_modules`、`.env` 等配置文件（已配置 .gitignore）。
-3. **禁止** 通过复制文件夹（如 `demo_日期`）来备份代码。请使用 Git 提交来保存进度。
+### 🌿 分支模型
+- `main`：稳定分支；受保护，仅 owner 可 push；历史保持线性
+- `develop`：实时开发分支；日常开发直接提交到该分支
+- 可选：临时 `feat/issue-编号-描述` 分支用于较大改动，合并回 `develop` 后删除
 
-### ✅ 正确的开发流程 (Do's)
+### 🔄 工作流概览
+1. 开发者在 `develop` 编码并推送；
+2. Owner 周期性发版：将 `develop` 直接合并到 `main`，并打标签发布
+3. 贡献者本地仅同步分支，不在本地执行任何“把 develop 合到 main”的操作
 
-#### 第一步：领取任务与创建分支
-在开始工作前，请先在 GitHub 上创建或认领一个 **Issue**。
-
+### 🤝 合并实现（owner）
+- 周期发布（develop → main，优先线性历史）：
 ```bash
-# 确保在主分支并同步最新代码
+# 1) 同步远端引用
+git fetch origin
+
+# 2) 切到 main 并确保本地与远端一致
 git checkout main
 git pull
 
-# 创建并切换到你的分支
-# 推荐命名格式：类型/issue编号-描述
-# 示例：feat/issue-12-login-page (对应 12 号 Issue)
-git checkout -b feat/issue-编号-简短描述
+# 3) 尝试快进到 develop 最新提交（失败说明分叉）
+#    首选快进；失败则生成合并提交以保留历史
+git merge --ff-only origin/develop || git merge origin/develop
+
+# 4) 推送稳定分支
+git push origin main
+
+# 5) 打标签并推送（发布点）
+git tag -a vX.Y.Z -m "release"
+git push origin vX.Y.Z
 ```
-
-#### 第二步：开发与提交 (关联 Issue)
-在分支中进行开发。**提交时请务必关联 Issue**。
-
+- 精确对齐到 `develop`（覆盖式，对主线有强约束时使用）：
 ```bash
+git fetch origin
+git checkout main
+git reset --hard origin/develop
+git push origin main
+```
+- 说明：合并前需确保 `origin/develop` 通过测试；合并后用标签标记发布点。
+
+### ✅ 日常命令（这里只考虑简单同步情况，即每次commit前和远端同步，commit后必定会同步到远端，不会存在本地commit和远端commit不一致的情况）
+```bash
+# 获取内容
+git checkout develop
+git pull
+
+# 在 develop 开发后直接提交并推送
+git pull # 保证版本的实时一致性
 git add .
-
-# 场景 A：常规提交（关联 Issue，但不关闭）
-# 语法：Refs #编号
-git commit -m "feat: 完成登录框样式布局 (Refs #12)"
-
-# 场景 B：完成任务提交（合并后自动关闭 Issue）
-# 语法：Closes #编号 或 Fixes #编号
-git commit -m "fix: 修复白屏问题，完成开发 (Closes #12)"
-```
-
-*Commit Message 格式建议：`类型: 简短描述 (Refs/Closes #编号)`*
-
-#### 第三步：合并回主分支
-确认功能开发完成且测试无误后，将代码合并回主分支：
-
-```bash
-# 1. 切回主分支
-git checkout main
-
-# 2. 拉取队友可能更新的代码
-git pull
-
-# 3. 合并你的分支
-git merge feat/issue-编号-简短描述
-
-# 4. 推送到远程仓库 (此时 GitHub 会自动处理 Issue 状态)
+git commit -m "feat: 首页导航文案调整 (Refs #12)"
 git push
+
+# 可选：大改动走 feature 分支并合回 develop
+git checkout -b feat/issue-编号-简短描述
+# 开发完成后
+git checkout develop
+git pull
+git merge feat/issue-编号-简短描述
+git push
+git branch -d feat/issue-编号-简短描述
+
+# 获取最新稳定版本
+git checkout main
+git pull
 ```
 
-#### 第四步：清理
-合并完成后，删除已无用的功能分支：
-```bash
-git branch -d feat/issue-编号-简短描述
-```
+### 📆 课堂周期流程
+- 每轮上课前，我们尽力保证 `develop` 稳定并合并到 `main`
+- 课程需求与练习 Bug：统一在 `develop` 维护（新一轮迭代在 `develop` 开始）
+- PR 规范：所有 PR 必须以 `develop` 为目标分支；针对 `main` 的 PR 将不予受理
+
+### ⚠️ 注意事项
+- 禁止非 owner 向 `main` push；PR 请选择 `develop`
 
 ---
 
