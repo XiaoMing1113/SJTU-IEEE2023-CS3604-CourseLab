@@ -133,9 +133,9 @@ git merge --ff-only origin/develop || git merge origin/develop
 # 4) 推送稳定分支
 git push origin main
 
-# 5) 打标签并推送（发布点）
-git tag -a vX.Y.Z -m "release"
-git push origin vX.Y.Z
+# 5) 打main版本标签并推送（发布点）
+git tag -a v1.0.0 -m "release"
+git push origin v1.0.0
 ```
 - 精确对齐到 `develop`（覆盖式，对主线有强约束时使用）：
 ```bash

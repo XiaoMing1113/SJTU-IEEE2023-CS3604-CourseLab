@@ -11,6 +11,12 @@ const SearchResultsPage = () => {
   const [trains, setTrains] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAdv, setShowAdv] = useState(false);
+  const [selectedTrainPrefixes, setSelectedTrainPrefixes] = useState([]);
+  const [selectedDepStations, setSelectedDepStations] = useState([]);
+  const [selectedArrStations, setSelectedArrStations] = useState([]);
+  const [filterSeat, setFilterSeat] = useState({ business: false, first: false, second: false });
+  const [filterTimeRange, setFilterTimeRange] = useState('00-24');
 
   // --- 搜索条件状态 ---
   // 从URL参数或location state获取搜索条件
@@ -123,6 +129,49 @@ const SearchResultsPage = () => {
     navigate('/booking', { state: { train, searchConditions } });
   };
 
+  const applyFilters = (list) => {
+    const seatKeys = [];
+    if (filterSeat.business) seatKeys.push('businessClass');
+    if (filterSeat.first) seatKeys.push('firstClass');
+    if (filterSeat.second) seatKeys.push('secondClass');
+    const [startH, endH] = (filterTimeRange || '00-24').split('-').map(x => parseInt(x, 10));
+    return list.filter(t => {
+      if (selectedTrainPrefixes.length > 0) {
+        const prefix = String(t.trainNumber || '').charAt(0).toUpperCase();
+        if (!selectedTrainPrefixes.includes(prefix)) return false;
+      }
+      if (selectedDepStations.length > 0 && !selectedDepStations.includes(t.departureStation)) return false;
+      if (selectedArrStations.length > 0 && !selectedArrStations.includes(t.arrivalStation)) return false;
+      if (seatKeys.length > 0) {
+        const hasSeat = seatKeys.some(k => (t.seats?.[k]?.available || 0) > 0);
+        if (!hasSeat) return false;
+      }
+      if (!isNaN(startH) && !isNaN(endH)) {
+        const h = parseInt(String(t.departureTime || '00').substring(0,2), 10);
+        if (!(h >= startH && h < endH)) return false;
+      }
+      return true;
+    });
+  };
+
+  const uniquePrefixes = React.useMemo(() => {
+    const allowed = ['G','D','Z','T','K'];
+    const set = new Set((trains || []).map(t => String(t.trainNumber || '').charAt(0).toUpperCase()).filter(p => allowed.includes(p)));
+    return Array.from(set);
+  }, [trains]);
+  const uniqueDepStations = React.useMemo(() => {
+    const set = new Set((trains || []).map(t => t.departureStation).filter(Boolean));
+    return Array.from(set);
+  }, [trains]);
+  const uniqueArrStations = React.useMemo(() => {
+    const set = new Set((trains || []).map(t => t.arrivalStation).filter(Boolean));
+    return Array.from(set);
+  }, [trains]);
+
+  const toggleSelect = (current, setter, value, checked) => {
+    setter(checked ? [...current, value] : current.filter(v => v !== value));
+  };
+
   // --- 辅助函数：渲染余票 (核心 UI 逻辑) ---
   // 12306 逻辑： >20 显示“有”，=0 显示“无”/“候补”，否则显示数字
   const renderTicketCell = (seatData) => {
@@ -168,7 +217,7 @@ const SearchResultsPage = () => {
               onChange={(e) => setSearchConditions({ ...searchConditions, date: e.target.value })}
             />
           </div>
-          <button className="btn-query" onClick={fetchTrains}>查询</button>
+          <button className="btn-query" onClick={() => { setShowAdv(true); fetchTrains(); }}>查询</button>
         </div>
       </div>
 
@@ -194,6 +243,63 @@ const SearchResultsPage = () => {
 
       {/* 3. 核心数据表格 */}
       <div className="train-table-container">
+
+        {showAdv && (
+          <div className="adv-filter-bar">
+            <div className="adv-rows">
+              <div className="adv-line">
+                <div className="adv-line-label">车次</div>
+                <div className="adv-checklist inline">
+                  {uniquePrefixes.map(prefix => (
+                    <label key={prefix} className="adv-check-item">
+                      <input type="checkbox" checked={selectedTrainPrefixes.includes(prefix)} onChange={(e)=>toggleSelect(selectedTrainPrefixes, setSelectedTrainPrefixes, prefix, e.target.checked)} /> {prefix}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="adv-line">
+                <div className="adv-line-label">出发站</div>
+                <div className="adv-checklist">
+                  {uniqueDepStations.map(st => (
+                    <label key={st} className="adv-check-item">
+                      <input type="checkbox" checked={selectedDepStations.includes(st)} onChange={(e)=>toggleSelect(selectedDepStations, setSelectedDepStations, st, e.target.checked)} /> {st}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="adv-line">
+                <div className="adv-line-label">到达站</div>
+                <div className="adv-checklist">
+                  {uniqueArrStations.map(st => (
+                    <label key={st} className="adv-check-item">
+                      <input type="checkbox" checked={selectedArrStations.includes(st)} onChange={(e)=>toggleSelect(selectedArrStations, setSelectedArrStations, st, e.target.checked)} /> {st}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="adv-line">
+                <div className="adv-line-label">席位</div>
+                <div className="adv-checks">
+                  <label><input type="checkbox" checked={filterSeat.business} onChange={(e)=>setFilterSeat({ ...filterSeat, business: e.target.checked })} /> 商务座</label>
+                  <label><input type="checkbox" checked={filterSeat.first} onChange={(e)=>setFilterSeat({ ...filterSeat, first: e.target.checked })} /> 一等座</label>
+                  <label><input type="checkbox" checked={filterSeat.second} onChange={(e)=>setFilterSeat({ ...filterSeat, second: e.target.checked })} /> 二等座</label>
+                </div>
+              </div>
+              <div className="adv-line">
+                <div className="adv-line-label">发车时间</div>
+                <div>
+                  <select className="adv-select" value={filterTimeRange} onChange={(e)=>setFilterTimeRange(e.target.value)}>
+                    <option value="00-24">00:00-24:00</option>
+                    <option value="00-06">00:00-06:00</option>
+                    <option value="06-12">06:00-12:00</option>
+                    <option value="12-18">12:00-18:00</option>
+                    <option value="18-24">18:00-24:00</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 状态提示 */}
         <div className="table-header-info">
@@ -230,7 +336,7 @@ const SearchResultsPage = () => {
               </tr>
             </thead>
             <tbody>
-              {trains.map((train, index) => (
+              {applyFilters(trains).map((train, index) => (
                 <tr key={train.trainNumber || index} className={index % 2 === 0 ? 'bg-even' : 'bg-odd'}>
                   {/* 车次 */}
                   <td className="cell-train-code">

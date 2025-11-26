@@ -62,7 +62,7 @@ const Header = () => {
             <span className="language">English</span>
           </div>
           <div className="top-right">
-            <span className="top-link">我的12306</span>
+            <Link to="/my" className="top-link">我的12306</Link>
             <span className="separator">|</span>
             {user ? (
               <span className="user-greeting">

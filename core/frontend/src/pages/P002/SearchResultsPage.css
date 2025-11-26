@@ -133,6 +133,20 @@
   margin: 0 auto 50px;
 }
 
+.adv-filter-bar { background: #f8fbff; border: 1px solid #e6efff; border-radius: 6px; padding: 10px; margin: 8px 0 12px; }
+.adv-rows { display: flex; flex-direction: column; gap: 10px; }
+.adv-line { display: flex; align-items: flex-start; gap: 10px; }
+.adv-line-label { width: 80px; font-size: 12px; color: #333; line-height: 22px; font-weight: 600; }
+.adv-item label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+.adv-input { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px 8px; font-size: 13px; }
+.adv-select { width: 100%; border: 1px solid #ccc; border-radius: 4px; padding: 6px 8px; font-size: 13px; }
+.adv-checks { display: flex; gap: 10px; align-items: center; }
+.adv-checks label { font-size: 12px; color: #333; }
+.adv-checklist { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; max-height: 120px; overflow: auto; padding: 6px; border: 1px dashed #e6efff; border-radius: 4px; background: #ffffff; }
+.adv-checklist.inline { display: flex; flex-wrap: nowrap; gap: 10px; max-height: none; overflow: visible; padding: 6px 0; border: none; }
+.adv-check-item { font-size: 12px; color: #333; }
+.adv-checklist.inline .adv-check-item { display: inline-flex; align-items: center; gap: 4px; }
+
 .table-header-info {
   font-size: 12px;
   color: #666;

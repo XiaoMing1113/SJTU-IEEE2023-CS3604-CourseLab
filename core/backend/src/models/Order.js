@@ -90,9 +90,11 @@ class Order {
       }
 
       db.all(
-        `SELECT order_id, train_number, date, from_station, to_station, total_amount, status, payment_deadline, created_at, ticket_info
-         FROM orders ${where}
-         ORDER BY datetime(created_at) DESC
+        `SELECT o.order_id, o.train_number, o.date, o.from_station, o.to_station, o.total_amount, o.status, o.payment_deadline, o.created_at, o.ticket_info,
+                t.departure_time as dep_time, t.arrival_time as arr_time
+         FROM orders o LEFT JOIN trains t ON o.train_number = t.train_number
+         ${where.replace(/orders/g,'o')}
+         ORDER BY datetime(o.created_at) DESC
          LIMIT ? OFFSET ?`,
         [...params, parseInt(pageSize), offset],
         (err, rows) => {
@@ -112,7 +114,9 @@ class Order {
                   totalAmount: r.total_amount,
                   status: r.status,
                   paymentDeadline: r.payment_deadline,
-                  createdAt: r.created_at
+                  createdAt: r.created_at,
+                  departureTime: r.dep_time,
+                  arrivalTime: r.arr_time
                 }
                 if (r.ticket_info && r.status === 'PAID') {
                   try { o.ticketInfo = JSON.parse(r.ticket_info) } catch (_) {}
