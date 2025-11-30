@@ -27,7 +27,7 @@
 
 ```bash
 # 1. 进入前端目录 (注意：是在 core 目录下)
-cd core_1/frontend
+cd core/frontend
 
 # 2. 安装依赖 (初次运行或 package.json 变更时执行)
 npm install
@@ -44,15 +44,12 @@ npm run dev
 
 ```bash
 # 1. 新开一个终端窗口，进入后端目录
-cd core_1/backend
+cd core/backend
 
 # 2. 安装依赖
 npm install
 
-# 3. 初始化数据库客户端 (重要！防止报错)
-npx prisma generate
-
-# 4. 启动后端服务
+# 3. 启动后端服务
 npm run dev
 ```
 
