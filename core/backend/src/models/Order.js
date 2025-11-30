@@ -123,16 +123,43 @@ class Order {
                 }
                 return o
               })
-              resolve({
-                orders,
-                pagination: {
-                  page: parseInt(page),
-                  pageSize: parseInt(pageSize),
-                  totalPages: Math.ceil(countRow.cnt / parseInt(pageSize)),
-                  totalOrders: countRow.cnt,
-                  hasNextPage: offset + parseInt(pageSize) < countRow.cnt,
-                  hasPrevPage: parseInt(page) > 1
-                }
+              if (orders.length === 0) {
+                return resolve({
+                  orders,
+                  pagination: {
+                    page: parseInt(page),
+                    pageSize: parseInt(pageSize),
+                    totalPages: Math.ceil(countRow.cnt / parseInt(pageSize)),
+                    totalOrders: countRow.cnt,
+                    hasNextPage: offset + parseInt(pageSize) < countRow.cnt,
+                    hasPrevPage: parseInt(page) > 1
+                  }
+                })
+              }
+              let pending = orders.length
+              orders.forEach((o, idx) => {
+                db.all(
+                  `SELECT name, id_number as idNumber, seat_type as seatType FROM order_passengers WHERE order_id = ?`,
+                  [o.orderId],
+                  (pErr, passengers) => {
+                    // 若查询乘客失败，不影响主流程，使用空数组
+                    orders[idx].passengers = Array.isArray(passengers) ? passengers : []
+                    pending -= 1
+                    if (pending === 0) {
+                      resolve({
+                        orders,
+                        pagination: {
+                          page: parseInt(page),
+                          pageSize: parseInt(pageSize),
+                          totalPages: Math.ceil(countRow.cnt / parseInt(pageSize)),
+                          totalOrders: countRow.cnt,
+                          hasNextPage: offset + parseInt(pageSize) < countRow.cnt,
+                          hasPrevPage: parseInt(page) > 1
+                        }
+                      })
+                    }
+                  }
+                )
               })
             }
           )

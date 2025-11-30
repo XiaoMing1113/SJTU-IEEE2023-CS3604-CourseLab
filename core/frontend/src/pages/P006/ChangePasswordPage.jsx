@@ -21,7 +21,6 @@ const ChangePasswordPage = () => {
     if (newPassword !== confirmPassword) { setError('两次输入的密码不一致'); return }
     try {
       await api.post('/auth/change-password', { oldPassword, newPassword })
-      alert('密码修改成功，请重新登录')
       localStorage.removeItem('token'); localStorage.removeItem('user');
       window.dispatchEvent(new CustomEvent('userLoginStatusChanged'))
       navigate('/login')

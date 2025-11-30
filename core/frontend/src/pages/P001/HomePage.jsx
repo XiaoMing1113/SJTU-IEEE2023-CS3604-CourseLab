@@ -15,6 +15,7 @@ export const swapLogic = ({ from, to }) => ({ from: to, to: from })
 
 const HomePage = () => {
   const navigate = useNavigate()
+  const formatDate = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 
   // 搜索类型: single(单程), round(往返), transfer(中转), refund(退改签)
   const [activeTab, setActiveTab] = useState('single')
@@ -22,10 +23,11 @@ const HomePage = () => {
   const [searchForm, setSearchForm] = useState({
     from: '',
     to: '',
-    date: new Date().toISOString().split('T')[0],
+    date: formatDate(new Date()),
     isStudent: false,
     isHighSpeed: false
   })
+  const [formError, setFormError] = useState('')
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -52,8 +54,7 @@ const HomePage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    // 简单的校验
-    if (!searchForm.from || !searchForm.to) return alert("请输入出发地和目的地")
+    if (!searchForm.from || !searchForm.to) { setFormError('请输入出发地和目的地'); return }
     navigate('/search', { state: searchForm })
   }
 
@@ -93,6 +94,50 @@ const HomePage = () => {
     { title: "站车风采", icon: iconFeature },
     { title: "用户反馈", icon: iconFeedback },
   ]
+
+  const [openPicker, setOpenPicker] = useState(null)
+  const [cityTab, setCityTab] = useState('hot')
+  const CITIES = React.useMemo(() => ['北京','上海','天津','济南'], [])
+  const initialMap = React.useMemo(() => ({ 北京: 'B', 上海: 'S', 天津: 'T', 济南: 'J' }), [])
+  const groupedCities = React.useMemo(() => {
+    const groups = {
+      hot: CITIES,
+      ABCDEFG: CITIES.filter(c => 'ABCDEFG'.includes(initialMap[c] || '')),
+      HIJKLMN: CITIES.filter(c => 'HIJKLMN'.includes(initialMap[c] || '')),
+      OPQRST: CITIES.filter(c => 'OPQRST'.includes(initialMap[c] || '')),
+      UVWXYZ: CITIES.filter(c => 'UVWXYZ'.includes(initialMap[c] || '')),
+    }
+    return groups
+  }, [CITIES, initialMap])
+
+  const pickStation = (field, name) => {
+    setSearchForm(prev => ({ ...prev, [field]: name }))
+    setOpenPicker(null)
+  }
+
+  const StationDropdown = ({ field }) => (
+    <div className="station-dropdown">
+      <div className="station-panel">
+        <div className="station-tabs">
+          {['hot','ABCDEFG','HIJKLMN','OPQRST','UVWXYZ'].map(t => (
+            <button key={t} className={`station-tab ${cityTab === t ? 'active' : ''}`} onClick={() => setCityTab(t)}>{t === 'hot' ? '热门' : t}</button>
+          ))}
+        </div>
+        <div className="station-body">
+          <div className="station-group">
+            {(groupedCities[cityTab] || groupedCities.hot).map(city => (
+              <button key={city} className="station-item" onClick={() => pickStation(field, city)}>{city}</button>
+            ))}
+          </div>
+        </div>
+        <button className="station-close" onClick={() => setOpenPicker(null)}>×</button>
+      </div>
+    </div>
+  )
+
+  const minDateStr = formatDate(new Date())
+  const maxDateTmp = new Date(); maxDateTmp.setDate(maxDateTmp.getDate() + 15)
+  const maxDateStr = formatDate(maxDateTmp)
 
   return (
     <div className="home-page">
@@ -139,46 +184,52 @@ const HomePage = () => {
 
               {/* 出发地 - 目的地 */}
               <div className="form-line stations-line">
-                <div className="input-group">
-                  <label>出发地</label>
-                  <input
-                    type="text"
-                    name="from"
-                    placeholder="简拼/全拼/汉字"
-                    value={searchForm.from}
-                    onChange={handleInputChange}
-                  />
-                  <span className="icon-map">📍</span>
-                </div>
+              <div className="input-group">
+                <label>出发地</label>
+                <input
+                  type="text"
+                  name="from"
+                  placeholder="简拼/全拼/汉字"
+                  value={searchForm.from}
+                  onChange={handleInputChange}
+                  onFocus={() => setOpenPicker('from')}
+                />
+                <span className="icon-map">📍</span>
+                {openPicker === 'from' && <StationDropdown field="from" />}
+              </div>
 
                 <div className="swap-icon" onClick={handleSwap}>
                   ⇌
                 </div>
 
-                <div className="input-group">
-                  <label>到达地</label>
-                  <input
-                    type="text"
-                    name="to"
-                    placeholder="简拼/全拼/汉字"
-                    value={searchForm.to}
-                    onChange={handleInputChange}
-                  />
-                  <span className="icon-map">📍</span>
-                </div>
+              <div className="input-group">
+                <label>到达地</label>
+                <input
+                  type="text"
+                  name="to"
+                  placeholder="简拼/全拼/汉字"
+                  value={searchForm.to}
+                  onChange={handleInputChange}
+                  onFocus={() => setOpenPicker('to')}
+                />
+                <span className="icon-map">📍</span>
+                {openPicker === 'to' && <StationDropdown field="to" />}
+              </div>
               </div>
 
               {/* 出发日期 */}
               <div className="form-line date-line">
                 <div className="input-group full-width">
-                  <label>出发日期</label>
-                  <input
-                    type="date"
-                    name="date"
-                    value={searchForm.date}
-                    onChange={handleInputChange}
-                  />
-                </div>
+                <label>出发日期</label>
+                <input
+                  type="date"
+                  name="date"
+                  min={minDateStr}
+                  max={maxDateStr}
+                  value={searchForm.date}
+                  onChange={handleInputChange}
+                />
+              </div>
               </div>
 
               {/* 选项勾选 */}
@@ -202,11 +253,12 @@ const HomePage = () => {
               </div>
 
               {/* 查询按钮 */}
-              <button type="submit" className="hero-search-btn">
-                查 询
-              </button>
-            </form>
-          </div>
+            <button type="submit" className="hero-search-btn">
+              查 询
+            </button>
+            {formError && (<div style={{ color:'#ff4d4f', marginTop:8 }}>{formError}</div>)}
+          </form>
+        </div>
 
           {/* 右侧：透明文字/广告区 (模拟官网右侧的保险广告) */}
           {/* <div className="hero-promo">

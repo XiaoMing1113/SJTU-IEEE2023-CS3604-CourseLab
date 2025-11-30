@@ -97,7 +97,7 @@ const BookingPage = () => {
         setErrorModal(res?.message || '创建订单失败')
       }
     } catch (e) {
-      setErrorModal(e?.toString?.() || '创建订单失败')
+      setErrorModal(e?.message || '创建订单失败')
     }
   }
 

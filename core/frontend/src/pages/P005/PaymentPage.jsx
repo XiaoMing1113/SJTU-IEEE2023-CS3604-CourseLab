@@ -52,7 +52,7 @@ const PaymentPage = () => {
       })
       if (success) {
         setSuccessModal(true)
-        setTimeout(() => navigate('/my-orders'), 1200)
+        setTimeout(() => navigate('/my#orders'), 1200)
       } else {
         setFailModal(true)
       }

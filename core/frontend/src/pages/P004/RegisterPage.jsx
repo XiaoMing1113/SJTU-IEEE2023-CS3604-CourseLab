@@ -117,8 +117,9 @@ const RegisterPage = () => {
     } catch (e) {
       setIsCodeSent(false)
       setCountdown(0)
-      setError(typeof e === 'string' ? e : '发送验证码失败')
-      setDialogMessage(typeof e === 'string' ? e : '发送验证码失败')
+      const msg = e?.message || '发送验证码失败'
+      setError(msg)
+      setDialogMessage(msg)
       setDialogOpen(true)
     }
   }
@@ -147,7 +148,7 @@ const RegisterPage = () => {
       await register(payload)
       setSuccessOpen(true)
     } catch (err) {
-      const msg = typeof err === 'string' ? err : '注册失败，请检查输入'
+      const msg = err?.message || '注册失败，请检查输入'
       setError(msg)
       setDialogMessage(msg)
       setDialogOpen(true)

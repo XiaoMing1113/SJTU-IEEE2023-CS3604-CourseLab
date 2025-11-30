@@ -26,11 +26,12 @@ api.interceptors.response.use(
     return response.data
   },
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status
+    const message = error.response?.data?.message || error.message || '请求失败'
+    if (status === 401) {
       localStorage.removeItem('token')
-      window.location.href = '/login'
     }
-    return Promise.reject(error.response?.data?.message || error.message)
+    return Promise.reject({ message, status, code: status === 401 ? 'UNAUTHORIZED' : undefined })
   }
 )
 

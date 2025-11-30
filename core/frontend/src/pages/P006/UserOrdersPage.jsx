@@ -287,7 +287,7 @@ const UserOrdersPage = () => {
                     }
                     window.location.reload()
                   } catch (e) {
-                    setConfirmModal({ ...confirmModal, submitting: false, error: (e?.toString?.() || '操作失败') })
+                    setConfirmModal({ ...confirmModal, submitting: false, error: (e?.message || '操作失败') })
                   }
                 }}
               >

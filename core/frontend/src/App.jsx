@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import Header from './components/Header'
 import HomePage from './pages/P001/HomePage'
 import LoginPage from './pages/P003/LoginPage'
@@ -38,7 +38,7 @@ function App() {
           <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
           <Route path="/payment/:orderId" element={<PaymentPage />} />
           <Route path="/payment-success/:orderId" element={<PaymentSuccessPage />} />
-          <Route path="/my-orders" element={<UserOrdersPage />} />
+          <Route path="/my-orders" element={<Navigate to="/my#orders" replace />} />
           <Route path="/my" element={<PersonalCenter />} />
           <Route path="/my/change-password" element={<ChangePasswordPage />} />
         </Routes>

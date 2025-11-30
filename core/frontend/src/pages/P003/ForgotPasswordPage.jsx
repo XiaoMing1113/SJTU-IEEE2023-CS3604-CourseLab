@@ -50,7 +50,7 @@ const ForgotPasswordPage = () => {
       if (code) setServerCode(code)
       setCountdown(60)
     } catch (e) {
-      const msg = typeof e === 'string' ? e : (e?.message || '发送验证码失败')
+      const msg = e?.message || '发送验证码失败'
       setError(msg)
       setDialogMessage(msg)
       setDialogOpen(true)
@@ -96,7 +96,7 @@ const ForgotPasswordPage = () => {
       await resetPassword({ recipient, idNumber, verificationCode, newPassword })
       setSuccessOpen(true)
     } catch (e) {
-      const msg = typeof e === 'string' ? e : (e?.message || '重置失败，请稍后重试')
+      const msg = e?.message || '重置失败，请稍后重试'
       setError(msg)
       setDialogMessage(msg)
       setDialogOpen(true)
