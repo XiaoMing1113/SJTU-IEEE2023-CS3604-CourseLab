@@ -349,7 +349,7 @@ const SearchResultsPage = () => {
               <div
                 key={idx}
                 className={`date-item ${item.isCurrent ? 'active' : ''} ${item.disabled ? 'disabled' : ''}`}
-                onClick={() => { if (!item.disabled) handleDateChange(item.fullDate) }}
+                onClick={() => { if (!item.disabled) handleDateChange(addDays(item.fullDate, -1)) }}
               >
                 <span className="date-fmt">{item.display}</span>
                 <span className="week-fmt">{item.week}</span>
